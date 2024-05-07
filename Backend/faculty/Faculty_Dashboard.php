@@ -1,10 +1,9 @@
 <?php
-
-
 include("Faculty_Cover.php");
 
-// Fetch user's department
 $userId = $_SESSION['user_id'];
+
+// Fetch user's department
 $fetchDepartmentQuery = "SELECT Department FROM users WHERE id = ?";
 $stmtFetchDepartment = $conn->prepare($fetchDepartmentQuery);
 $stmtFetchDepartment->bind_param("i", $userId);
@@ -13,51 +12,82 @@ $stmtFetchDepartment->bind_result($department);
 $stmtFetchDepartment->fetch();
 $stmtFetchDepartment->close();
 
-// Count students for admission in the same department
-$countStudentsQuery = "SELECT COUNT(*) FROM admission_data WHERE degree_applied = ? AND faculty_Message = 'sent'";
+// Check if the department matches a college
+$isCollegeQuery = "SELECT COUNT(*) FROM programs WHERE College = ?";
+$stmtIsCollege = $conn->prepare($isCollegeQuery);
+$stmtIsCollege->bind_param("s", $department);
+$stmtIsCollege->execute();
+$isCollege = $stmtIsCollege->fetch();
+$stmtIsCollege->close();
+
+// Prepare the courses array
+$courses = [];
+if ($isCollege) {
+    // Fetch all courses under the college
+    $fetchCoursesQuery = "SELECT Courses FROM programs WHERE College = ?";
+    $stmtFetchCourses = $conn->prepare($fetchCoursesQuery);
+    $stmtFetchCourses->bind_param("s", $department);
+    $stmtFetchCourses->execute();
+    $stmtFetchCourses->bind_result($course);
+
+    while ($stmtFetchCourses->fetch()) {
+        $courses[] = $course;
+    }
+    $stmtFetchCourses->close();
+} else {
+    // Treat the department as a single course
+    $courses[] = $department;
+}
+
+// Use the list of courses to perform data retrieval and counts
+// Use a dynamic query with IN clause for counting multiple courses
+
+// Count students for admission
+$countStudentsQuery = "SELECT COUNT(*) FROM admission_data WHERE degree_applied IN (" . implode(',', array_fill(0, count($courses), '?')) . ") AND faculty_Message = 'sent'";
 $stmtCountStudents = $conn->prepare($countStudentsQuery);
-$stmtCountStudents->bind_param("s", $department);
+$stmtCountStudents->bind_param(str_repeat('s', count($courses)), ...$courses);
 $stmtCountStudents->execute();
 $stmtCountStudents->bind_result($studentCountForAdmission);
 $stmtCountStudents->fetch();
 $stmtCountStudents->close();
 
-// Check if the user's department matches any value in the College column of the programs table
-$checkDepartmentQuery = "SELECT Number_of_Available_Slots FROM programs WHERE Courses = ?";
-$stmtCheckDepartment = $conn->prepare($checkDepartmentQuery);
-$stmtCheckDepartment->bind_param("s", $department);
-$stmtCheckDepartment->execute();
-$stmtCheckDepartment->bind_result($availableSlots);
-$stmtCheckDepartment->fetch();
-$stmtCheckDepartment->close();
+// Get available slots from programs based on courses
+$getAvailableSlotsQuery = "SELECT SUM(Number_of_Available_Slots) FROM programs WHERE Courses IN (" . implode(',', array_fill(0, count($courses), '?')) . ")";
+$stmtGetAvailableSlots = $conn->prepare($getAvailableSlotsQuery);
+$stmtGetAvailableSlots->bind_param(str_repeat('s', count($courses)), ...$courses);
+$stmtGetAvailableSlots->execute();
+$stmtGetAvailableSlots->bind_result($availableSlots);
+$stmtGetAvailableSlots->fetch();
+$stmtGetAvailableSlots->close();
 
-// Count students for admission in the same department with "NOA" result
-$countStudentsQueryNOA = "SELECT COUNT(*) FROM admission_data WHERE degree_applied = ? AND faculty_Message = 'sent' AND Admission_Result = 'NOA(Admitted-Qualified)'";
+// Count students with "NOA" result (Admitted-Qualified)
+$countStudentsQueryNOA = "SELECT COUNT(*) FROM admission_data WHERE degree_applied IN (" . implode(',', array_fill(0, count($courses), '?')) . ") AND faculty_Message = 'sent' AND Admission_Result = 'NOA(Admitted-Qualified)'";
 $stmtCountStudentsNOA = $conn->prepare($countStudentsQueryNOA);
-$stmtCountStudentsNOA->bind_param("s", $department);
+$stmtCountStudentsNOA->bind_param(str_repeat('s', count($courses)), ...$courses);
 $stmtCountStudentsNOA->execute();
 $stmtCountStudentsNOA->bind_result($noaStudentCount);
 $stmtCountStudentsNOA->fetch();
 $stmtCountStudentsNOA->close();
 
-// Count students for admission in the same department with "NOA" result
-$countStudentsQueryNOA = "SELECT COUNT(*) FROM admission_data WHERE degree_applied = ? AND faculty_Message = 'sent' AND Admission_Result = 'NOA(Admitted-Not Qualified)'";
+// Count students for admission with "NOA(Admitted-Not Qualified)" result
+$countStudentsQueryNOA = "SELECT COUNT(*) FROM admission_data WHERE degree_applied IN (" . implode(',', array_fill(0, count($courses), '?')) . ") AND faculty_Message = 'sent' AND Admission_Result = 'NOA(Admitted-Not Qualified)'";
 $stmtCountStudentsNOA = $conn->prepare($countStudentsQueryNOA);
-$stmtCountStudentsNOA->bind_param("s", $department);
+// Dynamically bind the parameters for the IN clause
+$stmtCountStudentsNOA->bind_param(str_repeat('s', count($courses)), ...$courses);
+
 $stmtCountStudentsNOA->execute();
 $stmtCountStudentsNOA->bind_result($noaNQStudentCount);
 $stmtCountStudentsNOA->fetch();
 $stmtCountStudentsNOA->close();
 
-// Count students for admission in the same department with "NOR(Possible Qualifier)" and "NOR(Possible Qualifier-Non-Board)" results
-$countStudentsQueryNOR = "SELECT COUNT(*) FROM admission_data WHERE degree_applied = ? AND faculty_Message = 'sent' AND (Personnel_Result = 'NOR(Possible Qualifier)' OR Personnel_Result = 'NOR(Possible Qualifier-Non-Board)')";
+// Count students with "NOR(Possible Qualifier)" and "NOR(Possible Qualifier-Non-Board)"
+$countStudentsQueryNOR = "SELECT COUNT(*) FROM admission_data WHERE degree_applied IN (" . implode(',', array_fill(0, count($courses), '?')) . ") AND faculty_Message = 'sent' AND (Personnel_Result = 'NOR(Possible Qualifier)' OR Personnel_Result = 'NOR(Possible Qualifier-Non-Board)')";
 $stmtCountStudentsNOR = $conn->prepare($countStudentsQueryNOR);
-$stmtCountStudentsNOR->bind_param("s", $department);
+$stmtCountStudentsNOR->bind_param(str_repeat('s', count($courses)), ...$courses);
 $stmtCountStudentsNOR->execute();
 $stmtCountStudentsNOR->bind_result($norStudentCount);
 $stmtCountStudentsNOR->fetch();
 $stmtCountStudentsNOR->close();
-
 ?>
 
 

@@ -1,9 +1,9 @@
 <?php
+include("Faculty_Cover.php");
 
-include ("Faculty_Cover.php");
+$userId = $_SESSION['user_id'];
 
 // Fetch user's department
-$userId = $_SESSION['user_id'];
 $fetchDepartmentQuery = "SELECT Department FROM users WHERE id = ?";
 $stmtFetchDepartment = $conn->prepare($fetchDepartmentQuery);
 $stmtFetchDepartment->bind_param("i", $userId);
@@ -11,6 +11,56 @@ $stmtFetchDepartment->execute();
 $stmtFetchDepartment->bind_result($department);
 $stmtFetchDepartment->fetch();
 $stmtFetchDepartment->close();
+
+// Check if the user's department is a college
+$checkIfCollege = "SELECT COUNT(*) FROM programs WHERE College = ?";
+$stmtCheckIfCollege = $conn->prepare($checkIfCollege);
+$stmtCheckIfCollege->bind_param("s", $department);
+$stmtCheckIfCollege->execute();
+$isCollege = $stmtCheckIfCollege->fetch();
+$stmtCheckIfCollege->close();
+
+$allNonBoard = false;
+if ($isCollege) {
+    // Check all courses under the college to see if they are "Non-Board"
+    $fetchCoursesQuery = "SELECT Nature_of_Degree FROM programs WHERE College = ?";
+    $stmtFetchCourses = $conn->prepare($fetchCoursesQuery);
+    $stmtFetchCourses->bind_param("s", $department);
+    $stmtFetchCourses->execute();
+
+    // Bind the result to `Nature_of_Degree`
+    $stmtFetchCourses->bind_result($Nature_of_Degree);
+
+    $isAllNonBoard = true; // Flag to check if all are "Non-Board"
+    while ($stmtFetchCourses->fetch()) {
+        if ($Nature_of_Degree !== 'Non-Board') { // If any course is not "Non-Board"
+            $isAllNonBoard = false;
+            break;
+        }
+    }
+
+    $stmtFetchCourses->close();
+
+    $allNonBoard = $isAllNonBoard;
+}
+
+
+// Fetch relevant courses based on the department
+$courses = [];
+if ($isCollege) {
+    $fetchCoursesQuery = "SELECT Courses FROM programs WHERE College = ?";
+    $stmtFetchCourses = $conn->prepare($fetchCoursesQuery);
+    $stmtFetchCourses->bind_param("s", $department);
+    $stmtFetchCourses->execute();
+    $stmtFetchCourses->bind_result($course);
+
+    while ($stmtFetchCourses->fetch()) {
+        $courses[] = $course;
+    }
+    $stmtFetchCourses->close();
+} else {
+    $courses[] = $department; // Treat department as a specific course if not a college
+}
 
 // Store the search query in a session variable if it's set
 if (isset($_GET['search'])) {
@@ -20,103 +70,53 @@ if (isset($_GET['filter'])) {
     $_SESSION['filter'] = $_GET['filter'];
 }
 
-// Retrieve the stored search query and filter from session if they exist
 $search = isset($_SESSION['search']) ? $_SESSION['search'] : '';
 $filter = isset($_SESSION['filter']) ? $_SESSION['filter'] : '';
 
-// Construct query based on filter
+// Base query with dynamic `IN` clause for multiple courses
+$baseQuery = "SELECT *, 
+              CASE 
+                WHEN Gr11_GWA IS NOT NULL THEN Gr11_GWA
+                WHEN GWA_OTAS IS NOT NULL THEN GWA_OTAS
+                ELSE Gr12_GWA
+              END AS GWA
+              FROM admission_data 
+              WHERE degree_applied IN (" . implode(',', array_fill(0, count($courses), '?')) . ") 
+              AND faculty_Message = 'sent'
+              AND (`Name` LIKE ? OR 
+                   `Middle_Name` LIKE ? OR 
+                   `Last_Name` LIKE ? OR 
+                   `applicant_number` LIKE ? OR 
+                   academic_classification LIKE ? OR 
+                   degree_applied LIKE ?)";
+
 if ($filter == 'qualified') {
-    $fetchStudentListQuery = "SELECT *, 
-                           CASE 
-                             WHEN Gr11_GWA IS NOT NULL THEN Gr11_GWA
-                             WHEN GWA_OTAS IS NOT NULL THEN GWA_OTAS
-                             ELSE Gr12_GWA
-                           END AS GWA
-                           FROM admission_data 
-                           WHERE degree_applied = ? 
-                           AND faculty_Message = 'sent'
-                           AND Admission_Result = 'NOA(Admitted-Qualified)'
-                           AND (`Name` LIKE ? OR 
-                                `Middle_Name` LIKE ? OR 
-                                `Last_Name` LIKE ? OR 
-                                `applicant_number` LIKE ? OR 
-                                applicant_number LIKE ? OR 
-                                academic_classification LIKE ? OR 
-                                TRIM(`Personnel_Result`) = '$search' OR 
-                   TRIM(`Admission_Result`) = '$search' OR 
-                                degree_applied LIKE ?)
-                           ORDER BY applicant_number ASC";
-}  else if ($filter == 'qualifiedNQ') {
-    $fetchStudentListQuery = "SELECT *, 
-                           CASE 
-                             WHEN Gr11_GWA IS NOT NULL THEN Gr11_GWA
-                             WHEN GWA_OTAS IS NOT NULL THEN GWA_OTAS
-                             ELSE Gr12_GWA
-                           END AS GWA
-                           FROM admission_data 
-                           WHERE degree_applied = ? 
-                           AND faculty_Message = 'sent'
-                           AND Admission_Result = 'NOA(Admitted-Not Qualified)'
-                           AND (`Name` LIKE ? OR 
-                                `Middle_Name` LIKE ? OR 
-                                `Last_Name` LIKE ? OR 
-                                `applicant_number` LIKE ? OR 
-                                applicant_number LIKE ? OR 
-                                academic_classification LIKE ? OR 
-                                TRIM(`Personnel_Result`) = '$search' OR 
-                   TRIM(`Admission_Result`) = '$search' OR 
-                                degree_applied LIKE ?)
-                           ORDER BY applicant_number ASC";
-}else if ($filter == 'nor_qualifier') {
-    $fetchStudentListQuery = "SELECT *, 
-                           CASE 
-                             WHEN Gr11_GWA IS NOT NULL THEN Gr11_GWA
-                             WHEN GWA_OTAS IS NOT NULL THEN GWA_OTAS
-                             ELSE Gr12_GWA
-                           END AS GWA
-                           FROM admission_data 
-                           WHERE degree_applied = ? 
-                           AND faculty_Message = 'sent'
-                           AND (Personnel_Result = 'NOR(Possible Qualifier)' OR Personnel_Result = 'NOR(Possible Qualifier-Non-Board)')
-                           AND (`Name` LIKE ? OR 
-                                `Middle_Name` LIKE ? OR 
-                                `Last_Name` LIKE ? OR 
-                                `applicant_number` LIKE ? OR 
-                                applicant_number LIKE ? OR 
-                                academic_classification LIKE ? OR 
-                                TRIM(`Personnel_Result`) = '$search' OR 
-                   TRIM(`Admission_Result`) = '$search' OR 
-                                degree_applied LIKE ?)
-                           ORDER BY applicant_number ASC";
+    $fetchStudentListQuery = $baseQuery . " AND Admission_Result = 'NOA(Admitted-Qualified)'";
+} else if ($filter == 'qualifiedNQ') {
+    $fetchStudentListQuery = $baseQuery . " AND Admission_Result = 'NOA(Admitted-Not Qualified)'";
+} else if ($filter == 'nor_qualifier') {
+    $fetchStudentListQuery = $baseQuery . " AND (Personnel_Result = 'NOR(Possible Qualifier)' OR Personnel_Result = 'NOR(Possible Qualifier-Non-Board)')";
 } else {
-    // Default query without filter
-    $fetchStudentListQuery = "SELECT *, 
-                           CASE 
-                             WHEN Gr11_GWA IS NOT NULL THEN Gr11_GWA
-                             WHEN GWA_OTAS IS NOT NULL THEN GWA_OTAS
-                             ELSE Gr12_GWA
-                           END AS GWA
-                           FROM admission_data 
-                           WHERE degree_applied = ? 
-                           AND faculty_Message = 'sent'
-                           AND (`Name` LIKE ? OR 
-                                `Middle_Name` LIKE ? OR 
-                                `Last_Name` LIKE ? OR 
-                                `applicant_number` LIKE ? OR 
-                                applicant_number LIKE ? OR 
-                                academic_classification LIKE ? OR 
-                                TRIM(`Personnel_Result`) = '$search' OR 
-                   TRIM(`Admission_Result`) = '$search' OR 
-                                degree_applied LIKE ?)
-                           ORDER BY applicant_number ASC";
+    $fetchStudentListQuery = $baseQuery;
 }
+
+// Create dynamic parameter binding
 $stmtFetchStudentList = $conn->prepare($fetchStudentListQuery);
+
+$paramTypes = str_repeat('s', count($courses) + 6); // +6 for search parameters
 $searchParam = "%$search%";
-$stmtFetchStudentList->bind_param("ssssssss", $department, $searchParam, $searchParam, $searchParam, $searchParam, $searchParam, $searchParam, $searchParam);
+$bindVariables = array_merge($courses, array_fill(0, 6, $searchParam));
+
+// Ensure the correct number of parameters and types
+$stmtFetchStudentList->bind_param($paramTypes, ...$bindVariables);
+
 $stmtFetchStudentList->execute();
 $result = $stmtFetchStudentList->get_result();
 $stmtFetchStudentList->close();
+
+// Further processing with $result to display data
 ?>
+
 
 
 
@@ -888,7 +888,8 @@ $stmtFetchStudentList->close();
                         <table id="studentTable">
                             <thead id="thead">
                                 <tr>
-                                    <th colspan="8" style="text-align: center;"></th>
+                                <?php if (!$allNonBoard): ?>
+                                    <th colspan="9" style="text-align: center;"></th>
                                     <th style="background-color: Yellow;text-align: center;" class="Board_only"
                                         colspan="3">English</th>
                                     <th style="background-color: #F88379;text-align: center;" class="Board_only"
@@ -902,7 +903,6 @@ $stmtFetchStudentList->close();
                                     <th class="Board_only"></th>
                                     <th class="Board_only"></th>
                                     <th></th>
-                                    <th></th>
                                 </tr>
                                 <tr>
                                     <th>#</th>
@@ -911,6 +911,7 @@ $stmtFetchStudentList->close();
                                     <th>Middle Name</th>
                                     <th>First Name</th>
                                     <th>Classification</th>
+                                    <th>Program</th>
                                     <!--<th>Nature</th> -->
                                     <th id="gwa">GWA</th>
                                     <th id="test">Test Score</th>
@@ -962,6 +963,7 @@ $stmtFetchStudentList->close();
                                     echo "<td>" . $row['Name'] . "</td>";
                                     echo "<td>" . $row['Middle_Name'] . "</td>";
                                     echo "<td>" . $row['academic_classification'] . "</td>";
+                                    echo "<td>" . $row['degree_applied'] . "</td>";
                                     echo "<td style='display:none'>" . $row['nature_of_degree'] . "</td>";
 
                                     // Check nature_of_degree and academic_classification for failing grades
@@ -1210,6 +1212,7 @@ $stmtFetchStudentList->close();
                                 }
                                 ?>
                             </tbody>
+                            <?php endif; ?>
                         </table>
                     </div>
 
@@ -1832,45 +1835,6 @@ $stmtFetchStudentList->close();
                 }
             });
         });
-
-        function toggleColumnsVisibility() {
-            // Get all table rows
-            var rows = document.querySelectorAll('#studentTable tbody tr');
-
-            // Loop through each row
-            rows.forEach(function (row) {
-                // Get the nature of degree for the row
-                var natureOfDegree = row.querySelector('td:nth-child(7)').textContent.trim();
-
-                // Get all cells in the row that have the class 'Board_only'
-                var cells = row.querySelectorAll('.Board_only');
-
-                // Loop through each cell
-                cells.forEach(function (cell) {
-                    // If nature of degree is "Board", show the cell; otherwise, hide it
-                    if (natureOfDegree === 'Board') {
-                        cell.style.display = 'table-cell';
-                    } else {
-                        cell.style.display = 'none';
-                    }
-                });
-            });
-
-            // Show or hide the corresponding header cells based on the first row's nature of degree
-            var headerCells = document.querySelectorAll('.Board_only');
-            var firstRowNatureOfDegree = rows[0].querySelector('td:nth-child(7)').textContent.trim();
-
-            headerCells.forEach(function (headerCell) {
-                if (firstRowNatureOfDegree === 'Board') {
-                    headerCell.style.display = 'table-cell';
-                } else {
-                    headerCell.style.display = 'none';
-                }
-            });
-        }
-
-        // Call the function to toggle columns visibility based on nature of degree
-        toggleColumnsVisibility();
 
 
 
