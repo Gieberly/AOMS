@@ -195,18 +195,17 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
 
                 <select id="userType" name="userType" required onchange="toggleDepartmentDropdown()">
-                <option value="" disabled selected>Select User Type*</option>
+                    <option value="" disabled selected>Select User Type*</option>
                     <option value="Student">Applicant</option>
-                    <option value="Personnel">Personnel</option>
-                    <option value="Faculty">Faculty/Staff</option>
-                    <option value="OSS">OSS</option>
+                    <option value="Personnel">OUR Personnel</option>
+                    <option value="Faculty">College Personnel</option>
+                    <option value="OSS">OSS Personnel</option>
                 </select>
                 <!-- Style for the "Select Department" dropdown -->
 
                 <select name="description" id="description">
                     <option value="" disabled selected>Select Department:</option>
                     <?php
-                    // Loop through the fetched data and group courses under their respective colleges
                     if ($result->num_rows > 0) {
                         $currentCollege = null;
                         while ($row = $result->fetch_assoc()) {
@@ -214,16 +213,14 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                             $course = $row['Courses'];
 
                             if ($college != $currentCollege) {
-                                if ($currentCollege !== null) {
-                                    echo "</optgroup>";
-                                }
-                                echo "<optgroup label=\"$college\">";
+                                // Insert a college as an option, using bold and uppercase styling
+                                echo "<option style=\"font-weight: bold; text-transform: uppercase;\">" . htmlspecialchars($college) . "</option>";
                                 $currentCollege = $college;
                             }
 
-                            echo "<option value=\"$course\">$course</option>";
+                            // Add the course options under each college
+                            echo "<option value=\"" . htmlspecialchars($course) . "\">" . htmlspecialchars($course) . "</option>";
                         }
-                        echo "</optgroup>";
                     } else {
                         echo "<option value=\"\">No programs available</option>";
                     }
