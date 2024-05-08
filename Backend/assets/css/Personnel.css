@@ -1660,7 +1660,7 @@ button[type="submit"]:hover {
 	width: 100%;
 	border-collapse: collapse;
 	display: flex;
-	flex-wrap: wrap;
+	/* flex-wrap: wrap; */
 	grid-gap: 24px;
 	margin-top: 10px;
 	color: var(--dark);
@@ -1671,7 +1671,7 @@ button[type="submit"]:hover {
 .table-data {
 	/* Add any styling for the table data container */
 	display: flex;
-	flex-wrap: wrap;
+	/* flex-wrap: wrap; */
 	grid-gap: 24px;
 	margin-top: 10px;
 	color: var(--dark);
