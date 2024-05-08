@@ -81,7 +81,7 @@ if ($result->num_rows > 0) {
 }
 
 // Count admitted applicants meeting specified conditions
-$sql = "SELECT COUNT(*) AS total_admitted_applicants FROM admission_data WHERE Admission_Result = 'NOA' AND Personnel_Message = 'sent'";
+$sql = "SELECT COUNT(*) AS total_admitted_applicants FROM admission_data WHERE Admission_Result = 'NOA(Admitted-Qualified)' ORAdmission_Result = 'NOA(Admitted-Not Qualified)'  AND Personnel_Message = 'sent'";
 $result = $conn->query($sql);
 
 if ($result->num_rows > 0) {
