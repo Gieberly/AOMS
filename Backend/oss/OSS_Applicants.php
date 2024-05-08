@@ -1420,7 +1420,7 @@ function hideLastApplicantNoModal() {
                     }
                 }
             };
-            xhr.open('POST', 'OSS_send.php');
+            xhr.open('POST', 'Oss_send.php');
             xhr.setRequestHeader('Content-Type', 'application/json');
             xhr.send(JSON.stringify({ selectedRowIds: selectedRowIds }));
         });
