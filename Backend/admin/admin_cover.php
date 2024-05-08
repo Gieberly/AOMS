@@ -1,10 +1,9 @@
 <?php
-session_start();
 include("../config.php"); 
 include("../includes/functions.php");
 include("../includes/fetch_data.php");
 include('../includes/script.php');
-
+session_start();
 
 
 
