@@ -1967,49 +1967,71 @@ if (!$isCollege) {
         toggleColumnsVisibility();
 
 
-        $(document).ready(function () {
+$(document).ready(function () {
+    // Initialize the DataTable
     var table = new DataTable('#studentTable', {
-        searching: false, // Disables the default search box
+        searching: false,
         paging: false,
         info: false,
         select: true,
-        order: [[0, 'asc']], // Default sorting by 'Applicant Number'
-        dom: 'Bfrtip', // Include buttons but hide them initially
-        buttons: [
+        order: [[0, 'asc']], // Default sorting
+        dom: 'frtip', // Minimal layout
+        columnDefs: [
             {
-                extend: 'colvis', // Column visibility functionality
-                text: '', // Hidden, we use a custom button instead
-                className: 'hidden-button', // Hide this button
+                targets: [0], // Column index (disable sorting)
+                orderable: false, // Disable sorting
             },
             {
-                extend: 'excelHtml5', // Excel export functionality
-                title: 'Faculty Masterlist', // Excel title
-                filename: 'Faculty Masterlist', // Excel file name
+                targets: [10], // Example column (disable sorting)
+                orderable: false, // Disable sorting
             },
         ],
     });
 
-    // Custom button to trigger column visibility
-    $('#HideColumns').click(function (e) {
-        e.preventDefault(); // Prevent default button behavior
-        table.buttons(0, 0).trigger(); // Trigger the column visibility menu
+    // Create the Excel export button
+    var excelButton = new $.fn.dataTable.Buttons(table, {
+        buttons: [
+            {
+                extend: 'excelHtml5',
+                title: 'Faculty Masterlist', // Optional Excel title
+                filename: 'Faculty Masterlist', // Optional file name when saving
+            },
+        ],
     });
 
-    // Retain Excel export functionality
+    table.buttons(excelButton); // Attach the Excel export button (hidden)
+
+    // Attach the custom button for column visibility
+    var columnVisibilityButton = new $.fn.dataTable.Buttons(table, {
+        buttons: [
+            {
+                extend: 'colvis', // Enable column visibility control
+                text: '', // No visible text (we use a custom button)
+                className: 'hidden-button', // Hide the default button
+            },
+        ],
+    });
+
+    table.buttons(columnVisibilityButton); // Attach the column visibility button (hidden)
+
+    // Handle Excel export with a custom button
     $('#excelExportButton').click(function (e) {
-        e.preventDefault(); // Prevent default link behavior
-        table.buttons(1, 0).trigger(); // Trigger the Excel export button
+        e.preventDefault(); // Prevent default behavior
+        table.buttons(0, 0).trigger(); // Trigger the Excel export
     });
 
-    // Example for toggling row selection
-    $('#studentTable tbody').on('click', 'tr', function () {
-        $(this).toggleClass('selected'); // Toggle selection class
+    // Handle Column Visibility with a custom button
+    $('#HideColumns').click(function (e) {
+        e.preventDefault(); // Prevent default behavior
+        table.buttons(1, 0).trigger(); // Trigger the column visibility menu
     });
 
     // Apply custom styling when the sorted column changes
     table.on('order.dt', function () {
-        var order = table.order()[0];
-        var sortedColumnIndex = order[0];
+        $('#studentTable tbody td').css('background-color', ''); // Reset backgrounds
+
+        var order = table.order()[0]; // Get sorting information
+        var sortedColumnIndex = order[0]; // Column index of the sorted column
 
         $('#studentTable tbody tr').each(function () {
             $(this).children().eq(sortedColumnIndex).css('background-color', 'lightgreen');
@@ -2018,7 +2040,8 @@ if (!$isCollege) {
 
     table.trigger('order.dt'); // Apply initial styling
 });
-</script>
+
+    </script>
 
     <style>
 /* Change the default background color for selected rows */
