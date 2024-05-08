@@ -44,7 +44,7 @@ function getCourses($conn)
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>BSU Faculty/Staff Admission Unit</title>
+    <title>BSU College Personnel Admission Unit</title>
     <link rel="icon" href="../assets/images/BSU Logo1.png" type="image/x-icon">
     <link rel="stylesheet" href="../assets/css//Personnel.css" />
     <script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
