@@ -69,7 +69,7 @@ $full_name = $name . ' ' . $mname . ' ' . $last_name;
     <section id="sidebar">
         <a class="brand">
             <img class="bsulogo" src="../assets/images/BSU Logo1.png" alt="BSU LOGO">
-            <span class="text">Personnel</span>
+            <span class="text">OUR</span>
         </a>
 
         <ul class="side-menu top">
