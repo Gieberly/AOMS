@@ -223,19 +223,19 @@ $stmt->close();
         }
 
 
-        #sendButton {
+        #sendButton, #HideColumns {
             background-color: transparent;
             border: none;
             cursor: pointer;
             padding: 0;
         }
 
-        #sendButton i {
+        #sendButton i, #HideColumns i {
             font-size: 14px;
             color: black;
         }
 
-        #sendButton:hover i {
+        #sendButton:hover i, #HideColumns:hover i {
             color: green;
             transform: scale(1.2);
         }
@@ -812,6 +812,9 @@ $stmt->close();
                         <h3>List of Applicants</h3>
                         <!-- Add this input field for date filtering -->
                         <div class="headfornaturetosort">
+                        <button  type="button" id="HideColumns" data-tooltip="Column Visibility">
+                            <i class='bx bxs-hide'></i>
+                            </button>
                             <!--<form method="GET" action="" id="calendarFilterForm">-->
                             <!--    <label for="appointment_date"></label>-->
                             <!--    <input type="date" name="appointment_date" id="appointment_date">-->
@@ -2174,61 +2177,78 @@ $stmt->close();
         });
 
         $(document).ready(function () {
-            var table = new DataTable('#studentTable', {
-                searching: false,
-                paging: false,
-                
-                info: false,
-                select: true,
-                order: [[0, 'asc']], // Default sorting by 'Applicant Number'
-                dom: 'frtip', // No default buttons in DataTable
-                columnDefs: [
-                    {
-                        targets: [0], // Column index (if '#' should not be sortable)
-                        orderable: false // Disable sorting for this column
-                    },
-                    {
-                        targets: [10], // Example column where sorting is disabled
-                        orderable: false // Disable sorting
-                    },
-                ],
-            });
-            $('#studentTable tbody').on('click', 'tr', function () {
-        $(this).toggleClass('selected'); // Toggle selection class
+    // Initialize the DataTable
+    var table = new DataTable('#studentTable', {
+        searching: false,
+        paging: false,
+        info: false,
+        select: true,
+        order: [[0, 'asc']], // Default sorting
+        dom: 'frtip', // Minimal layout
+        columnDefs: [
+            {
+                targets: [0], // Column index (disable sorting)
+                orderable: false, // Disable sorting
+            },
+            {
+                targets: [10], // Example column (disable sorting)
+                orderable: false, // Disable sorting
+            },
+        ],
     });
-            // Excel export button (not displayed)
-            var excelButton = new $.fn.dataTable.Buttons(table, {
-                buttons: [
-                    {
-                        extend: 'excelHtml5',
-                        title: 'OUR Masterlist', // Optional Excel title
-                        filename: 'OUR Masterlist', // Optional file name when saving
-                    }
-                ],
-            });
 
-            table.buttons(excelButton);
+    // Create the Excel export button
+    var excelButton = new $.fn.dataTable.Buttons(table, {
+        buttons: [
+            {
+                extend: 'excelHtml5',
+                title: 'Faculty Masterlist', // Optional Excel title
+                filename: 'Faculty Masterlist', // Optional file name when saving
+            },
+        ],
+    });
 
-            // Trigger Excel export when the custom button is clicked
-            $('#excelExportButton').click(function (e) {
-                e.preventDefault(); // Prevent default link behavior
-                table.buttons(0, 0).trigger(); // Trigger the Excel export
-            });
+    table.buttons(excelButton); // Attach the Excel export button (hidden)
 
-            // Apply custom styling when the sorted column changes
-            table.on('order.dt', function () {
-                $('#studentTable tbody td').css('background-color', ''); // Reset backgrounds
+    // Attach the custom button for column visibility
+    var columnVisibilityButton = new $.fn.dataTable.Buttons(table, {
+        buttons: [
+            {
+                extend: 'colvis', // Enable column visibility control
+                text: '', // No visible text (we use a custom button)
+                className: 'hidden-button', // Hide the default button
+            },
+        ],
+    });
 
-                var order = table.order()[0]; // Get sorting information
-                var sortedColumnIndex = order[0]; // Column index of the sorted column
+    table.buttons(columnVisibilityButton); // Attach the column visibility button (hidden)
 
-                $('#studentTable tbody tr').each(function () {
-                    $(this).children().eq(sortedColumnIndex).css('background-color', 'lightgreen');
-                });
-            });
+    // Handle Excel export with a custom button
+    $('#excelExportButton').click(function (e) {
+        e.preventDefault(); // Prevent default behavior
+        table.buttons(0, 0).trigger(); // Trigger the Excel export
+    });
 
-            table.trigger('order.dt'); // Apply initial styling
+    // Handle Column Visibility with a custom button
+    $('#HideColumns').click(function (e) {
+        e.preventDefault(); // Prevent default behavior
+        table.buttons(1, 0).trigger(); // Trigger the column visibility menu
+    });
+
+    // Apply custom styling when the sorted column changes
+    table.on('order.dt', function () {
+        $('#studentTable tbody td').css('background-color', ''); // Reset backgrounds
+
+        var order = table.order()[0]; // Get sorting information
+        var sortedColumnIndex = order[0]; // Column index of the sorted column
+
+        $('#studentTable tbody tr').each(function () {
+            $(this).children().eq(sortedColumnIndex).css('background-color', 'lightgreen');
         });
+    });
+
+    table.trigger('order.dt'); // Apply initial styling
+});
 
     </script>
 
@@ -2243,12 +2263,7 @@ table.dataTable tbody tr:hover,
     background-color: lightgray !important; /* Change the default background color */
     color: #000 !important; /* Adjust text color to ensure visibility */
 }
-#studentTable td, 
-#studentTable th {
-    max-width: 150px; /* Set a maximum width to control text wrapping */
-    white-space: normal; /* Allow text to break into multiple lines */
-    word-wrap: break-word; /* Ensure text wraps within the defined width */
-}
+
         /* Default color for unsorted columns */
         th.sorting {
             color: black;
@@ -2292,14 +2307,6 @@ table.dataTable tbody tr:hover,
             text-align: left;
             /* Left-align text in table body */
         }
-        table.dataTable td {
-    padding: 10px; /* Adjust padding to create space within each cell */
-}
-
-/* Add border-spacing between table cells */
-table {
-    border-spacing: 10px; /* Adds space between cells */
-}
 
         .table-data {
             width: 100%;
