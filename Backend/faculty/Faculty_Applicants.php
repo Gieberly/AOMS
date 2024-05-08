@@ -1966,41 +1966,47 @@ if (!$isCollege) {
         // Call the function on page load or as needed
         toggleColumnsVisibility();
 
+
         $(document).ready(function () {
     var table = new DataTable('#studentTable', {
-        searching: false,
+        searching: false, // Disables the default search box
         paging: false,
         info: false,
         select: true,
-        order: [[0, 'asc']], // Default sorting
-        dom: 'Bfrtip', // Include buttons
+        order: [[0, 'asc']], // Default sorting by 'Applicant Number'
+        dom: 'Bfrtip', // Include buttons but hide them initially
         buttons: [
             {
-                extend: 'colvis', // Column visibility button
+                extend: 'colvis', // Column visibility functionality
                 text: '', // Hidden, we use a custom button instead
-                className: 'hidden-button' // Hide this button
+                className: 'hidden-button', // Hide this button
             },
             {
-                extend: 'excelHtml5', // Excel export
-                title: 'Faculty Masterlist',
-                filename: 'Faculty Masterlist',
+                extend: 'excelHtml5', // Excel export functionality
+                title: 'Faculty Masterlist', // Excel title
+                filename: 'Faculty Masterlist', // Excel file name
             },
         ],
     });
 
-    // Handle custom button for column visibility
+    // Custom button to trigger column visibility
     $('#HideColumns').click(function (e) {
         e.preventDefault(); // Prevent default button behavior
-        table.buttons(0, 0).trigger(); // Trigger the colvis button to show column visibility options
+        table.buttons(0, 0).trigger(); // Trigger the column visibility menu
     });
 
-    // Handle custom button for Excel export
+    // Retain Excel export functionality
     $('#excelExportButton').click(function (e) {
-        e.preventDefault(); // Prevent default behavior
-        table.buttons(1, 0).trigger(); // Trigger the Excel export
+        e.preventDefault(); // Prevent default link behavior
+        table.buttons(1, 0).trigger(); // Trigger the Excel export button
     });
 
-    // Custom styling when the sorted column changes
+    // Example for toggling row selection
+    $('#studentTable tbody').on('click', 'tr', function () {
+        $(this).toggleClass('selected'); // Toggle selection class
+    });
+
+    // Apply custom styling when the sorted column changes
     table.on('order.dt', function () {
         var order = table.order()[0];
         var sortedColumnIndex = order[0];
@@ -2012,8 +2018,7 @@ if (!$isCollege) {
 
     table.trigger('order.dt'); // Apply initial styling
 });
-
-    </script>
+</script>
 
     <style>
 /* Change the default background color for selected rows */
