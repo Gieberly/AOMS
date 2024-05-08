@@ -26,7 +26,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
        
             // Log user activity
             $action = "User logs in";
-            $description = "User with email: $email and $userType  logged into their dashboard.";
+            $description = " $userType User with email: $email  logged into their dashboard.";
             $ip_address = $_SERVER['REMOTE_ADDR'];
             $created_at = date('Y-m-d H:i:s'); // Get current date/time in the correct timezone
 
