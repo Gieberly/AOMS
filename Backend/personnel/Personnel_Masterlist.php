@@ -41,7 +41,7 @@ if ($filter == 'toadmit') {
     $query = "SELECT *, $caseForGWA 
               FROM admission_data 
               WHERE (Personnel_Result = 'NOR(Possible Qualifier-Non-Board)' OR 
-                     Personnel_Result = 'NOR(Possible Qualifier)') 
+                     Personnel_Result = 'NOR(Possible Qualifier-Board)') 
               AND Personnel_Message = 'sent'
               AND (`Name` LIKE '%$search%' OR 
                    `Middle_Name` LIKE '%$search%' OR 
@@ -1270,7 +1270,7 @@ $stmt->close();
                         </div>
                     </div>
 
-
+ 
                 </div>
 
                 <div class="todo" style="display: none;">

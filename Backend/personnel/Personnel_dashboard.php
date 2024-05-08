@@ -94,7 +94,7 @@ if ($result->num_rows > 0) {
 // Count readmitted applicants meeting specified conditions
 $sql = "SELECT COUNT(*) AS total_readmitted_applicants 
         FROM admission_data 
-        WHERE (Personnel_Result = 'NOR(Possible Qualifier-Non-Board)' OR Personnel_Result = 'NOR(Possible Qualifier-Board)') 
+        WHERE (Personnel_Result = 'NOR(Possible Qualifier-Non-Board)' AND Personnel_Result = 'NOR(Possible Qualifier-Board)') 
         AND Personnel_Message = 'sent'";
 $result = $conn->query($sql);
 
