@@ -960,7 +960,7 @@ if (!$isCollege) {
                                 <tr>
 
                                     <th colspan="8" style="text-align: center;"></th>
-                                    <th class="Board_only"></th>
+                                    <th></th>
 
                                     <th style="background-color: Yellow;text-align: center;" class="Board_only"
                                         colspan="3">English</th>
