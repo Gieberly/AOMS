@@ -987,7 +987,7 @@ if (!$isCollege) {
                                     <th>Middle Name</th>
                                     <th>First Name</th>
                                     <th>Classification</th>
-                                    <th class="Board_only">Program</th>
+                                    <th>Program</th>
                                     <th style="display:none">Nature</th>
                                     <th id="gwa">GWA</th>
                                     <th id="test">Test Score</th>
@@ -1038,7 +1038,7 @@ if (!$isCollege) {
                                     echo "<td>" . $row['Name'] . "</td>";
                                     echo "<td>" . $row['Middle_Name'] . "</td>";
                                     echo "<td>" . $row['academic_classification'] . "</td>";
-                                    echo "<td class='Board_only'>" . $row['degree_applied'] . "</td>";
+                                    echo "<td>" . $row['degree_applied'] . "</td>";
                                     echo "<td style='display:none'>" . $row['nature_of_degree'] . "</td>";
 
                                     // Check nature_of_degree and academic_classification for failing grades
