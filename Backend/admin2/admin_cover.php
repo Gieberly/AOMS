@@ -1,8 +1,6 @@
 <?php
 include("../config.php"); 
-include("../includes/functions.php");
-include("../includes/fetch_data.php");
-include('../includesscript.php');
+
 session_start();
 
 

@@ -1,23 +1,14 @@
 <?php
 include("../config.php");
+function getAuditLogs() {
+    global $conn;
+    $query = "SELECT * FROM audit_trail";
+    $result = $conn->query($query);
+    return $result;
+}
 function multiplyColumns($value1, $value2) {
     return intval($value1) * intval($value2);
 }
-function approveUser($conn, $email) {
-    // Sanitize input
-    $email = mysqli_real_escape_string($conn, $email);
-
-    // Update the user's status to "Approved"
-    $query = "UPDATE users SET lstatus='Approved' WHERE email='$email'";
-    $result = mysqli_query($conn, $query);
-
-    if ($result) {
-        return true; // Status updated successfully
-    } else {
-        return false; // Status update failed
-    }
-}
-
 function getfiles() {
     global $conn;
     $query = "SELECT * FROM files";
@@ -71,11 +62,10 @@ function getPendingAccounts() {
 }
 function getAllStaff() {
     global $conn;
-    $query = "SELECT *FROM users WHERE userType IN ('Personnel', 'OSS', 'Faculty')";
+    $query = "SELECT *FROM users WHERE userType IN ('Personnel', 'Admin')";
     $result = $conn->query($query);
     return $result;
 }
-
 
 
 function getAllFaculty() {
@@ -116,34 +106,6 @@ function getCourses()
     $result = $conn->query($query);
     return $result;
 }
-// Function to delete staff member
-function deleteStaff($staffId) {
-    global $conn;
-    $query = "DELETE FROM users WHERE id = ? AND userType = 'Staff'";
-    $stmt = $conn->prepare($query);
-    $stmt->bind_param("i", $staffId);
-    return $stmt->execute();
-}
-
-// Check if the form for updating status is submitted
-if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['updateStatus'])) {
-    $staffId = $_POST['staffId'];
-    $newStatus = $_POST['newStatus'];
-    updateStaffStatus($staffId, $newStatus);
-}
-
-// Check if the form for deleting staff member is submitted
-if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['deleteStaff'])) {
-    $staffId = $_POST['staffId'];
-    deleteStaff($staffId);
-}
-
-// Check if the form for editing appointment slots is submitted
-if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['updateSlots'])) {
-    $appointment_id = $_POST['appointment_id'];
-    editAppointmentSlots($appointment_id);
-}
-//Function to get all Departments
 function getAllDept() {
     global $conn;
     $query = "SELECT * FROM programs ";
@@ -159,19 +121,7 @@ function getAllStudentFormData() {
     $result = $conn->query($query);
     return $result;
 }
-// Function to get the name of the logged-in user
-function getLoggedInUserName() {
-    // Check if the user is logged in
-    if(isset($_SESSION['id'])) {
-        // Assuming you have stored the user's name in the session upon login
-        // Adjust this line to fetch the user's name from your database or wherever it's stored
-        $username = $_SESSION['last_name'];
-        return $username;
-    } else {
-        // User is not logged in
-        return null;
-    }
-}
+
 function isValidYear($year) {
     // Check if the year is numeric and has exactly 4 digits
     if (!preg_match('/^\d{4}$/', $year)) {

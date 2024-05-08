@@ -1,5 +1,4 @@
 <?php
-include("../config.php");
 
 function countRejectedAccounts($startYear, $endYear) {
     global $conn;
@@ -487,5 +486,23 @@ function restoreApplicant($conn, $id) {
         return false; 
     }
 }
+
+function logAction($action, $email, $userType, $ipAddress, $conn)
+{
+    $action = mysqli_real_escape_string($conn, $action);
+    $email = mysqli_real_escape_string($conn, $email);
+    $userType = mysqli_real_escape_string($conn, $userType);
+    $ipAddress = mysqli_real_escape_string($conn, $ipAddress);
+
+    $query = "INSERT INTO audit_trail (action, email, userType, ip_address) VALUES ('$action', '$email', '$userType', '$ipAddress')";
+
+    if (mysqli_query($conn, $query)) {
+        return "Action logged: $action";
+    } else {
+        return "Error: " . mysqli_error($conn);
+    }
+}
+
+    
 
 ?>
