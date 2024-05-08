@@ -973,7 +973,7 @@ if (!$isCollege) {
                                         curriculum/ALS</th>
 
                                     <th></th>
-                                    <th></th>
+                                    <!-- <th></th> -->
                                     <th style="display: none;" id="selectColumn">
                                         <input type="checkbox" id="selectAllCheckbox">
                                     </th>
@@ -1020,7 +1020,7 @@ if (!$isCollege) {
                                     <th id="math" class="Board_only" style="background-color:lightgreen">Math</th>
                                     <th id="scie" class="Board_only" style="background-color:lightgreen">Science</th>
                                     <th>Result</th>
-                                    <th class="">Personnel Eval</th>
+                                    <!-- <th class="">Personnel Eval</th> -->
                                     <th style="display: none;" id="selectColumns"></th>
 
                                 </tr>
@@ -1281,7 +1281,7 @@ if (!$isCollege) {
 
 
                                     echo "<td>" . $row['Admission_Result'] . "</td>";
-                                    echo "<td>" . $row['Personnel_Result'] . "</td>";
+                                    // echo "<td>" . $row['Personnel_Result'] . "</td>";
                                     echo "<td id='checkbox-{$row['id']}'><input type='checkbox' style='display: none;' class='select-checkbox' id='checkbox-{$row['id']}'></td>";
                                     $counter++; // Increment the counter for the next row
                                 }
