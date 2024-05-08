@@ -848,8 +848,8 @@ if (!$isCollege) {
                             <button  style="display: none;"type="button" id="unlock" data-tooltip="Unlock Table">
                                 <i class='bx bx-lock-open'></i>
                             </button> -->
-                            <button  style="display: none;"type="button" id="HideColumns" data-tooltip="Column Visibility">
-                                <i class='bx bx-lock-open'></i>
+                            <button  type="button" id="HideColumns" data-tooltip="Column Visibility">
+                            <i class='bx bxs-hide'></i>
                             </button>
                             <!-- Corrected code snippet -->
                             <button type="button" id="toggleSelection">
