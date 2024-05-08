@@ -1967,61 +1967,51 @@ if (!$isCollege) {
         toggleColumnsVisibility();
 
         $(document).ready(function () {
-            var table = new DataTable('#studentTable', {
-                searching: false,
-                paging: false,
-                
-                info: false,
-                select: true,
-                order: [[0, 'asc']], // Default sorting by 'Applicant Number'
-                dom: 'frtip', // No default buttons in DataTable
-                columnDefs: [
-                    {
-                        targets: [0], // Column index (if '#' should not be sortable)
-                        orderable: false // Disable sorting for this column
-                    },
-                    {
-                        targets: [10], // Example column where sorting is disabled
-                        orderable: false // Disable sorting
-                    },
-                ],
-            });
-            $('#studentTable tbody').on('click', 'tr', function () {
-        $(this).toggleClass('selected'); // Toggle selection class
+    var table = new DataTable('#studentTable', {
+        searching: false,
+        paging: false,
+        info: false,
+        select: true,
+        order: [[0, 'asc']], // Default sorting
+        dom: 'Bfrtip', // Include buttons
+        buttons: [
+            {
+                extend: 'colvis', // Column visibility button
+                text: '', // Hidden, we use a custom button instead
+                className: 'hidden-button' // Hide this button
+            },
+            {
+                extend: 'excelHtml5', // Excel export
+                title: 'Faculty Masterlist',
+                filename: 'Faculty Masterlist',
+            },
+        ],
     });
-            // Excel export button (not displayed)
-            var excelButton = new $.fn.dataTable.Buttons(table, {
-                buttons: [
-                    {
-                        extend: 'excelHtml5',
-                        title: 'Faculty Masterlist', // Optional Excel title
-                        filename: 'Faculty Masterlist', // Optional file name when saving
-                    }
-                ],
-            });
 
-            table.buttons(excelButton);
+    // Handle custom button for column visibility
+    $('#HideColumns').click(function (e) {
+        e.preventDefault(); // Prevent default button behavior
+        table.buttons(0, 0).trigger(); // Trigger the colvis button to show column visibility options
+    });
 
-            // Trigger Excel export when the custom button is clicked
-            $('#excelExportButton').click(function (e) {
-                e.preventDefault(); // Prevent default link behavior
-                table.buttons(0, 0).trigger(); // Trigger the Excel export
-            });
+    // Handle custom button for Excel export
+    $('#excelExportButton').click(function (e) {
+        e.preventDefault(); // Prevent default behavior
+        table.buttons(1, 0).trigger(); // Trigger the Excel export
+    });
 
-            // Apply custom styling when the sorted column changes
-            table.on('order.dt', function () {
-                $('#studentTable tbody td').css('background-color', ''); // Reset backgrounds
+    // Custom styling when the sorted column changes
+    table.on('order.dt', function () {
+        var order = table.order()[0];
+        var sortedColumnIndex = order[0];
 
-                var order = table.order()[0]; // Get sorting information
-                var sortedColumnIndex = order[0]; // Column index of the sorted column
-
-                $('#studentTable tbody tr').each(function () {
-                    $(this).children().eq(sortedColumnIndex).css('background-color', 'lightgreen');
-                });
-            });
-
-            table.trigger('order.dt'); // Apply initial styling
+        $('#studentTable tbody tr').each(function () {
+            $(this).children().eq(sortedColumnIndex).css('background-color', 'lightgreen');
         });
+    });
+
+    table.trigger('order.dt'); // Apply initial styling
+});
 
     </script>
 
