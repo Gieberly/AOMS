@@ -1,5 +1,5 @@
 <?php
-include("Admin_Cover.php");
+include("admin_cover.php");
 
 // Capture selected academic year from POST data
 $startYear = isset($_POST['start_year']) ? mysqli_real_escape_string($conn, $_POST['start_year']) : null;
