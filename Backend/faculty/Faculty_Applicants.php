@@ -63,8 +63,11 @@ $baseQuery = "SELECT *,
               AND (`Name` LIKE ? OR 
                    `Middle_Name` LIKE ? OR 
                    `Last_Name` LIKE ? OR 
+                   
                    `applicant_number` LIKE ? OR 
                    academic_classification LIKE ? OR 
+                   TRIM(`Personnel_Result`) = '$search' OR 
+                   TRIM(`Admission_Result`) = '$search' OR 
                    degree_applied LIKE ?)";
 
 // Determine the filter and add specific conditions to the base query

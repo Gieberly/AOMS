@@ -20,7 +20,7 @@ $filter = isset($_SESSION['filter']) ? $_SESSION['filter'] : '';
 // Define Excel file name for download
 $fileName = "Faculty_Applicants_" . date('Y-m-d') . ".xlsx";
 
-// Fetch user's department
+// Fetch the user's department
 $userId = $_SESSION['user_id'];
 $fetchDepartmentQuery = "SELECT Department FROM users WHERE id = ?";
 $stmtFetchDepartment = $conn->prepare($fetchDepartmentQuery);
@@ -30,7 +30,34 @@ $stmtFetchDepartment->bind_result($department);
 $stmtFetchDepartment->fetch();
 $stmtFetchDepartment->close();
 
-// Store the search query in a session variable if it's set
+// Check if the department is a college
+$isCollegeQuery = "SELECT COUNT(*) FROM programs WHERE College = ?";
+$stmtIsCollege = $conn->prepare($isCollegeQuery);
+$stmtIsCollege->bind_param("s", $department);
+$stmtIsCollege->execute();
+$stmtIsCollege->bind_result($isCollege);
+$stmtIsCollege->fetch();
+$stmtIsCollege->close();
+
+// Get the relevant courses
+$courses = [];
+if ($isCollege) {
+    // Fetch all courses under the specified college
+    $fetchCoursesQuery = "SELECT Courses FROM programs WHERE College = ?";
+    $stmtFetchCourses = $conn->prepare($fetchCoursesQuery);
+    $stmtFetchCourses->bind_param("s", $department);
+    $stmtFetchCourses->execute();
+    $stmtFetchCourses->bind_result($course);
+
+    while ($stmtFetchCourses->fetch()) {
+        $courses[] = $course;
+    }
+    $stmtFetchCourses->close();
+} else {
+    $courses[] = $department; // If not a college, it's a specific course
+}
+
+// Store the search query and filter in session if set
 if (isset($_GET['search'])) {
     $_SESSION['search'] = $_GET['search'];
 }
@@ -38,100 +65,46 @@ if (isset($_GET['filter'])) {
     $_SESSION['filter'] = $_GET['filter'];
 }
 
-// Retrieve the stored search query and filter from session if they exist
 $search = isset($_SESSION['search']) ? $_SESSION['search'] : '';
 $filter = isset($_SESSION['filter']) ? $_SESSION['filter'] : '';
 
+// Base query for multiple or single courses
+$baseQuery = "SELECT *, 
+              CASE 
+                WHEN Gr11_GWA IS NOT NULL THEN Gr11_GWA
+                WHEN GWA_OTAS IS NOT NULL THEN GWA_OTAS
+                ELSE Gr12_GWA
+              END AS GWA
+              FROM admission_data 
+              WHERE degree_applied IN (" . implode(',', array_fill(0, count($courses), '?')) . ") 
+              AND faculty_Message = 'sent'
+              AND (`Name` LIKE ? OR 
+                   `Middle_Name` LIKE ? OR 
+                   `Last_Name` LIKE ? OR 
+                   `applicant_number` LIKE ? OR 
+                   academic_classification LIKE ? OR 
+                   degree_applied LIKE ?)";
 
-// Construct query based on filter
+// Determine the filter and add specific conditions to the base query
 if ($filter == 'qualified') {
-  $fetchStudentListQuery = "SELECT *, 
-                         CASE 
-                           WHEN Gr11_GWA IS NOT NULL THEN Gr11_GWA
-                           WHEN GWA_OTAS IS NOT NULL THEN GWA_OTAS
-                           ELSE Gr12_GWA
-                         END AS GWA
-                         FROM admission_data 
-                         WHERE degree_applied = ? 
-                         AND faculty_Message = 'sent'
-                         AND Admission_Result = 'NOA(Admitted-Qualified)'
-                         AND (`Name` LIKE ? OR 
-                              `Middle_Name` LIKE ? OR 
-                              `Last_Name` LIKE ? OR 
-                              `applicant_number` LIKE ? OR 
-                              applicant_number LIKE ? OR 
-                              academic_classification LIKE ? OR 
-                              TRIM(`Personnel_Result`) = '$search' OR 
-                 TRIM(`Admission_Result`) = '$search' OR 
-                              degree_applied LIKE ?)
-                         ORDER BY applicant_number ASC";
-}  else if ($filter == 'qualifiedNQ') {
-  $fetchStudentListQuery = "SELECT *, 
-                         CASE 
-                           WHEN Gr11_GWA IS NOT NULL THEN Gr11_GWA
-                           WHEN GWA_OTAS IS NOT NULL THEN GWA_OTAS
-                           ELSE Gr12_GWA
-                         END AS GWA
-                         FROM admission_data 
-                         WHERE degree_applied = ? 
-                         AND faculty_Message = 'sent'
-                         AND Admission_Result = 'NOA(Admitted-Not Qualified)'
-                         AND (`Name` LIKE ? OR 
-                              `Middle_Name` LIKE ? OR 
-                              `Last_Name` LIKE ? OR 
-                              `applicant_number` LIKE ? OR 
-                              applicant_number LIKE ? OR 
-                              academic_classification LIKE ? OR 
-                              TRIM(`Personnel_Result`) = '$search' OR 
-                 TRIM(`Admission_Result`) = '$search' OR 
-                              degree_applied LIKE ?)
-                         ORDER BY applicant_number ASC";
-}else if ($filter == 'nor_qualifier') {
-  $fetchStudentListQuery = "SELECT *, 
-                         CASE 
-                           WHEN Gr11_GWA IS NOT NULL THEN Gr11_GWA
-                           WHEN GWA_OTAS IS NOT NULL THEN GWA_OTAS
-                           ELSE Gr12_GWA
-                         END AS GWA
-                         FROM admission_data 
-                         WHERE degree_applied = ? 
-                         AND faculty_Message = 'sent'
-                         AND (Personnel_Result = 'NOR(Possible Qualifier)' OR Personnel_Result = 'NOR(Possible Qualifier-Non-Board)')
-                         AND (`Name` LIKE ? OR 
-                              `Middle_Name` LIKE ? OR 
-                              `Last_Name` LIKE ? OR 
-                              `applicant_number` LIKE ? OR 
-                              applicant_number LIKE ? OR 
-                              academic_classification LIKE ? OR 
-                              TRIM(`Personnel_Result`) = '$search' OR 
-                 TRIM(`Admission_Result`) = '$search' OR 
-                              degree_applied LIKE ?)
-                         ORDER BY applicant_number ASC";
+    $fetchStudentListQuery = $baseQuery . " AND Admission_Result = 'NOA(Admitted-Qualified)'";
+} else if ($filter == 'qualifiedNQ') {
+    $fetchStudentListQuery = $baseQuery . " AND Admission_Result = 'NOA(Admitted-Not Qualified)'";
+} else if ($filter == 'nor_qualifier') {
+    $baseQuery = $baseQuery . " AND (Personnel_Result = 'NOR(Possible Qualifier)' OR Personnel_Result = 'NOR(Possible Qualifier-Non-Board)')";
 } else {
-  // Default query without filter
-  $fetchStudentListQuery = "SELECT *, 
-                         CASE 
-                           WHEN Gr11_GWA IS NOT NULL THEN Gr11_GWA
-                           WHEN GWA_OTAS IS NOT NULL THEN GWA_OTAS
-                           ELSE Gr12_GWA
-                         END AS GWA
-                         FROM admission_data 
-                         WHERE degree_applied = ? 
-                         AND faculty_Message = 'sent'
-                         AND (`Name` LIKE ? OR 
-                              `Middle_Name` LIKE ? OR 
-                              `Last_Name` LIKE ? OR 
-                              `applicant_number` LIKE ? OR 
-                              applicant_number LIKE ? OR 
-                              academic_classification LIKE ? OR 
-                              TRIM(`Personnel_Result`) = '$search' OR 
-                 TRIM(`Admission_Result`) = '$search' OR 
-                              degree_applied LIKE ?)
-                         ORDER BY applicant_number ASC";
+    $fetchStudentListQuery = $baseQuery;
 }
+
+// Prepare the statement and bind parameters
 $stmtFetchStudentList = $conn->prepare($fetchStudentListQuery);
+
+$paramTypes = str_repeat('s', count($courses) + 6); // For courses + 6 search parameters
 $searchParam = "%$search%";
-$stmtFetchStudentList->bind_param("ssssssss", $department,  $searchParam, $searchParam, $searchParam, $searchParam, $searchParam, $searchParam, $searchParam);
+$bindVariables = array_merge($courses, array_fill(0, 6, $searchParam));
+
+$stmtFetchStudentList->bind_param($paramTypes, ...$bindVariables);
+
 $stmtFetchStudentList->execute();
 $result = $stmtFetchStudentList->get_result();
 
