@@ -61,14 +61,12 @@ $baseQuery = "SELECT *,
               WHERE degree_applied IN (" . implode(',', array_fill(0, count($courses), '?')) . ") 
               AND faculty_Message = 'sent'
               AND (`Name` LIKE ? OR 
-                   `Middle_Name` LIKE ? OR 
-                   `Last_Name` LIKE ? OR 
-                   
-                   `applicant_number` LIKE ? OR 
-                   academic_classification LIKE ? OR 
-                   TRIM(`Personnel_Result`) = '$search' OR 
-                   TRIM(`Admission_Result`) = '$search' OR 
-                   degree_applied LIKE ?)";
+              `Middle_Name` LIKE ? OR 
+              `Last_Name` LIKE ? OR 
+              `applicant_number` LIKE ? OR 
+              academic_classification LIKE ? OR 
+              degree_applied LIKE ?)
+         ORDER BY applicant_number";
 
 // Determine the filter and add specific conditions to the base query
 if ($filter == 'qualified') {
@@ -114,7 +112,7 @@ if (!$isCollege) {
     $stmtFetchNatureOfDegrees->bind_param("s", $department);
     $stmtFetchNatureOfDegrees->execute();
     $stmtFetchNatureOfDegrees->bind_result($distinctNature);
-    
+
     $hasBoard = false;
     $hasNonBoard = false;
 
@@ -141,15 +139,35 @@ if (!$isCollege) {
 <head>
 
 
+    <!-- jQuery and DataTables JS -->
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 
+    <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/1.13.6/css/jquery.dataTables.min.css">
+    <link rel="stylesheet" type="text/css"
+        href="https://cdn.datatables.net/buttons/2.4.2/css/buttons.dataTables.min.css">
 
+    <script src="https://code.jquery.com/jquery-3.7.0.min.js"></script>
+    <link rel="stylesheet" href="https://cdn.datatables.net/responsive/2.4.2/css/responsive.dataTables.min.css">
+    <script src="https://cdn.datatables.net/1.13.6/js/jquery.dataTables.min.js"></script>
+    <script src="https://cdn.datatables.net/responsive/2.4.2/js/dataTables.responsive.min.js"></script>
+    <link rel="stylesheet" href="https://cdn.datatables.net/select/1.6.1/css/select.dataTables.min.css">
+    <script src="https://cdn.datatables.net/select/1.6.1/js/dataTables.select.min.js"></script>
+    <script src="https://cdn.datatables.net/buttons/2.4.2/js/dataTables.buttons.min.js"></script>
+    <script src="https://cdn.datatables.net/buttons/2.4.2/js/buttons.flash.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.2.6/pdfmake.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.2.6/vfs_fonts.js"></script>
+    <script src="https://cdn.datatables.net/buttons/2.4.2/js/buttons.html5.min.js"></script>
+    <script src="https://cdn.datatables.net/buttons/2.4.2/js/buttons.print.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.1.3/jszip.min.js"></script>
+    <link rel="stylesheet" href="https://cdn.datatables.net/buttons/2.4.2/css/buttons.dataTables.min.css">
 </head>
 
 <body>
 
-<script>
-var isNonBoardOnly = <?php echo json_encode($allNonBoard); ?>;
-</script>
+    <script>
+        var isNonBoardOnly = <?php echo json_encode($allNonBoard); ?>;
+    </script>
     <style>
         .cancel {
             padding: 10px 15px;
@@ -295,6 +313,8 @@ var isNonBoardOnly = <?php echo json_encode($allNonBoard); ?>;
             font-size: 12px;
         }
 
+
+
         .failing_grade {
             background-color: hsl(350, 100%, 80%);
             /* Darker shade of red with adjusted lightness */
@@ -306,26 +326,48 @@ var isNonBoardOnly = <?php echo json_encode($allNonBoard); ?>;
             color: #3C91E6;
         }
 
-        #sendButton {
+        #sendButton,
+        #toggleSelection {
             background-color: transparent;
             border: none;
             cursor: pointer;
             padding: 0;
         }
 
-        #sendButton i {
+        #sendButton i,
+        #toggleSelection i {
             font-size: 14px;
             color: black;
         }
 
-        #sendButton:hover i {
+        #sendButton:hover i,
+        #toggleSelection:hover i {
+            color: green;
+            transform: scale(1.2);
+        }
+
+        #lock,
+        #unlock {
+            background-color: transparent;
+            border: none;
+            cursor: pointer;
+            padding: 0;
+        }
+
+        #lock i,
+        #unlock i {
+            font-size: 15px;
+            color: black;
+        }
+
+        #lock:hover i,
+        #unlock:hover i {
             color: green;
             transform: scale(1.2);
         }
 
 
-
-        #toast {
+        .toast {
             position: fixed;
             top: 10%;
             right: 10%;
@@ -339,7 +381,7 @@ var isNonBoardOnly = <?php echo json_encode($allNonBoard); ?>;
             transition: opacity 0.5s ease-in-out;
         }
 
-        #toast.show {
+        .toast.show {
             opacity: 1;
         }
 
@@ -499,7 +541,7 @@ var isNonBoardOnly = <?php echo json_encode($allNonBoard); ?>;
             margin-right: 10px;
         }
 
-        #toast {
+        .toast {
             position: fixed;
             top: 10%;
             right: 10%;
@@ -513,7 +555,7 @@ var isNonBoardOnly = <?php echo json_encode($allNonBoard); ?>;
             transition: opacity 0.5s ease-in-out;
         }
 
-        #toast.show {
+        .toast.show {
             opacity: 1;
         }
 
@@ -651,7 +693,7 @@ var isNonBoardOnly = <?php echo json_encode($allNonBoard); ?>;
 
         .small-label {
             display: block;
-            font-size: .9vw;
+            font-size: .9em;
             margin-bottom: 5px;
         }
 
@@ -661,7 +703,7 @@ var isNonBoardOnly = <?php echo json_encode($allNonBoard); ?>;
             border: 1px solid #ccc;
             border-radius: 4px;
             box-sizing: border-box;
-            font-size: .8vw;
+            font-size: .8em;
         }
 
         .submit {
@@ -671,7 +713,7 @@ var isNonBoardOnly = <?php echo json_encode($allNonBoard); ?>;
             border: none;
             border-radius: 4px;
             cursor: pointer;
-            font-size: 1vw;
+            font-size: 1em;
         }
 
         .submit:hover {
@@ -680,7 +722,7 @@ var isNonBoardOnly = <?php echo json_encode($allNonBoard); ?>;
 
 
         .personal_information {
-            font-size: 1vw;
+            font-size: 1em;
             font-weight: bold;
             margin-bottom: 10px;
         }
@@ -780,9 +822,9 @@ var isNonBoardOnly = <?php echo json_encode($allNonBoard); ?>;
                         </li>
                     </ul>
                 </div>
+                <!-- Custom Button for Excel Export -->
                 <div class="button-container">
-                    <a href="excel.php?search=<?php echo urlencode($search); ?>&filter=<?php echo urlencode($filter); ?>&export_excel=1"
-                        class="btn-download">
+                    <a href="#" id="excelExportButton" class="btn-download">
                         <i class='bx bxs-file-export'></i>
                         <span class="text">Excel Export</span>
                     </a>
@@ -790,47 +832,57 @@ var isNonBoardOnly = <?php echo json_encode($allNonBoard); ?>;
 
             </div>
 
-            <div class="table-data">
+
+            <div class="table-data" style="width: 100%; overflow-x: auto;">
                 <div class="order">
                     <div class="head">
                         <h3>List of Applicants</h3>
                         <!-- Add this input field for date filtering -->
                         <div class="headfornaturetosort">
-                            <select id="dropdownMenu">
-                                <option value="">Sort Applicants Grade</option>
-                                <option value="gwa">GWA</option>
-                                <option value="test">Test Score</option>
-                                <option class="Board_only" value="oaralcom">Oral communication in context</option>
-                                <option class="Board_only" value="rewri">Reading and writing skills</option>
-                                <option class="Board_only" value="engca">English for academic and professional purposes
-                                </option>
-                                <option class="Board_only" value="earscie">Earth Science</option>
-                                <option class="Board_only" value="earli">Earth and Life Science</option>
-                                <option class="Board_only" value="phylscie">Physical Science</option>
-                                <option class="Board_only" value="dire">Disaster Readiness and Risk Reduction</option>
-                                <option class="Board_only" value="genma">General Mathematics</option>
-                                <option class="Board_only" value="stapro">Statistics and Probability</option>
-                                <option class="Board_only" value="english">English</option>
-                                <option class="Board_only" value="math">Math</option>
-                                <option class="Board_only" value="scie">Science</option>
-                            </select>
-                            <button type="button" id="sort">
-                                <i class='bx bx-sort-up'></i>
+
+                            <!-- <button type="button" id="lock" data-tooltip="Lock Table">
+                                <i class='bx bxs-lock'></i>
                             </button>
-                            <!--<form method="GET" action="" id="calendarFilterForm">-->
-                            <!--    <label for="appointment_date"></label>-->
-                            <!--    <input type="date" name="appointment_date" id="appointment_date">-->
-                            <!--    <button type="submit"><i class='bx bx-filter'></i></button>-->
-                            <!--</form>-->
+                            <button  style="display: none;"type="button" id="unlock" data-tooltip="Unlock Table">
+                                <i class='bx bx-lock-open'></i>
+                            </button> -->
+                            <!-- Corrected code snippet -->
                             <button type="button" id="toggleSelection">
-                                <i class='bx bx-select-multiple'></i> Toggle Selection
+                                <i class='bx bx-select-multiple'></i>
                             </button>
 
-                            <button type="button" id="sendButton" style="display: none;">
+                            <button type="button" id="sendButton" style="display: none;" data-tooltip="Send">
                                 <i class='bx bx-send'></i>
                             </button>
                         </div>
                     </div>
+                    <script>
+                        // Get the elements
+                        const lockButton = document.getElementById('lock');
+                        const unlockButton = document.getElementById('unlock');
+                        const toastLock = document.getElementById('toast-lock');
+                        const toastUnlock = document.getElementById('toast-unlock');
+
+                        // Function to show a toast and hide it after 3 seconds
+                        function showToast(toast) {
+                            toast.classList.add("show");
+                            setTimeout(() => {
+                                toast.classList.remove("show");
+                            }, 3000); // 3 seconds
+                        }
+
+                        lockButton.addEventListener('click', function () {
+                            lockButton.style.display = 'none';
+                            unlockButton.style.display = 'inline-block'; // Show unlock button
+                            showToast(toastLock); // Show lock toast
+                        });
+
+                        unlockButton.addEventListener('click', function () {
+                            unlockButton.style.display = 'none';
+                            lockButton.style.display = 'inline-block'; // Show lock button
+                            showToast(toastUnlock); // Show unlock toast
+                        });
+                    </script>
                     <style>
                         #dropdownMenu {
                             appearance: none;
@@ -903,11 +955,13 @@ var isNonBoardOnly = <?php echo json_encode($allNonBoard); ?>;
 
                     <div class="table-container">
 
-                        <table id="studentTable">
+                        <table id="studentTable" class="display responsive nowrap" style="width: 100%;">
                             <thead id="thead">
                                 <tr>
 
-                                    <th colspan="9" style="text-align: center;"></th>
+                                    <th colspan="8" style="text-align: center;"></th>
+                                    <th class="Board_only"></th>
+
                                     <th style="background-color: Yellow;text-align: center;" class="Board_only"
                                         colspan="3">English</th>
                                     <th style="background-color: #F88379;text-align: center;" class="Board_only"
@@ -918,9 +972,13 @@ var isNonBoardOnly = <?php echo json_encode($allNonBoard); ?>;
                                         style="text-align: center;background-color: lightgreen;">Old high school
                                         curriculum/ALS</th>
 
-                                    <th class="Board_only"></th>
-                                    <th class="Board_only"></th>
                                     <th></th>
+                                    <th></th>
+                                    <th style="display: none;" id="selectColumn">
+                                        <input type="checkbox" id="selectAllCheckbox">
+                                    </th>
+
+
                                 </tr>
                                 <tr>
                                     <th>#</th>
@@ -929,8 +987,8 @@ var isNonBoardOnly = <?php echo json_encode($allNonBoard); ?>;
                                     <th>Middle Name</th>
                                     <th>First Name</th>
                                     <th>Classification</th>
-                                    <th>Program</th>
-                                    <!--<th>Nature</th> -->
+                                    <th class="Board_only">Program</th>
+                                    <th style="display:none">Nature</th>
                                     <th id="gwa">GWA</th>
                                     <th id="test">Test Score</th>
 
@@ -963,11 +1021,10 @@ var isNonBoardOnly = <?php echo json_encode($allNonBoard); ?>;
                                     <th id="scie" class="Board_only" style="background-color:lightgreen">Science</th>
                                     <th>Result</th>
                                     <th class="">Personnel Eval</th>
+                                    <th style="display: none;" id="selectColumns"></th>
 
-                                    <th style="display: none;" id="selectColumn">
-                                        <input type="checkbox" id="selectAllCheckbox">
-                                    </th>
                                 </tr>
+
                             </thead>
                             <tbody id="tbody">
                                 <?php
@@ -981,7 +1038,7 @@ var isNonBoardOnly = <?php echo json_encode($allNonBoard); ?>;
                                     echo "<td>" . $row['Name'] . "</td>";
                                     echo "<td>" . $row['Middle_Name'] . "</td>";
                                     echo "<td>" . $row['academic_classification'] . "</td>";
-                                    echo "<td>" . $row['degree_applied'] . "</td>";
+                                    echo "<td class='Board_only'>" . $row['degree_applied'] . "</td>";
                                     echo "<td style='display:none'>" . $row['nature_of_degree'] . "</td>";
 
                                     // Check nature_of_degree and academic_classification for failing grades
@@ -1265,12 +1322,20 @@ var isNonBoardOnly = <?php echo json_encode($allNonBoard); ?>;
                         }
                     </style>
 
-                    <div id="toast" class="toast" role="alert" aria-live="assertive" aria-atomic="true">
-                        <div class="toast-header">
-                            <strong class="mr-auto">Success!</strong>
 
+                    <!-- Toast notifications for lock and unlock -->
+                    <div id="toast-lock" class="toast" role="alert" aria-live="assertive" aria-atomic="true">
+                        <div class="toast-header">
+                            <strong>Table Locked!</strong>
                         </div>
-                        <div class="toast-body" id="toast-body"></div>
+                        <div class="toast-body">The table is now locked.</div>
+                    </div>
+
+                    <div id="toast-unlock" class="toast" role="alert" aria-live="assertive" aria-atomic="true">
+                        <div class="toast-header">
+                            <strong>Table Unlocked!</strong>
+                        </div>
+                        <div class="toast-body">The table is now unlocked.</div>
                     </div>
                     <div id="confirmationModal" class="modal" style="display: none;">
                         <div class="modal-content">
@@ -1630,11 +1695,13 @@ var isNonBoardOnly = <?php echo json_encode($allNonBoard); ?>;
         document.getElementById('toggleSelection').addEventListener('click', function () {
             var sendButton = document.getElementById('sendButton');
             var selectColumn = document.getElementById('selectColumn');
+            var selectColumna = document.getElementById('selectColumna');
             var checkboxes = document.querySelectorAll('.select-checkbox');
 
             // Toggle the visibility of sendButton, selectColumn, and checkboxes
             sendButton.style.display = sendButton.style.display === 'none' ? 'block' : 'none';
             selectColumn.style.display = selectColumn.style.display === 'none' ? 'table-cell' : 'none';
+            selectColumns.style.display = selectColumns.style.display === 'none' ? 'table-cell' : 'none';
 
             checkboxes.forEach(function (checkbox) {
                 checkbox.style.display = checkbox.style.display === 'none' ? 'block' : 'none';
@@ -1856,48 +1923,182 @@ var isNonBoardOnly = <?php echo json_encode($allNonBoard); ?>;
 
 
         function toggleColumnsVisibility() {
-    // Get all rows from the table
-    var rows = document.querySelectorAll('#studentTable tbody tr');
+            // Get all rows from the table
+            var rows = document.querySelectorAll('#studentTable tbody tr');
 
-    rows.forEach(function (row) {
-        // Get the nature of degree from the 7th column (change as needed)
-        var natureOfDegree = row.querySelector('td:nth-child(7)').textContent.trim();
+            rows.forEach(function (row) {
+                // Get the nature of degree from the 7th column (change as needed)
+                var natureOfDegree = row.querySelector('td:nth-child(7)').textContent.trim();
 
-        // Get all cells with the class 'Board_only'
-        var cells = row.querySelectorAll('.Board_only');
+                // Get all cells with the class 'Board_only'
+                var cells = row.querySelectorAll('.Board_only');
 
-        cells.forEach(function (cell) {
-            // If it's non-board only, hide 'Board_only' cells
+                cells.forEach(function (cell) {
+                    // If it's non-board only, hide 'Board_only' cells
+                    if (isNonBoardOnly) {
+                        cell.style.display = 'none';
+                    } else if (natureOfDegree === 'Board') {
+                        cell.style.display = 'table-cell';
+                    } else {
+                        cell.style.display = 'none';
+                    }
+                });
+            });
+
+            // Adjust header visibility
+            var headerCells = document.querySelectorAll('.Board_only');
             if (isNonBoardOnly) {
-                cell.style.display = 'none';
-            } else if (natureOfDegree === 'Board') {
-                cell.style.display = 'table-cell';
+                headerCells.forEach(function (headerCell) {
+                    headerCell.style.display = 'none';
+                });
             } else {
-                cell.style.display = 'none';
+                headerCells.forEach(function (headerCell) {
+                    headerCell.style.display = 'table-cell';
+                });
             }
-        });
+        }
+
+        // Call the function on page load or as needed
+        toggleColumnsVisibility();
+
+        $(document).ready(function () {
+            var table = new DataTable('#studentTable', {
+                searching: false,
+                paging: false,
+                
+                info: false,
+                select: true,
+                order: [[0, 'asc']], // Default sorting by 'Applicant Number'
+                dom: 'frtip', // No default buttons in DataTable
+                columnDefs: [
+                    {
+                        targets: [0], // Column index (if '#' should not be sortable)
+                        orderable: false // Disable sorting for this column
+                    },
+                    {
+                        targets: [10], // Example column where sorting is disabled
+                        orderable: false // Disable sorting
+                    },
+                ],
+            });
+            $('#studentTable tbody').on('click', 'tr', function () {
+        $(this).toggleClass('selected'); // Toggle selection class
     });
+            // Excel export button (not displayed)
+            var excelButton = new $.fn.dataTable.Buttons(table, {
+                buttons: [
+                    {
+                        extend: 'excelHtml5',
+                        title: 'Faculty Masterlist', // Optional Excel title
+                        filename: 'Faculty Masterlist', // Optional file name when saving
+                    }
+                ],
+            });
 
-    // Adjust header visibility
-    var headerCells = document.querySelectorAll('.Board_only');
-    if (isNonBoardOnly) {
-        headerCells.forEach(function (headerCell) {
-            headerCell.style.display = 'none';
+            table.buttons(excelButton);
+
+            // Trigger Excel export when the custom button is clicked
+            $('#excelExportButton').click(function (e) {
+                e.preventDefault(); // Prevent default link behavior
+                table.buttons(0, 0).trigger(); // Trigger the Excel export
+            });
+
+            // Apply custom styling when the sorted column changes
+            table.on('order.dt', function () {
+                $('#studentTable tbody td').css('background-color', ''); // Reset backgrounds
+
+                var order = table.order()[0]; // Get sorting information
+                var sortedColumnIndex = order[0]; // Column index of the sorted column
+
+                $('#studentTable tbody tr').each(function () {
+                    $(this).children().eq(sortedColumnIndex).css('background-color', 'lightgreen');
+                });
+            });
+
+            table.trigger('order.dt'); // Apply initial styling
         });
-    } else {
-        headerCells.forEach(function (headerCell) {
-            headerCell.style.display = 'table-cell';
-        });
-    }
-}
-
-// Call the function on page load or as needed
-toggleColumnsVisibility();
-
 
     </script>
 
+    <style>
+/* Change the default background color for selected rows */
+.dataTables_wrapper .dataTables_paginate .paginate_button.current,
+.dataTables_wrapper .dataTables_paginate .paginate_button:hover,
+table.dataTable tbody tr.selected,
+table.dataTable tbody tr:hover,
+.dataTables_wrapper .dataTables_filter input,
+.dataTables_wrapper .dataTables_filter input:focus {
+    background-color: lightgray !important; /* Change the default background color */
+    color: #000 !important; /* Adjust text color to ensure visibility */
+}
 
+        /* Default color for unsorted columns */
+        th.sorting {
+            color: black;
+            /* Default color for unsorted columns */
+        }
+
+        /* Color for sorted columns */
+        th.sorting_asc,
+        th.sorting_desc {
+            color: green;
+            /* Color for sorted columns */
+        }
+
+        /* Optional: Custom icons for sorting arrows */
+        th.sorting_asc::after {
+            content: '\2191';
+            /* Up arrow for ascending */
+        }
+
+        th.sorting_desc::after {
+            content: '\2193';
+            /* Down arrow for descending */
+        }
+
+        @media (max-width: 768px) {
+
+            #studentTable th,
+            #studentTable td {
+                font-size: 18em;
+                /* Reduce font size on smaller screens */
+            }
+        }
+
+        /* Ensure proper text alignment */
+        #studentTable th {
+            text-align: center;
+            /* Center-align text in table headers */
+        }
+
+        #studentTable td {
+            text-align: left;
+            /* Left-align text in table body */
+        }
+
+        .table-data {
+            width: 100%;
+            /* Occupy full width */
+            overflow-x: auto;
+            /* Allow horizontal scrolling for wider tables */
+        }
+
+        /* Set the DataTable's width to ensure it occupies the full width of the parent */
+        #studentTable {
+            width: 100%;
+            /* Ensure full width on page load */
+        }
+
+        /* Adjust font size for smaller screens for better responsiveness */
+        @media (max-width: 768px) {
+
+            #studentTable th,
+            #studentTable td {
+                font-size: 0.8em;
+                /* Smaller font on smaller screens */
+            }
+        }
+    </style>
 
     </div>
 

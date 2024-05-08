@@ -430,7 +430,7 @@ body {
     /* Apply styles to the labels */
     .small-label {
       display: block;
-      font-size: .9vw;
+      font-size: .9em;
       margin-bottom: 5px;
     }
 
@@ -441,7 +441,7 @@ body {
       border: 1px solid #ccc;
       border-radius: 4px;
       box-sizing: border-box;
-      font-size: .8vw;
+      font-size: .8em;
     }
 
     /* Apply styles to the submit button */
@@ -452,7 +452,7 @@ body {
       border: none;
       border-radius: 4px;
       cursor: pointer;
-      font-size: 1vw;
+      font-size: 1em;
     }
 
     input[type="submit"]:hover {
@@ -461,7 +461,7 @@ body {
 
     /* Style for the personal information headings */
     .personal_information {
-      font-size: 1vw;
+      font-size: 1em;
       font-weight: bold;
       margin-bottom: 10px;
     }
@@ -1384,7 +1384,7 @@ nav {
 }
 
 #content main .head-title .left h1 {
-	font-size: 2vw;
+	font-size: 2em;
 	font-weight: 600;
 	margin-bottom: 10px;
 	color: var(--dark);
@@ -1403,7 +1403,7 @@ nav {
 #content main .head-title .left .breadcrumb li a {
 	color: var(--dark-grey);
 	pointer-events: none;
-	font-size: 1vw;
+	font-size: 1em;
 }
 
 #content main .head-title .left .breadcrumb li a.active {
@@ -1417,7 +1417,7 @@ nav {
 .btn-download,
 .btn-appointment {
 	height: 5vh;
-	width: 10vw;
+	width: 10em;
 	padding: 0 5%;
 	border-radius: 36px;
 	background: var(--green);
@@ -1427,7 +1427,7 @@ nav {
 	align-items: center;
 	grid-gap: 3%;
 	font-weight: 500;
-	font-size: 1vw;
+	font-size: 1em;
 }
 
 .btn-download:hover,
@@ -1527,23 +1527,7 @@ button[type="submit"]:hover {
 	/* Adjust the scale factor as needed */
 }
 
-#toggleSelection,  #sort {
-	border: none;
-	background: none;
-	padding: 0;
-	font-size: 0;
-}
 
-#toggleSelection i:hover {
-	color: var(--green);
-	transform: scale(1.2);
-	/* Adjust the scale factor as needed */
-}
-
-#toggleSelection .bx {
-	font-size: 15px;
-	color: var(--dark);
-}
 #sort i:hover {
 	color: var(--green);
 	transform: scale(1.2);
@@ -1760,7 +1744,7 @@ button[type="submit"]:hover {
 
 #content main .table-data .head h3 {
 	/* Add styles for the table header heading */
-	font-size: 1.5vw;
+	font-size: 1.5em;
 	float: left;
 	margin-right: auto;
 }
@@ -1788,7 +1772,7 @@ button[type="submit"]:hover {
 	border: none;
 	text-align: left;
 	padding: 6px;
-	font-size: .8vw;
+	font-size: .8em;
 	white-space: normal;
 	border-bottom: 1px solid var(--dark);
 
@@ -1801,7 +1785,7 @@ button[type="submit"]:hover {
 	/* Add any styles for table data cells */
 	border: none;
 	padding: .5%;
-	font-size: .8vw;
+	font-size: .8em;
 	font-family: 'Arial', sans-serif;
 }
 
@@ -2226,7 +2210,7 @@ label[for="rangeInput"] {
 
 .tab-label {
 	cursor: pointer;
-	font-size: 1vw;
+	font-size: 1em;
 	display: inline-block;
 	padding: 5px 10px;
 	background-color: #bababa;
