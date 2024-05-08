@@ -105,7 +105,21 @@ if ($result->num_rows > 0) {
     $totalReadmittedApplicants = 0; // Set default value if no rows found
 }
 // Function to fetch programs data from the database
+// Call the fetchPrograms function to get programs data
+$programs = fetchPrograms($conn);
 
+// Count not qualified applicants meeting specified conditions
+$sql = "SELECT COUNT(*) AS total_not_qualified_applicants 
+FROM admission_data WHERE Personnel_Result = 'NOR(Not Qualified)'
+ AND Personnel_Message = 'sent'";
+$result = $conn->query($sql);
+
+if ($result->num_rows > 0) {
+    $row = $result->fetch_assoc();
+    $totalNotQualApplicants = $row["total_not_qualified_applicants"];
+} else {
+    $totalNotQualApplicants = 0; // Set default value if no rows found
+}
 function fetchPrograms($conn)
 {
     // Prepare SQL query to select all columns from the programs table
@@ -156,6 +170,7 @@ function fetchPrograms($conn)
             $anqResult = $conn->query($anqSql);
             $anqRow = $anqResult->fetch_assoc();
             $row['anq_count'] = $anqRow['anq_count'];
+            
 
             // Add the row data to the programs array
             $programs[] = $row;
@@ -169,19 +184,7 @@ function fetchPrograms($conn)
     }
 }
 
-// Call the fetchPrograms function to get programs data
-$programs = fetchPrograms($conn);
 
-// Count not qualified applicants meeting specified conditions
-$sql = "SELECT COUNT(*) AS total_not_qualified_applicants FROM admission_data WHERE Personnel_Result = 'NOR(Not Qualified)'";
-$result = $conn->query($sql);
-
-if ($result->num_rows > 0) {
-    $row = $result->fetch_assoc();
-    $totalNotQualApplicants = $row["total_not_qualified_applicants"];
-} else {
-    $totalNotQualApplicants = 0; // Set default value if no rows found
-}
 $conn->close();
 ?>
 
