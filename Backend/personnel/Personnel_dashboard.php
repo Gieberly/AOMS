@@ -263,7 +263,7 @@ $conn->close();
                             <i class='bx bxs-group'></i></a>
                         <span class="text">
                             <h3><?php echo $totalReadmittedApplicants; ?></h3>
-                            <p>Applicants For Reapplication</p>
+                            <p>Possible Qualifier</p>
                         </span>
                     </li>
 
