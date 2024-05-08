@@ -32,7 +32,7 @@ if ($resultCourses->num_rows > 0) {
         $resultQualifiedCount = $conn->query($sqlQualifiedCount);
         $qualifiedCount = $resultQualifiedCount->fetch_assoc()['total_qualified'];
         // Count reapplication applicants for the current course
-        $sqlReapplicationCount = "SELECT COUNT(*) AS total_reapplication FROM admission_data WHERE degree_applied = '$course' AND (Personnel_Result = 'NOR(Possible Qualifier-Non-Board)' OR Personnel_Result = 'NOR(Possible Qualifier)')";
+        $sqlReapplicationCount = "SELECT COUNT(*) AS total_reapplication FROM admission_data WHERE degree_applied = '$course' AND (Personnel_Result = 'NOR(Possible Qualifier-Non-Board)' OR Personnel_Result = 'NOR(Possible Qualifier-Board)')";
         $resultReapplicationCount = $conn->query($sqlReapplicationCount);
         $reapplicationCount = $resultReapplicationCount->fetch_assoc()['total_reapplication'];
 
@@ -94,7 +94,7 @@ if ($result->num_rows > 0) {
 // Count readmitted applicants meeting specified conditions
 $sql = "SELECT COUNT(*) AS total_readmitted_applicants 
         FROM admission_data 
-        WHERE (Personnel_Result = 'NOR(Possible Qualifier-Non-Board)' OR Personnel_Result = 'NOR(Possible Qualifier)') 
+        WHERE (Personnel_Result = 'NOR(Possible Qualifier-Non-Board)' OR Personnel_Result = 'NOR(Possible Qualifier-Board)') 
         AND Personnel_Message = 'sent'";
 $result = $conn->query($sql);
 
@@ -128,7 +128,7 @@ function fetchPrograms($conn)
             $row['num_applicants'] = $countRow['num_applicants'];
 
             // Count Possible Qualifier applicants
-            $pqSql = "SELECT COUNT(*) AS pq_count FROM admission_data WHERE degree_applied = '" . $row['Courses'] . "' AND Personnel_Result = 'NOR(Possible Qualifier)'";
+            $pqSql = "SELECT COUNT(*) AS pq_count FROM admission_data WHERE degree_applied = '" . $row['Courses'] . "' AND Personnel_Result = 'NOR(Possible Qualifier-Board)'";
             $pqResult = $conn->query($pqSql);
             $pqRow = $pqResult->fetch_assoc();
             $row['pq_count'] = $pqRow['pq_count'];

@@ -40,7 +40,7 @@ if($filter == 'toadmit') {
     $query .= " AND Admission_Result = 'NOA'";
 } elseif ($filter == 'reapplication') {
     $query .= " AND (Personnel_Result = 'NOR(Possible Qualifier-Non-Board)' OR 
-                    Personnel_Result = 'NOR(Possible Qualifier)')";
+                    Personnel_Result = 'NOR(Possible Qualifier-Board)')";
 }elseif ($filter == 'notqualified') {
     $query .= " AND (Personnel_Result = 'NOR(Not Qualified)')";
 }
