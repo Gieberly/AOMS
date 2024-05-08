@@ -37,7 +37,7 @@ $query = "SELECT * FROM admission_data WHERE
 
 // Apply filter if specified
 if($filter == 'toadmit') {
-    $query .= " AND AAdmission_Result = 'NOA(Admitted-Qualified)' OR Admission_Result = 'NOA(Admitted-Not Qualified)' ";
+    $query .= " AND Admission_Result = 'NOA(Admitted-Qualified)' OR Admission_Result = 'NOA(Admitted-Not Qualified)' ";
 } elseif ($filter == 'reapplication') {
     $query .= " AND (Personnel_Result = 'NOR(Possible Qualifier-Non-Board)' OR 
                     Personnel_Result = 'NOR(Possible Qualifier-Board)')";
