@@ -26,7 +26,7 @@ $caseForGWA = "
 if ($filter == 'toadmit') {
     $query = "SELECT *, $caseForGWA
               FROM admission_data 
-              WHERE Admission_Result = 'NOA' 
+              WHERE Admission_Result = 'NOA(Admitted-Qualified)'  OR Admission_Result = 'NOA(Admitted-Not Qualified)' 
               AND Personnel_Message = 'sent'
               AND (`Name` LIKE '%$search%' OR 
                    `Middle_Name` LIKE '%$search%' OR 
