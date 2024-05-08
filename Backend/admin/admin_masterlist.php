@@ -13,12 +13,20 @@ if (isset($_GET['filter'])) {
 $search = isset($_SESSION['search']) ? $_SESSION['search'] : '';
 $filter = isset($_SESSION['filter']) ? $_SESSION['filter'] : '';
 
-
+// Construct query with CASE statement for GWA
+$caseForGWA = "
+    CASE 
+        WHEN Gr11_GWA IS NOT NULL THEN Gr11_GWA
+        WHEN GWA_OTAS IS NOT NULL THEN GWA_OTAS
+        ELSE Gr12_GWA
+    END AS GWA
+";
 
 // Construct query based on filter
 if ($filter == 'toadmit') {
-    $query = "SELECT * FROM admission_data 
-              WHERE Admission_Result = 'NOA' 
+    $query = "SELECT *, $caseForGWA
+              FROM admission_data 
+              WHERE Admission_Result = 'NOA(Admitted-Qualified)'  OR Admission_Result = 'NOA(Admitted-Not Qualified)' 
               AND Personnel_Message = 'sent'
               AND (`Name` LIKE '%$search%' OR 
                    `Middle_Name` LIKE '%$search%' OR 
@@ -30,9 +38,10 @@ if ($filter == 'toadmit') {
                    `degree_applied` LIKE '%$search%')
               ORDER BY applicant_number ASC";
 } elseif ($filter == 'reapplication') {
-    $query = "SELECT * FROM admission_data 
+    $query = "SELECT *, $caseForGWA 
+              FROM admission_data 
               WHERE (Personnel_Result = 'NOR(Possible Qualifier-Non-Board)' OR 
-                     Personnel_Result = 'NOR(Possible Qualifier)') 
+                     Personnel_Result = 'NOR(Possible Qualifier-Board)') 
               AND Personnel_Message = 'sent'
               AND (`Name` LIKE '%$search%' OR 
                    `Middle_Name` LIKE '%$search%' OR 
@@ -44,35 +53,35 @@ if ($filter == 'toadmit') {
                     TRIM(`Admission_Result`) = '$search' OR 
                    `degree_applied` LIKE '%$search%')
               ORDER BY applicant_number ASC";
-
-              } elseif ($filter == 'notqualified') {
-                $query = "SELECT * FROM admission_data 
-                          WHERE (Personnel_Result = 'NOR(Not Qualified)') 
-                          AND Personnel_Message = 'sent'
-                          AND (`Name` LIKE '%$search%' OR 
-                               `Middle_Name` LIKE '%$search%' OR 
-                               `Last_Name` LIKE '%$search%' OR 
-                               `academic_classification` LIKE '%$search%' OR 
-                               `email` LIKE '%$search%' OR 
-                               TRIM(`nature_of_degree`) = '$search' OR 
-                               TRIM(`Personnel_Result`) = '$search' OR 
-                                TRIM(`Admission_Result`) = '$search' OR 
-                               `degree_applied` LIKE '%$search%')
-                          ORDER BY applicant_number ASC";
+} elseif ($filter == 'notqualified') {
+    $query = "SELECT *, $caseForGWA 
+              FROM admission_data 
+              WHERE (Personnel_Result = 'NOR(Not Qualified)') 
+              AND Personnel_Message = 'sent'
+              AND (`Name` LIKE '%$search%' OR 
+                   `Middle_Name` LIKE '%$search%' OR 
+                   `Last_Name` LIKE '%$search%' OR 
+                   `academic_classification` LIKE '%$search%' OR 
+                   `email` LIKE '%$search%' OR 
+                   TRIM(`nature_of_degree`) = '$search' OR 
+                   TRIM(`Personnel_Result`) = '$search' OR 
+                    TRIM(`Admission_Result`) = '$search' OR 
+                   `degree_applied` LIKE '%$search%')
+              ORDER BY applicant_number ASC";
 } else {
     // Default query without filter
-    $query = "SELECT * FROM admission_data WHERE 
+    $query = "SELECT *, $caseForGWA 
+              FROM admission_data 
+              WHERE 
               (`Name` LIKE '%$search%' OR 
               `Middle_Name` LIKE '%$search%' OR 
               `Last_Name` LIKE '%$search%' OR 
               `academic_classification` LIKE '%$search%' OR 
               `email` LIKE '%$search%' OR 
-              TRIM(`nature_of_degree`) = '$search' OR 
+              TRIM(`nature_of_degree`) = '$search%' OR 
               `degree_applied` LIKE '%$search%' OR
-              `Name` LIKE '%$search%' OR 
-              `Middle_Name` LIKE '%$search%' OR 
-              TRIM(`Personnel_Result`) = '$search' OR 
-               TRIM(`Admission_Result`) = '$search' OR 
+              TRIM(`Personnel_Result`) = '$search%' OR 
+              TRIM(`Admission_Result`) = '$search%' OR 
               `Last_Name` LIKE '%$search%')
               AND Personnel_Message = 'sent'
               ORDER BY applicant_number ASC";
@@ -86,6 +95,7 @@ $stmt = $conn->prepare("SELECT name, email, userType, status FROM users WHERE id
 $stmt->bind_param("i", $userID);
 $stmt->execute();
 $stmt->bind_result($name, $email, $userType, $status);
+
 $stmt->fetch();
 
 // Close statement
@@ -97,11 +107,29 @@ $stmt->close();
 
 
 <head>
-    <meta charset="UTF-8">
 
-    <title>BSU OUR Admission Admin</title>
-    <?php include('../template/header_admin.php') ?>
+    <!-- jQuery and DataTables JS -->
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 
+    <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/1.13.6/css/jquery.dataTables.min.css">
+    <link rel="stylesheet" type="text/css"
+        href="https://cdn.datatables.net/buttons/2.4.2/css/buttons.dataTables.min.css">
+
+    <script src="https://code.jquery.com/jquery-3.7.0.min.js"></script>
+    <link rel="stylesheet" href="https://cdn.datatables.net/responsive/2.4.2/css/responsive.dataTables.min.css">
+    <script src="https://cdn.datatables.net/1.13.6/js/jquery.dataTables.min.js"></script>
+    <script src="https://cdn.datatables.net/responsive/2.4.2/js/dataTables.responsive.min.js"></script>
+    <link rel="stylesheet" href="https://cdn.datatables.net/select/1.6.1/css/select.dataTables.min.css">
+    <script src="https://cdn.datatables.net/select/1.6.1/js/dataTables.select.min.js"></script>
+    <script src="https://cdn.datatables.net/buttons/2.4.2/js/dataTables.buttons.min.js"></script>
+    <script src="https://cdn.datatables.net/buttons/2.4.2/js/buttons.flash.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.2.6/pdfmake.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.2.6/vfs_fonts.js"></script>
+    <script src="https://cdn.datatables.net/buttons/2.4.2/js/buttons.html5.min.js"></script>
+    <script src="https://cdn.datatables.net/buttons/2.4.2/js/buttons.print.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.1.3/jszip.min.js"></script>
+    <link rel="stylesheet" href="https://cdn.datatables.net/buttons/2.4.2/css/buttons.dataTables.min.css">
 </head>
 
 <body>
@@ -161,6 +189,16 @@ $stmt->close();
 
         .button.check-btn:hover i {
             color: green;
+        }
+
+        .tooltip {
+            position: absolute;
+            z-index: 1;
+            background-color: green;
+            color: #fff;
+            padding: 5px;
+            border-radius: 6px;
+            font-size: 12px;
         }
 
         .button-container .button::after {
@@ -751,33 +789,6 @@ $stmt->close();
 
 
         <main>
-        <style>
-    /* CSS to style the buttons */
-    .btn, .btn-Export {
-        display: inline-block;
-        padding: 10px 20px;
-        margin: 10px;
-        text-decoration: none;
-        color: #fff;
-        background-color: green;
-        border: none;
-        border-radius: 20px; /* More curved border radius */
-    }
-
-    .btn:hover, .btn-Export:hover {
-        background-color: darkgreen; /* Dark green with 70% opacity */
-        color: white; /* Change text color to white */
-    }
-    /* CSS to style the icons and text */
-    .btn .calendar-icon, .btn-Export .bx-file-export {
-        margin-right: 5px;
-    }
-
-    /* Hide the default underline on hover */
-    .btn:hover, .btn-Export:hover {
-        text-decoration: none;
-    }
-</style>
             <div class="head-title">
                 <div class="left">
                     <h1>Applicants</h1>
@@ -785,17 +796,15 @@ $stmt->close();
                         <li><a href="#">Applicants</a></li>
                         <li><i class='bx bx-chevron-right'></i></li>
                         <li>
-                        <li><a class="active" href="admin_Dashboard.php">Home</a></li>
+                        <li><a class="active" href="Personnel_Dashboard.php">Home</a></li>
                         </li>
                     </ul>
                 </div>
                 <div class="button-container">
-                    <a class="btn-Export" href="Personnel_Masterlist_Excel.php?search=<?php echo urlencode($search); ?>&filter=<?php echo urlencode($filter); ?>"
-                        class="btn-download">
+                    <a href="#" id="excelExportButton" class="btn-download">
                         <i class='bx bxs-file-export'></i>
                         <span class="text">Excel Export</span>
                     </a>
-
                 </div>
             </div>
 
@@ -805,11 +814,11 @@ $stmt->close();
                         <h3>List of Applicants</h3>
                         <!-- Add this input field for date filtering -->
                         <div class="headfornaturetosort">
-                            <form method="GET" action="" id="calendarFilterForm">
-                               <label for="appointment_date"></label>
-                               <input type="date" name="appointment_date" id="appointment_date">
-                               <button type="submit"><i class='bx bx-filter'></i></button>
-                            </form>
+                            <!--<form method="GET" action="" id="calendarFilterForm">-->
+                            <!--    <label for="appointment_date"></label>-->
+                            <!--    <input type="date" name="appointment_date" id="appointment_date">-->
+                            <!--    <button type="submit"><i class='bx bx-filter'></i></button>-->
+                            <!--</form>-->
                             <button type="button" id="toggleSelection">
                                 <i class='bx bx-select-multiple'></i> Toggle Selection
                             </button>
@@ -845,49 +854,355 @@ $stmt->close();
                             background-color: #4CAF50;
                             border-radius: 5px;
                         }
+
+                        .failing_grade {
+                            background-color: hsl(350, 100%, 80%);
+                            /* Darker shade of red with adjusted lightness */
+                        }
+
+
+
+                        .other_subjects {
+                            color: #3C91E6;
+                        }
                     </style>
 
                     <div class="table-container">
-                        <table>
+                        <table id="studentTable" class="display responsive nowrap" style="width: 100%;">
                             <thead id="thead">
+                                <tr>
+
+                                    <th colspan="8" style="text-align: center;"></th>
+                                    <th></th>
+                                    <th></th>
+
+                                    <th style="background-color: Yellow;text-align: center;" class="Board_only"
+                                        colspan="3">English</th>
+                                    <th style="background-color: #F88379;text-align: center;" class="Board_only"
+                                        colspan="4">Science</th>
+                                    <th style="background-color: #00FFFF;text-align: center;" class="Board_only"
+                                        colspan="2">Math</th>
+                                    <th class="Board_only" colspan="3"
+                                        style="text-align: center;background-color: lightgreen;">Old high school
+                                        curriculum/ALS</th>
+
+                                    <th></th>
+                                    <th></th>
+                                    <th style="display: none;" id="selectColumn">
+                                        <input type="checkbox" id="selectAllCheckbox">
+                                    </th>
+
+
+                                </tr>
                                 <tr>
                                     <th>#</th>
                                     <th>Applicant #</th>
                                     <th>Last Name</th>
-                                    <th>First Name</th>
                                     <th>Middle Name</th>
-                                    <th>Nature of degree</th>
-                                    <th>Program</th>
+                                    <th>First Name</th>
                                     <th>Classification</th>
-                                    <th>Result</th>
-                                    <th>Result as per admission policy</th>
-                                    <th style="display: none;" id="selectColumn">
-                                        <input type="checkbox" id="selectAllCheckbox">
+                                    <th>Program</th>
+                                    <th>Nature</th>
+                                    <th id="gwa">GWA</th>
+                                    <th id="test">Test Score</th>
+
+                                    <th id="oaralcom" class="Board_only" style="background-color: Yellow;">Oral
+                                        communication in
+                                        context</th>
+                                    <th id="rewri" class="Board_only" style="background-color: Yellow;">Reading and
+                                        writing skills
                                     </th>
+                                    <th id="engca" class="Board_only" style="background-color: Yellow;">English for
+                                        academic and
+                                        professional purposes</th>
+                                    <th id="earscie" class="Board_only" style="background-color: #F88379;">Earth Science
+                                    </th>
+                                    <th id="earli" class="Board_only" style="background-color: #F88379;">Earth and Life
+                                        Science
+                                    </th>
+                                    <th id="phylscie" class="Board_only" style="background-color: #F88379;">Physical
+                                        Science</th>
+                                    <th id="dire" class="Board_only" style="background-color: #F88379;">Disaster
+                                        Readiness and
+                                        Risk Reduction</th>
+                                    <th id="genma" class="Board_only" style="background-color: #00FFFF;">General
+                                        Mathematics</th>
+                                    <th id="stapro" class="Board_only" style="background-color: #00FFFF;">Statistics and
+                                        Probability
+                                    </th>
+                                    <th id="english" class="Board_only" style="background-color:lightgreen">English</th>
+                                    <th id="math" class="Board_only" style="background-color:lightgreen">Math</th>
+                                    <th id="scie" class="Board_only" style="background-color:lightgreen">Science</th>
+                                    <th>Result</th>
+                                    <th class="">Personnel Eval</th>
+                                    <th style="display: none;" id="selectColumns"></th>
+
                                 </tr>
+
                             </thead>
                             <tbody id="tbody">
                                 <?php
                                 $counter = 1; // Initialize the counter before the loop
+                                
                                 while ($row = $result->fetch_assoc()) {
-                                    echo "<tr id='selectedRow' class='editRow' data-id='" . $row['id'] . "' data-date='" . $row['application_date'] . "'>";
+                                    echo "<tr class='editRow' data-id='" . $row['id'] . "' data-date='" . $row['application_date'] . "'>";
                                     echo "<td>" . $counter . "</td>";
                                     echo "<td>" . $row['applicant_number'] . "</td>";
                                     echo "<td>" . $row['Last_Name'] . "</td>";
                                     echo "<td>" . $row['Name'] . "</td>";
                                     echo "<td>" . $row['Middle_Name'] . "</td>";
-                                    echo "<td>" . $row['nature_of_degree'] . "</td>";
-                                    echo "<td>" . $row['degree_applied'] . "</td>";
                                     echo "<td>" . $row['academic_classification'] . "</td>";
-                                    echo "<td>" . $row['Admission_Result'] . "</td>";
-                                    echo "<td>" . $row['Personnel_Result'] . "</td>";
+                                    echo "<td>" . $row['degree_applied'] . "</td>";
+                                    echo "<td>" . $row['nature_of_degree'] . "</td>";
 
-                                    echo "<td id='checkbox-{$row['id']}'><input type='checkbox'style='display: none;' class='select-checkbox'></td>";
-                                    echo "</tr>";
+                                    // Check nature_of_degree and academic_classification for failing grades
+                                    $failing_grade = false;
+                                    if ($row['nature_of_degree'] == "Board") {
+                                        // condition based on academic_classification and nature_of_degree
+                                        if (
+                                            $row['academic_classification'] == "Senior High School Graduates" ||
+                                            $row['academic_classification'] == "High School (Old Curriculum) Graduates" ||
+                                            $row['academic_classification'] == "Currently Grade 12"
+                                        ) {
+                                        } elseif (
+                                            $row['academic_classification'] == "ALS/PEPT Completers" ||
+                                            $row['academic_classification'] == "Transferees" ||
+                                            $row['academic_classification'] == "Second Degree"
+                                        ) {
+                                            if ($row['GWA'] < 80) {
+                                                $failing_grade = true;
+                                            }
+                                        }
+                                    } elseif ($row['nature_of_degree'] == "Non-Board") {
+                                        // similar conditions as above
+                                        // additional conditions based on academic_classification
+                                        if (
+                                            $row['academic_classification'] == "Senior High School Graduates" ||
+                                            $row['academic_classification'] == "High School (Old Curriculum) Graduates" ||
+                                            $row['academic_classification'] == "Currently Grade 12"
+                                        ) {
+                                            if ($row['GWA'] < 80) {
+                                                $failing_grade = true;
+                                            }
+                                        } elseif (
+                                            $row['academic_classification'] == "ALS/PEPT Completers" ||
+                                            $row['academic_classification'] == "Transferees" ||
+                                            $row['academic_classification'] == "Second Degree"
+                                        ) {
+                                            if ($row['GWA'] < 80) {
+                                                $failing_grade = true;
+                                            }
+                                        }
+                                    }
+
+                                    // Apply background color based on failing grade
+                                    if ($failing_grade) {
+                                        echo "<td class='failing_grade'>" . number_format($row['GWA'], 2) . "</td>";
+                                    } else {
+                                        echo "<td>" . number_format($row['GWA'], 2) . "</td>";
+                                    }
+
+                                    // Determine Admission Score
+                                    $admissionScore = $row['OSS_Admission_Test_Score'];
+
+                                    // Check if the score is failing and apply CSS class accordingly
+                                    $admissionScoreClass = '';
+                                    if ($admissionScore != null && $admissionScore != '' && $admissionScore < 85) {
+                                        $admissionScoreClass = 'failing_grade';
+                                    }
+
+                                    // Add Admission Score
+                                    echo "<td class='{$admissionScoreClass}'>" . $admissionScore . "</td>";
+                                    // Determine ORAL COMMUNICATION IN CONTEXT grade
+                                    $oralCommunicationGrade = ($row['English_Oral_Communication_Grade'] != null && $row['English_Oral_Communication_Grade'] != '') ? $row['English_Oral_Communication_Grade'] : $row['English_Other_Courses_Grade'];
+
+                                    // Check if the grade is fetched from English_Other_Courses_Grade column and apply CSS class accordingly
+                                    $oralCommunicationClass = '';
+                                    if ($oralCommunicationGrade != null && $oralCommunicationGrade != '' && $oralCommunicationGrade < 86) {
+                                        if ($row['English_Other_Courses_Grade'] != null && $row['English_Other_Courses_Grade'] != '') {
+                                            $oralCommunicationClass = 'failing_grade other_subjects';
+                                        } else {
+                                            $oralCommunicationClass = 'failing_grade';
+                                        }
+                                    } elseif ($row['English_Other_Courses_Grade'] != null && $row['English_Other_Courses_Grade'] != '') {
+                                        $oralCommunicationClass = 'other_subjects';
+                                    }
+
+                                    // Add English_Subject_1 data as a data attribute
+                                    $englishSubject1 = $row['English_Subject_1'];
+
+                                    echo "<td ' class='Board_only {$oralCommunicationClass}' data-english-subject='{$englishSubject1}'>" . $oralCommunicationGrade . "</td>";
+                                    // Determine READING AND WRITING SKILLS grade and subject
+                                    $readingWritingGrade = ($row['English_Reading_Writing_Grade'] != null && $row['English_Reading_Writing_Grade'] != '') ? $row['English_Reading_Writing_Grade'] : $row['English_Other_Courses_Grade_2'];
+                                    $readingWritingSubject = $row['English_Subject_2'];
+
+                                    // Check if the grade is failing and apply CSS class accordingly
+                                    $readingWritingClass = '';
+                                    if ($readingWritingGrade != null && $readingWritingGrade != '' && $readingWritingGrade < 86) {
+                                        if ($row['English_Other_Courses_Grade_2'] != null && $row['English_Other_Courses_Grade_2'] != '') {
+                                            $readingWritingClass = 'failing_grade other_subjects';
+                                        } else {
+                                            $readingWritingClass = 'failing_grade';
+                                        }
+                                    } elseif ($row['English_Other_Courses_Grade_2'] != null && $row['English_Other_Courses_Grade_2'] != '') {
+                                        $readingWritingClass = 'other_subjects';
+                                    }
+
+                                    // Add READING AND WRITING SKILLS grade and subject data as data attributes
+                                    echo "<td class='Board_only {$readingWritingClass}' data-english-subject='{$readingWritingSubject}'>" . $readingWritingGrade . "</td>";
+                                    // Determine ENGLISH FOR ACADEMIC AND PROFESSIONAL PURPOSES grade and subject
+                                    $englishAcademicGrade = ($row['English_Academic_Grade'] != null && $row['English_Academic_Grade'] != '') ? $row['English_Academic_Grade'] : $row['English_Other_Courses_Grade_3'];
+                                    $englishAcademicSubject = $row['English_Subject_3'];
+
+                                    // Check if the grade is failing and apply CSS class accordingly
+                                    $englishAcademicClass = '';
+                                    if ($englishAcademicGrade != null && $englishAcademicGrade != '' && $englishAcademicGrade < 86) {
+                                        if ($row['English_Other_Courses_Grade_3'] != null && $row['English_Other_Courses_Grade_3'] != '') {
+                                            $englishAcademicClass = 'failing_grade other_subjects';
+                                        } else {
+                                            $englishAcademicClass = 'failing_grade';
+                                        }
+                                    } elseif ($row['English_Other_Courses_Grade_3'] != null && $row['English_Other_Courses_Grade_3'] != '') {
+                                        $englishAcademicClass = 'other_subjects';
+                                    }
+
+                                    // Add ENGLISH FOR ACADEMIC AND PROFESSIONAL PURPOSES grade and subject data as data attributes
+                                    echo "<td class='Board_only {$englishAcademicClass}' data-english-subject='{$englishAcademicSubject}'>" . $englishAcademicGrade . "</td>";
+                                    // Determine Earth Science grade and subject
+                                    $earthScienceGrade = ($row['Science_Earth_Science_Grade'] != null && $row['Science_Earth_Science_Grade'] != '') ? $row['Science_Earth_Science_Grade'] : $row['Science_Other_Courses_Grade'];
+                                    $earthScienceSubject = $row['Science_Subject_1'];
+
+                                    // Check if the grade is failing and apply CSS class accordingly
+                                    $earthScienceClass = '';
+                                    if ($earthScienceGrade != null && $earthScienceGrade != '' && $earthScienceGrade < 86) {
+                                        if ($row['Science_Other_Courses_Grade'] != null && $row['Science_Other_Courses_Grade'] != '') {
+                                            $earthScienceClass = 'failing_grade other_subjects';
+                                        } else {
+                                            $earthScienceClass = 'failing_grade';
+                                        }
+                                    } elseif ($row['Science_Other_Courses_Grade'] != null && $row['Science_Other_Courses_Grade'] != '') {
+                                        $earthScienceClass = 'other_subjects';
+                                    }
+
+                                    // Add Earth Science grade and subject data as data attributes
+                                    echo "<td class='Board_only {$earthScienceClass}' data-science-subject='{$earthScienceSubject}'>" . $earthScienceGrade . "</td>";
+                                    // Determine Earth and Life Science grade and subject
+                                    $earthLifeScienceGrade = ($row['Science_Earth_and_Life_Science_Grade'] != null && $row['Science_Earth_and_Life_Science_Grade'] != '') ? $row['Science_Earth_and_Life_Science_Grade'] : $row['Science_Other_Courses_Grade_2'];
+                                    $earthLifeScienceSubject = $row['Science_Subject_2'];
+
+                                    // Check if the grade is failing and apply CSS class accordingly
+                                    $earthLifeScienceClass = '';
+                                    if ($earthLifeScienceGrade != null && $earthLifeScienceGrade != '' && $earthLifeScienceGrade < 86) {
+                                        if ($row['Science_Other_Courses_Grade_2'] != null && $row['Science_Other_Courses_Grade_2'] != '') {
+                                            $earthLifeScienceClass = 'failing_grade other_subjects';
+                                        } else {
+                                            $earthLifeScienceClass = 'failing_grade';
+                                        }
+                                    } elseif ($row['Science_Other_Courses_Grade_2'] != null && $row['Science_Other_Courses_Grade_2'] != '') {
+                                        $earthLifeScienceClass = 'other_subjects';
+                                    }
+                                    // Add Earth and Life Science grade and subject data as data attributes
+                                    echo "<td class=' Board_only {$earthLifeScienceClass}' data-science-subject='{$earthLifeScienceSubject}'>" . $earthLifeScienceGrade . "</td>";
+                                    // Determine Physical Science grade and subject
+                                    $physicalScienceGrade = ($row['Science_Physical_Science_Grade'] != null && $row['Science_Physical_Science_Grade'] != '') ? $row['Science_Physical_Science_Grade'] : $row['Science_Other_Courses_Grade_3'];
+                                    $physicalScienceSubject = $row['Science_Subject_3'];
+                                    // Check if the grade is failing and apply CSS class accordingly
+                                    $physicalScienceClass = '';
+                                    if ($physicalScienceGrade != null && $physicalScienceGrade != '' && $physicalScienceGrade < 86) {
+                                        if ($row['Science_Other_Courses_Grade_3'] != null && $row['Science_Other_Courses_Grade_3'] != '') {
+                                            $physicalScienceClass = 'failing_grade other_subjects';
+                                        } else {
+                                            $physicalScienceClass = 'failing_grade';
+                                        }
+                                    } elseif ($row['Science_Other_Courses_Grade_3'] != null && $row['Science_Other_Courses_Grade_3'] != '') {
+                                        $physicalScienceClass = 'other_subjects';
+                                    }
+                                    // Add Physical Science grade and subject data as data attributes
+                                    echo "<td class=' Board_only {$physicalScienceClass}' data-science-subject='{$physicalScienceSubject}'>" . $physicalScienceGrade . "</td>";
+                                    // Determine Disaster Readiness and Risk Reduction grade
+                                    $disasterReadinessGrade = $row['Science_Disaster_Readiness_Grade'];
+                                    // Check if the grade is failing and apply CSS class accordingly
+                                    $disasterReadinessClass = '';
+                                    if ($disasterReadinessGrade != null && $disasterReadinessGrade != '' && $disasterReadinessGrade < 86) {
+                                        $disasterReadinessClass = 'failing_grade';
+                                    }
+                                    // Add Disaster Readiness and Risk Reduction grade as data attribute
+                                    echo "<td class=' Board_only {$disasterReadinessClass}'>" . $disasterReadinessGrade . "</td>";
+                                    // Determine General Mathematics grade
+                                    $generalMathGrade = ($row['Math_General_Mathematics_Grade'] != null && $row['Math_General_Mathematics_Grade'] != '') ? $row['Math_General_Mathematics_Grade'] : $row['Math_Other_Courses_Grade'];
+                                    $generalMathSubject = $row['Math_Subject_1'];
+
+                                    // Check if the grade is failing and apply CSS class accordingly
+                                    $generalMathClass = '';
+                                    if ($generalMathGrade != null && $generalMathGrade != '' && $generalMathGrade < 86) {
+                                        if ($row['Math_Other_Courses_Grade'] != null && $row['Math_Other_Courses_Grade'] != '') {
+                                            $generalMathClass = 'failing_grade other_subjects';
+                                        } else {
+                                            $generalMathClass = 'failing_grade';
+                                        }
+                                    } elseif ($row['Math_Other_Courses_Grade'] != null && $row['Math_Other_Courses_Grade'] != '') {
+                                        $generalMathClass = 'other_subjects';
+                                    }
+                                    // Add General Mathematics grade and subject data as data attributes
+                                    echo "<td class=' Board_only {$generalMathClass}' data-math-subject='{$generalMathSubject}'>" . $generalMathGrade . "</td>";
+                                    // Determine Statistics and Probability grade
+                                    $statsProbabilityGrade = ($row['Math_Statistics_and_Probability_Grade'] != null && $row['Math_Statistics_and_Probability_Grade'] != '') ? $row['Math_Statistics_and_Probability_Grade'] : $row['Math_Other_Courses_Grade_2'];
+                                    $statsProbabilitySubject = $row['Math_Subject_2'];
+
+                                    // Check if the grade is failing and apply CSS class accordingly
+                                    $statsProbabilityClass = '';
+                                    if ($statsProbabilityGrade != null && $statsProbabilityGrade != '' && $statsProbabilityGrade < 86) {
+                                        if ($row['Math_Other_Courses_Grade_2'] != null && $row['Math_Other_Courses_Grade_2'] != '') {
+                                            $statsProbabilityClass = 'failing_grade other_subjects';
+                                        } else {
+                                            $statsProbabilityClass = 'failing_grade';
+                                        }
+                                    } elseif ($row['Math_Other_Courses_Grade_2'] != null && $row['Math_Other_Courses_Grade_2'] != '') {
+                                        $statsProbabilityClass = 'other_subjects';
+                                    }
+                                    // Add Statistics and Probability grade and subject data as data attributes
+                                    echo "<td class=' Board_only {$statsProbabilityClass}' data-math-subject='{$statsProbabilitySubject}'>" . $statsProbabilityGrade . "</td>";
+                                    // Determine English grade
+                                    $englishGrade = ($row['Old_HS_English_Grade'] != null && $row['Old_HS_English_Grade'] != '') ? $row['Old_HS_English_Grade'] : $row['ALS_English'];
+                                    // Check if the grade is failing and apply CSS class accordingly
+                                    $englishClass = '';
+                                    if ($englishGrade != null && $englishGrade != '' && $englishGrade < 86) {
+                                        $englishClass = 'failing_grade';
+                                    }
+                                    // Add English grade as data attribute
+                                    echo "<td class='Board_only {$englishClass}'>" . $englishGrade . "</td>";
+
+                                    // Determine Math grade
+                                    // Determine Math grade
+                                    $mathGrade = ($row['Old_HS_Math_Grade'] != null && $row['Old_HS_Math_Grade'] != '') ? $row['Old_HS_Math_Grade'] : $row['ALS_Math'];
+                                    // Check if the grade is failing and apply CSS class accordingly
+                                    $mathClass = '';
+                                    if ($mathGrade != null && $mathGrade != '' && $mathGrade < 86) {
+                                        $mathClass = 'failing_grade';
+                                    }
+                                    // Add Math grade as data attribute
+                                    echo "<td class='Board_only {$mathClass}'>" . $mathGrade . "</td>";
+
+                                    // Determine Science grade
+                                    $scienceGrade = $row['Old_HS_Science_Grade'];
+                                    // Check if the grade is failing and apply CSS class accordingly
+                                    $scienceClass = '';
+                                    if ($scienceGrade != null && $scienceGrade != '' && $scienceGrade < 86) {
+                                        $scienceClass = 'failing_grade';
+                                    }
+                                    // Add Science grade as data attribute
+                                    echo "<td class=' Board_only {$scienceClass}'>" . $scienceGrade . "</td>";
+
+
+                                    echo "<td>" . $row['Admission_Result'] . "</td>";
+
+                                    echo "<td>" . $row['Personnel_Result'] . "</td>";
+                                    echo "<td id='checkbox-{$row['id']}'><input type='checkbox' style='display: none;' class='select-checkbox' id='checkbox-{$row['id']}'></td>";
                                     $counter++; // Increment the counter for the next row
                                 }
                                 ?>
                             </tbody>
+
                         </table>
                     </div>
 
@@ -966,7 +1281,7 @@ $stmt->close();
                     <!--<input type="radio" id="tab1" name="tabGroup1" class="tab" checked>-->
                     <!--<label class="tab-label" for="tab1">Applicant Data</label>-->
                     <input type="radio" id="tab1" name="tabGroup1" class="tab">
-                    <label class="tab-label" for="tab1">Applicant Grades</label>
+                    <label class="tab-label" for="tab1">Applicant Result</label>
                     <div class="tab-content" id="content1" style="max-height: 400px; overflow-y: auto;">
 
                         <form id="updateProfileForm" class="tab1-content" method="post"
@@ -976,77 +1291,9 @@ $stmt->close();
                             <input type="hidden" name="academic_classification" class="input"
                                 id="academic_classification"
                                 value="<?php echo $admissionData['academic_classification']; ?>" readonly>
-                            <!-- Senior High School Graduates -->
-                            <div class="SHS Average" style="display:none;">
-                                <h2>Currently Enrolled as Grade 12<< /h2>
 
-                                        <p class="personal_information"> Grade 11 Average</p>
-                                        <div class="form-container2">
 
-                                            <div class="form-group">
-                                                <!-- Gr11_A1 -->
-                                                <label class="small-label" for="Gr11_A1">1st SEM</label>
-                                                <input name="Gr11_A1" class="input numeric-input" id="Gr11_A1"
-                                                    placeholder="Enter Grade"
-                                                    value="<?php echo $admissionData['Gr11_A1']; ?>" readonly>
-                                                <!-- Gr11_A2 -->
-                                            </div>
-                                            <div class="form-group">
-                                                <label class="small-label" for="Gr11_A2">2nd SEM</label>
-                                                <input name="Gr11_A2" class="input numeric-input" autocomplete="off"
-                                                    id="Gr11_A2" placeholder="Enter Grade"
-                                                    value="<?php echo $admissionData['Gr11_A2']; ?>" readonly>
-                                            </div>
-                                            <div class="form-group">
-                                                <!-- Gr11_A3 -->
-                                                <label class="small-label" for="Gr11_A3">3rd SEM</label>
-                                                <input name="Gr11_A3" class="input numeric-input" autocomplete="off"
-                                                    id="Gr11_A3" placeholder="Enter Grade"
-                                                    value="<?php echo $admissionData['Gr11_A3']; ?>" readonly>
-                                            </div>
-                                            <div class="form-group"> <!-- Gr11_GWA -->
-                                                <label class="small-label" for="Gr11_GWA">GWA</label>
-                                                <input name="Gr11_GWA" class="input numeric-input" autocomplete="off"
-                                                    id="Gr11_GWA" placeholder="Enter Grade"
-                                                    value="<?php echo $admissionData['Gr11_GWA']; ?>" readonly>
-                                            </div>
-
-                                        </div>
-                            </div>
-                            <div class="Gr-12-Average" style="display: none;">
-                                <h2>Senior High School Graduate </h2>
-                                <p class="personal_information">Grade 12 Average</p>
-                                <div class="form-container2">
-                                    <div class="form-group">
-                                        <!-- Gr12_A1 -->
-                                        <label class="small-label" for="Gr12_A1">1st SEM</label>
-                                        <input name="Gr12_A1" class="input numeric-input" id="Gr12_A1"
-                                            placeholder="Enter Grade" value="<?php echo $admissionData['Gr12_A1']; ?>"
-                                            readonly>
-
-                                    </div>
-                                    <div class="form-group"> <!-- Gr12_A2 -->
-                                        <label class="small-label" for="Gr12_A2">2nd SEM</label>
-                                        <input name="Gr12_A2" class="input numeric-input" autocomplete="off"
-                                            id="Gr12_A2" placeholder="Enter Grade"
-                                            value="<?php echo $admissionData['Gr12_A2']; ?>" readonly>
-                                    </div>
-                                    <div class="form-group"> <!-- Gr12_A3 -->
-                                        <label class="small-label" for="Gr12_A3">3rd SEM</label>
-                                        <input name="Gr12_A3" class="input numeric-input" autocomplete="off"
-                                            id="Gr12_A3" placeholder="Enter Grade"
-                                            value="<?php echo $admissionData['Gr12_A3']; ?>" readonly>
-
-                                    </div>
-                                    <div class="form-group"> <!-- Gr12_GWA -->
-                                        <label class="small-label" for="Gr12_GWA">GWA</label>
-                                        <input name="Gr12_GWA" class="input numeric-input" autocomplete="off"
-                                            id="Gr12_GWA" placeholder="Enter Grade"
-                                            value="<?php echo $admissionData['Gr12_GWA']; ?>" readonly>
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="Subjects" style="display: none;">
+                            <div class="" style="display: none;">
                                 <p id="toggleSubjects">Other Subjects</p>
                                 <br>
                                 <div class="core_subject">
@@ -1064,7 +1311,8 @@ $stmt->close();
                                                 value="<?php echo $admissionData['English_Oral_Communication_Grade']; ?>"
                                                 readonly>
                                         </div>
-                                        <div class="form-group"> <!-- English_Reading_Writing_Grade -->
+                                        <div class="form-group">
+                                            <!-- English_Reading_Writing_Grade -->
                                             <label class="small-label" for="English_Reading_Writing_Grade">Reading and
                                                 Writing Skills</label>
                                             <input name="English_Reading_Writing_Grade" class="input numeric-input"
@@ -1073,7 +1321,8 @@ $stmt->close();
                                                 value="<?php echo $admissionData['English_Reading_Writing_Grade']; ?>"
                                                 readonly>
                                         </div>
-                                        <div class="form-group"> <!-- English_Academic_Grade -->
+                                        <div class="form-group">
+                                            <!-- English_Academic_Grade -->
                                             <label class="small-label" for="English_Academic_Grade">Academic and
                                                 Professional Purposes</label>
                                             <input name="English_Academic_Grade" class="input numeric-input"
@@ -1157,7 +1406,8 @@ $stmt->close();
                                                 value="<?php echo $admissionData['Science_Earth_Science_Grade']; ?>"
                                                 readonly>
                                         </div>
-                                        <div class="form-group"> <!-- Science_Earth_and_Life_Science_Grade -->
+                                        <div class="form-group">
+                                            <!-- Science_Earth_and_Life_Science_Grade -->
                                             <label class="small-label" for="Science_Earth_and_Life_Science_Grade">Earth
                                                 and Life Science</label>
                                             <input name="Science_Earth_and_Life_Science_Grade"
@@ -1166,7 +1416,8 @@ $stmt->close();
                                                 value="<?php echo $admissionData['Science_Earth_and_Life_Science_Grade']; ?>"
                                                 readonly>
                                         </div>
-                                        <div class="form-group"> <!-- Science_Physical_Science_Grade -->
+                                        <div class="form-group">
+                                            <!-- Science_Physical_Science_Grade -->
                                             <label class="small-label"
                                                 for="Science_Physical_Science_Grade">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
                                                 Physical Science</label>
@@ -1176,7 +1427,8 @@ $stmt->close();
                                                 value="<?php echo $admissionData['Science_Physical_Science_Grade']; ?>"
                                                 readonly>
                                         </div>
-                                        <div class="form-group"> <!-- Science_Disaster_Readiness_Grade -->
+                                        <div class="form-group">
+                                            <!-- Science_Disaster_Readiness_Grade -->
                                             <label class="small-label" for="Science_Disaster_Readiness_Grade">DRRR for
                                                 STEM and GAS strands</label>
                                             <input name="Science_Disaster_Readiness_Grade" class="input numeric-input"
@@ -1303,89 +1555,14 @@ $stmt->close();
                                     </div>
                                 </div>
                             </div>
-                            <div class="Transferee" style="display: none;">
-                                <h2> Transferee</h2>
-                            </div>
 
 
-                            <div class="ALS" style="display: none;">
-                                <h2> ALS/PEPT Completer </h2>
-                                <p class="personal_information">STANDARD SCORE OF 95% OR HIGHER</p>
-                                <div class="form-container2">
-                                    <div class="form-group">
-                                        <!-- ALS_English -->
-                                        <label class="small-label" for="ALS_English">English</label>
-                                        <input name="ALS_English" class="input numeric-input" autocomplete="off"
-                                            id="ALS_English" placeholder="Enter Subject"
-                                            value="<?php echo $admissionData['ALS_English']; ?>" readonly>
-                                    </div>
 
-                                    <div class="form-group">
-                                        <!-- ALS_English -->
-                                        <label class="small-label" for="ALS_Math">Math</label>
-                                        <input name="ALS_Math" class="input numeric-input" autocomplete="off"
-                                            id="ALS_Math" placeholder="Enter Grade"
-                                            value="<?php echo $admissionData['ALS_Math']; ?>" readonly>
-                                    </div>
-                                </div>
-                            </div>
 
-                            <div class="HS-Graduate" style="display: none;">
-                                <h2> School (Old Curriculum) Graduate </h2>
-                                <p class="personal_information">At Least 86% for Board Program, No grade requirement for
-                                    Non-Board Program</p>
-                                <div class="form-container2">
-                                    <div class="form-group">
-                                        <!-- Old_HS_English_Grade -->
-                                        <label class="small-label" for="Old_HS_English_Grade">English</label>
-                                        <input name="Old_HS_English_Grade" class="input numeric-input"
-                                            autocomplete="off" id="Old_HS_English_Grade" placeholder="Enter Grade"
-                                            value="<?php echo $admissionData['Old_HS_English_Grade']; ?>" readonly>
-                                    </div>
-                                    <div class="form-group">
-                                        <!-- Old_HS_Math_Grade -->
-                                        <label class="small-label" for="Old_HS_Math_Grade">Math</label>
-                                        <input name="Old_HS_Math_Grade" class="input numeric-input" autocomplete="off"
-                                            id="Old_HS_Math_Grade" placeholder="Enter Grade"
-                                            value="<?php echo $admissionData['Old_HS_Math_Grade']; ?>" readonly>
-                                    </div>
-                                    <div class="form-group">
-                                        <!-- Old_HS_Science_Grade -->
-                                        <label class="small-label" for="Old_HS_Science_Grade">Science</label>
-                                        <input name="Old_HS_Science_Grade" class="input numeric-input"
-                                            autocomplete="off" id="Old_HS_Science_Grade" placeholder="Enter Grade"
-                                            value="<?php echo $admissionData['Old_HS_Science_Grade']; ?>" readonly>
-                                    </div>
 
-                                </div>
-                            </div>
 
-                            <div class="2nd-degree" style="display: none;">
-                                <h2> Second Degree</h2>
 
-                            </div>
-                            <div class="GWA-OTAS" style="display: none;">
-                                <div class="form-container2">
-                                    <div class="form-group"> <!-- GWA_OTAS -->
-                                        <label class="small-label" for="GWA_OTAS">Average</label>
-                                        <input name="GWA_OTAS" class="input numeric-input" autocomplete="off"
-                                            id="GWA_OTAS" placeholder="Enter Grade"
-                                            value="<?php echo $admissionData['GWA_OTAS']; ?>" readonly>
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="test">
-                                <h2>Admission Test Score</h2>
-                                <div class="form-container2">
-                                    <div class="form-group"> <!-- OSS_Admission_Test_Score -->
-                                        <label class="small-label" for="OSS_Admission_Test_Score">Admission Test
-                                            Score</label>
-                                        <input name="OSS_Admission_Test_Score" class="input numeric-input"
-                                            autocomplete="off" id="OSS_Admission_Test_Score" placeholder="Enter Grade"
-                                            value="<?php echo $admissionData['OSS_Admission_Test_Score']; ?>" readonly>
-                                    </div>
-                                </div>
-                            </div>
+
                             <div class="Remarks">
                                 <h2>Remarks</h2>
 
@@ -1419,8 +1596,10 @@ $stmt->close();
                                             style="white-space: nowrap;">Result as per admission policy</label>
                                         <select name="Personnel_Result" class="input" id="Personnel_Result">
                                             <option value="" disabled selected>Select qualification</option>
-                                            <option value="NOA">NOA</option>
-                                            <option value="NOR(Possible Qualifier)">NOR(Possible Qualifier)</option>
+                                            <option value="NOA(Admitted-Qualified)">NOA(Admitted-Qualified)</option>
+                                            <option value="NOA(Admitted-Not Qualified)">NOA(Admitted-Not Qualified)
+                                            </option>
+                                            <option value="NOR(Possible Qualifier-Board)">NOR(PQ-B)</option>
                                             <option value="NOR(Possible Qualifier-Non-Board)">NOR(PQ-NB)</option>
 
                                             <option value="NOR(Not Qualified)">NOR(Not Qualified)</option>
@@ -1430,18 +1609,18 @@ $stmt->close();
                                 </div>
 
                                 <label class="small-label" for="Requirements_Remarks"
-                                    style="white-space: nowrap;">Remarks From the Personnel</label>
+                                    style="white-space: nowrap;">Remarks</label>
                                 <textarea name="Requirements_Remarks" placeholder="Enter remarks..."
                                     class="input auto-expand"
                                     id="Requirements_Remarks"><?php echo $admissionData['Requirements_Remarks']; ?></textarea>
                                 <label class="small-label" for="OSS_Remarks" style="white-space: nowrap;">Remarks From
                                     the
-                                    OSS</label>
+                                    OSS Personnel</label>
                                 <textarea name="OSS_Remarks" placeholder="Enter remarks..." class="input auto-expand"
                                     id="OSS_Remarks" readonly><?php echo $admissionData['OSS_Remarks']; ?></textarea>
                                 <div class="form-group">
                                     <label class="small-label" for="Final_Remarks" style="white-space: nowrap;">Remarks
-                                        from the staff/faculty</label>
+                                        from the College Personnel </label>
                                     <textarea name="Final_Remarks" placeholder="Enter remarks..."
                                         class="input auto-expand" id="Final_Remarks"
                                         readonly><?php echo $admissionData['Final_Remarks']; ?></textarea>
@@ -1456,7 +1635,7 @@ $stmt->close();
 
                     </div>
 
-                  
+
                 </div>
             </div>
             </div>
@@ -1480,8 +1659,6 @@ $stmt->close();
 
 
     <script>
-
-
         function confirmSubmission() {
             document.getElementById("confirmationDialoga").style.display = "block";
             document.getElementById("confirmationDialoga").dataset.formId = "updateProfileForm";
@@ -1508,7 +1685,8 @@ $stmt->close();
 
             // If a tab was previously selected, show its content
             if (masterlistTab) {
-                $('#' + masterlistTab).prop('checked', true); // Check the radio button corresponding to the selected tab
+                $('#' + masterlistTab).prop('checked',
+                    true); // Check the radio button corresponding to the selected tab
                 $('.tab-content').hide(); // Hide all tab contents
                 $('#content' + masterlistTab.substr(3)).show(); // Show the content of the selected tab
             } else {
@@ -1542,7 +1720,8 @@ $stmt->close();
 
             $('.editRow').click(function (event) {
                 // Check if the click target is not a button, checkbox, or its child elements
-                if (!$(event.target).is('button') && !$(event.target).is('i') && !$(event.target).is(':checkbox')) {
+                if (!$(event.target).is('button') && !$(event.target).is('i') && !$(event.target).is(
+                    ':checkbox')) {
                     // Get the 'data-id' attribute from the clicked row
                     var userId = $(this).data('id');
 
@@ -1575,7 +1754,7 @@ $stmt->close();
             function populateForm(userId) {
                 // Send an AJAX request to fetch the user data based on the user ID
                 $.ajax({
-                    url: '../personnel/Personnel_fetchStudentdata.php', // replace with the actual URL for fetching user data
+                    url: 'Personnel_fetchStudentdata.php', // replace with the actual URL for fetching user data
                     type: 'POST',
                     data: {
                         userId: userId
@@ -1584,78 +1763,124 @@ $stmt->close();
                     success: function (response) {
                         $('#applicantPicture').attr('src', response.id_picture);
                         $('#updateProfileForm input[name="Gr11_A1"]').val(response.Gr11_A1);
-                        $('#updateProfileForm input[name="academic_classification"]').val(response.academic_classification);
+                        $('#updateProfileForm input[name="academic_classification"]').val(response
+                            .academic_classification);
                         $('#updateProfileForm input[name="college"]').val(response.college);
                         $('#updateProfileForm input[name="id"]').val(response.id);
-                        $('#updateProfileForm input[name="high_school_name_address"]').val(response.high_school_name_address);
+                        $('#updateProfileForm input[name="high_school_name_address"]').val(response
+                            .high_school_name_address);
                         $('#updateProfileForm input[name="lrn"]').val(response.lrn);
-                        $('#updateProfileForm input[name="degree_applied"]').val(response.degree_applied);
-                        $('#updateProfileForm input[name="nature_of_degree"]').val(response.nature_of_degree);
+                        $('#updateProfileForm input[name="degree_applied"]').val(response
+                            .degree_applied);
+                        $('#updateProfileForm input[name="nature_of_degree"]').val(response
+                            .nature_of_degree);
                         $('#updateProfileForm input[name="Gr11_A1"]').val(response.Gr11_A1);
                         $('#updateProfileForm input[name="Gr11_A2"]').val(response.Gr11_A2);
                         $('#updateProfileForm input[name="Gr11_A3"]').val(response.Gr11_A3);
                         $('#updateProfileForm input[name="Gr11_GWA"]').val(response.Gr11_GWA);
                         $('#updateProfileForm input[name="GWA_OTAS"]').val(response.GWA_OTAS);
-                        $('#updateProfileForm select[name="nature_qualification"]').val(response.nature_qualification);
-                        $('#updateProfileForm select[name="Personnel_Result"]').val(response.Personnel_Result);
-                        $('#updateProfileForm select[name="Degree_Remarks"]').val(response.Degree_Remarks);
-                        $('#updateProfileForm input[name="English_Subject_1"]').val(response.English_Subject_1);
-                        $('#updateProfileForm input[name="English_Subject_2"]').val(response.English_Subject_2);
-                        $('#updateProfileForm input[name="English_Subject_3"]').val(response.English_Subject_3);
-                        $('#updateProfileForm input[name="Science_Subject_1"]').val(response.Science_Subject_1);
-                        $('#updateProfileForm input[name="Science_Subject_2"]').val(response.Science_Subject_2);
-                        $('#updateProfileForm input[name="Science_Subject_3"]').val(response.Science_Subject_3);
-                        $('#updateProfileForm input[name="Math_Subject_1"]').val(response.Math_Subject_1);
-                        $('#updateProfileForm input[name="Math_Subject_2"]').val(response.Math_Subject_2);
+                        $('#updateProfileForm select[name="nature_qualification"]').val(response
+                            .nature_qualification);
+                        $('#updateProfileForm select[name="Personnel_Result"]').val(response
+                            .Personnel_Result);
+                        $('#updateProfileForm select[name="Degree_Remarks"]').val(response
+                            .Degree_Remarks);
+                        $('#updateProfileForm input[name="English_Subject_1"]').val(response
+                            .English_Subject_1);
+                        $('#updateProfileForm input[name="English_Subject_2"]').val(response
+                            .English_Subject_2);
+                        $('#updateProfileForm input[name="English_Subject_3"]').val(response
+                            .English_Subject_3);
+                        $('#updateProfileForm input[name="Science_Subject_1"]').val(response
+                            .Science_Subject_1);
+                        $('#updateProfileForm input[name="Science_Subject_2"]').val(response
+                            .Science_Subject_2);
+                        $('#updateProfileForm input[name="Science_Subject_3"]').val(response
+                            .Science_Subject_3);
+                        $('#updateProfileForm input[name="Math_Subject_1"]').val(response
+                            .Math_Subject_1);
+                        $('#updateProfileForm input[name="Math_Subject_2"]').val(response
+                            .Math_Subject_2);
                         $('#updateProfileForm input[name="Gr12_A1"]').val(response.Gr12_A1);
                         $('#updateProfileForm input[name="Gr12_A2"]').val(response.Gr12_A2);
                         $('#updateProfileForm input[name="Gr12_A3"]').val(response.Gr12_A3);
                         $('#updateProfileForm input[name="Gr12_GWA"]').val(response.Gr12_GWA);
-                        $('#updateProfileForm input[name="English_Oral_Communication_Grade"]').val(response.English_Oral_Communication_Grade);
-                        $('#updateProfileForm input[name="English_Reading_Writing_Grade"]').val(response.English_Reading_Writing_Grade);
-                        $('#updateProfileForm input[name="English_Academic_Grade"]').val(response.English_Academic_Grade);
-                        $('#updateProfileForm input[name="English_Other_Courses_Grade"]').val(response.English_Other_Courses_Grade);
-                        $('#updateProfileForm input[name="English_Other_Courses_Grade_2"]').val(response.English_Other_Courses_Grade_2);
-                        $('#updateProfileForm input[name="English_Other_Courses_Grade_3"]').val(response.English_Other_Courses_Grade_3);
-                        $('#updateProfileForm input[name="Science_Earth_Science_Grade"]').val(response.Science_Earth_Science_Grade);
-                        $('#updateProfileForm input[name="academic_classification"]').val(response.academic_classification);
-                        $('#updateProfileForm input[name="Science_Earth_and_Life_Science_Grade"]').val(response.Science_Earth_and_Life_Science_Grade);
-                        $('#updateProfileForm input[name="Science_Physical_Science_Grade"]').val(response.Science_Physical_Science_Grade);
-                        $('#updateProfileForm input[name="Science_Disaster_Readiness_Grade"]').val(response.Science_Disaster_Readiness_Grade);
-                        $('#updateProfileForm input[name="Science_Other_Courses_Grade"]').val(response.Science_Other_Courses_Grade);
-                        $('#updateProfileForm input[name="Science_Other_Courses_Grade_2"]').val(response.Science_Other_Courses_Grade_2);
-                        $('#updateProfileForm input[name="Science_Other_Courses_Grade_3"]').val(response.Science_Other_Courses_Grade_3);
-                        $('#updateProfileForm input[name="Math_General_Mathematics_Grade"]').val(response.Math_General_Mathematics_Grade);
-                        $('#updateProfileForm input[name="Math_Statistics_and_Probability_Grade"]').val(response.Math_Statistics_and_Probability_Grade);
-                        $('#updateProfileForm input[name="Math_Other_Courses_Grade"]').val(response.Math_Other_Courses_Grade);
-                        $('#updateProfileForm input[name="Math_Other_Courses_Grade_2"]').val(response.Math_Other_Courses_Grade_2);
-                        $('#updateProfileForm input[name="Old_HS_English_Grade"]').val(response.Old_HS_English_Grade);
-                        $('#updateProfileForm input[name="Old_HS_Math_Grade"]').val(response.Old_HS_Math_Grade);
-                        $('#updateProfileForm input[name="Old_HS_Science_Grade"]').val(response.Old_HS_Science_Grade);
+                        $('#updateProfileForm input[name="English_Oral_Communication_Grade"]').val(
+                            response.English_Oral_Communication_Grade);
+                        $('#updateProfileForm input[name="English_Reading_Writing_Grade"]').val(response
+                            .English_Reading_Writing_Grade);
+                        $('#updateProfileForm input[name="English_Academic_Grade"]').val(response
+                            .English_Academic_Grade);
+                        $('#updateProfileForm input[name="English_Other_Courses_Grade"]').val(response
+                            .English_Other_Courses_Grade);
+                        $('#updateProfileForm input[name="English_Other_Courses_Grade_2"]').val(response
+                            .English_Other_Courses_Grade_2);
+                        $('#updateProfileForm input[name="English_Other_Courses_Grade_3"]').val(response
+                            .English_Other_Courses_Grade_3);
+                        $('#updateProfileForm input[name="Science_Earth_Science_Grade"]').val(response
+                            .Science_Earth_Science_Grade);
+                        $('#updateProfileForm input[name="academic_classification"]').val(response
+                            .academic_classification);
+                        $('#updateProfileForm input[name="Science_Earth_and_Life_Science_Grade"]').val(
+                            response.Science_Earth_and_Life_Science_Grade);
+                        $('#updateProfileForm input[name="Science_Physical_Science_Grade"]').val(
+                            response.Science_Physical_Science_Grade);
+                        $('#updateProfileForm input[name="Science_Disaster_Readiness_Grade"]').val(
+                            response.Science_Disaster_Readiness_Grade);
+                        $('#updateProfileForm input[name="Science_Other_Courses_Grade"]').val(response
+                            .Science_Other_Courses_Grade);
+                        $('#updateProfileForm input[name="Science_Other_Courses_Grade_2"]').val(response
+                            .Science_Other_Courses_Grade_2);
+                        $('#updateProfileForm input[name="Science_Other_Courses_Grade_3"]').val(response
+                            .Science_Other_Courses_Grade_3);
+                        $('#updateProfileForm input[name="Math_General_Mathematics_Grade"]').val(
+                            response.Math_General_Mathematics_Grade);
+                        $('#updateProfileForm input[name="Math_Statistics_and_Probability_Grade"]').val(
+                            response.Math_Statistics_and_Probability_Grade);
+                        $('#updateProfileForm input[name="Math_Other_Courses_Grade"]').val(response
+                            .Math_Other_Courses_Grade);
+                        $('#updateProfileForm input[name="Math_Other_Courses_Grade_2"]').val(response
+                            .Math_Other_Courses_Grade_2);
+                        $('#updateProfileForm input[name="Old_HS_English_Grade"]').val(response
+                            .Old_HS_English_Grade);
+                        $('#updateProfileForm input[name="Old_HS_Math_Grade"]').val(response
+                            .Old_HS_Math_Grade);
+                        $('#updateProfileForm input[name="Old_HS_Science_Grade"]').val(response
+                            .Old_HS_Science_Grade);
                         $('#updateProfileForm input[name="ALS_English"]').val(response.ALS_English);
                         $('#updateProfileForm input[name="ALS_Math"]').val(response.ALS_Math);
 
                         $('#updateProfileForm input[name="Requirements"]').val(response.Requirements);
-                        $('#updateProfileForm input[name="OSS_Endorsement_Slip"]').val(response.OSS_Endorsement_Slip);
-                        $('#updateProfileForm input[name="OSS_Admission_Test_Score"]').val(response.OSS_Admission_Test_Score);
+                        $('#updateProfileForm input[name="OSS_Endorsement_Slip"]').val(response
+                            .OSS_Endorsement_Slip);
+                        $('#updateProfileForm input[name="OSS_Admission_Test_Score"]').val(response
+                            .OSS_Admission_Test_Score);
                         $('#updateProfileForm input[name="OSS_Remarks"]').val(response.OSS_Remarks);
-                        $('#updateProfileForm input[name="Qualification_Nature_Degree"]').val(response.Qualification_Nature_Degree);
-                        $('#updateProfileForm textarea[name="Requirements_Remarks"]').val(response.Requirements_Remarks);
+                        $('#updateProfileForm input[name="Qualification_Nature_Degree"]').val(response
+                            .Qualification_Nature_Degree);
+                        $('#updateProfileForm textarea[name="Requirements_Remarks"]').val(response
+                            .Requirements_Remarks);
                         $('#updateProfileForm textarea[name="OSS_Remarks"]').val(response.OSS_Remarks);
 
-                        $('#updateProfileForm input[name="Interview_Result"]').val(response.Interview_Result);
+                        $('#updateProfileForm input[name="Interview_Result"]').val(response
+                            .Interview_Result);
                         $('#updateProfileForm input[name="Endorsed"]').val(response.Endorsed);
-                        $('#updateProfileForm input[name="Confirmed_Slot"]').val(response.Confirmed_Slot);
-                        $('#updateProfileForm textarea[name="Final_Remarks"]').val(response.Final_Remarks);
-                        $('#updateProfileForm input[name="degree_applied"]').val(response.degree_applied);
-                        $('#updateProfileForm input[name="nature_of_degree"]').val(response.nature_of_degree);
+                        $('#updateProfileForm input[name="Confirmed_Slot"]').val(response
+                            .Confirmed_Slot);
+                        $('#updateProfileForm textarea[name="Final_Remarks"]').val(response
+                            .Final_Remarks);
+                        $('#updateProfileForm input[name="degree_applied"]').val(response
+                            .degree_applied);
+                        $('#updateProfileForm input[name="nature_of_degree"]').val(response
+                            .nature_of_degree);
 
                         $('#updateProfileForm input[name="college"]').val(response.college);
                         $('#applicantPicture').attr('src', response.id_picture);
                         $('#updateProfileForm2 input[name="Name"]').val(response.Name);
                         $('#updateProfileForm2 input[name="Middle_Name"]').val(response.Middle_Name);
                         $('#updateProfileForm2 input[name="Last_Name"]').val(response.Last_Name);
-                        $('#updateProfileForm2 input[name="applicant_number"]').val(response.applicant_number);
+                        $('#updateProfileForm2 input[name="applicant_number"]').val(response
+                            .applicant_number);
                         $('#updateProfileForm2 input[name="birthplace"]').val(response.birthplace);
                         $('#updateProfileForm2 select[name="gender"]').val(response.gender);
                         $('#updateProfileForm2 input[name="birthdate"]').val(response.birthdate);
@@ -1663,31 +1888,43 @@ $stmt->close();
                         $('#updateProfileForm2 input[name="civil_status"]').val(response.civil_status);
                         $('#updateProfileForm2 input[name="citizenship"]').val(response.citizenship);
                         $('#updateProfileForm2 input[name="nationality"]').val(response.nationality);
-                        $('#updateProfileForm input[name="Requirements_Remarks"]').val(response.Requirements_Remarks);
+                        $('#updateProfileForm input[name="Requirements_Remarks"]').val(response
+                            .Requirements_Remarks);
                         $('#updateProfileForm input[name="Requirements"]').val(response.Requirements);
                         $('#updateProfileForm2 input[name="phone_number"]').val(response.phone_number);
                         $('#updateProfileForm2 input[name="facebook"]').val(response.facebook);
                         $('#updateProfileForm2 input[name="email"]').val(response.email);
-                        $('#updateProfileForm2 input[name="contact_person_1"]').val(response.contact_person_1);
-                        $('#updateProfileForm2 input[name="contact_person_1_mobile"]').val(response.contact1_phone);
-                        $('#updateProfileForm2 select[name="relationship_1"]').val(response.relationship_1);
-                        $('#updateProfileForm2 input[name="contact_person_2"]').val(response.contact_person_2);
-                        $('#updateProfileForm2 input[name="contact_person_2_mobile"]').val(response.contact_person_2_mobile);
-                        $('#updateProfileForm2 select[name="relationship_2"]').val(response.relationship_2);
-                        $('#updateProfileForm2 select[name="academic_classification"]').val(response.academic_classification);
+                        $('#updateProfileForm2 input[name="contact_person_1"]').val(response
+                            .contact_person_1);
+                        $('#updateProfileForm2 input[name="contact_person_1_mobile"]').val(response
+                            .contact1_phone);
+                        $('#updateProfileForm2 select[name="relationship_1"]').val(response
+                            .relationship_1);
+                        $('#updateProfileForm2 input[name="contact_person_2"]').val(response
+                            .contact_person_2);
+                        $('#updateProfileForm2 input[name="contact_person_2_mobile"]').val(response
+                            .contact_person_2_mobile);
+                        $('#updateProfileForm2 select[name="relationship_2"]').val(response
+                            .relationship_2);
+                        $('#updateProfileForm2 select[name="academic_classification"]').val(response
+                            .academic_classification);
 
                         $('#updateProfileForm2 select[name="college"]').val(response.college);
                         $('#updateProfileForm2 input[name="id"]').val(response.id);
-                        $('#updateProfileForm2 input[name="high_school_name_address"]').val(response.high_school_name_address);
+                        $('#updateProfileForm2 input[name="high_school_name_address"]').val(response
+                            .high_school_name_address);
                         $('#updateProfileForm2 input[name="lrn"]').val(response.lrn);
-                        $('#updateProfileForm2 select[name="degree_applied"]').val(response.degree_applied);
-                        $('#updateProfileForm2 select[name="nature_of_degree"]').val(response.nature_of_degree);
+                        $('#updateProfileForm2 select[name="degree_applied"]').val(response
+                            .degree_applied);
+                        $('#updateProfileForm2 select[name="nature_of_degree"]').val(response
+                            .nature_of_degree);
                         var academicClassification = response.academic_classification;
 
 
 
                         // Show the relevant div based on academic classification
-                        $('.SHS-Average,.Gr-12-Average, .ALS, .Subjects, .GWA-OTAS, .Transferee, .Gr-12, .HS-Graduate, .2nd-degree, .Remarks').hide(); // Hide all divs first
+                        $('.SHS-Average,.Gr-12-Average, .ALS, .Subjects, .GWA-OTAS, .Transferee, .Gr-12, .HS-Graduate, .2nd-degree, .Remarks')
+                            .hide(); // Hide all divs first
                         if (academicClassification === 'Senior High School Graduate') {
                             $('.Gr-12-Average, .Subjects,.Remarks ').show();
                         } else if (academicClassification === 'Currently enrolled as Grade 12') {
@@ -1745,7 +1982,8 @@ $stmt->close();
                         success: function (response) {
                             if (response.success) {
                                 // Update the status in the table cell
-                                $('[data-id="' + id + '"] [data-field="appointment_status"]').text(status);
+                                $('[data-id="' + id + '"] [data-field="appointment_status"]').text(
+                                    status);
                                 showToast(response.message, 'success');
                             } else {
                                 showToast(response.message, 'error');
@@ -1854,6 +2092,7 @@ $stmt->close();
                 checkbox.checked = document.getElementById('selectAllCheckbox').checked;
             });
         });
+
         function hideModal(modalId) {
             document.getElementById(modalId).style.display = 'none';
         }
@@ -1888,7 +2127,8 @@ $stmt->close();
                 if (xhr.readyState === XMLHttpRequest.DONE) {
                     if (xhr.status === 200) {
                         // Show success alert
-                        document.getElementById('alertMessage').innerText = 'Sent Successfully to the Applicants!';
+                        document.getElementById('alertMessage').innerText =
+                            'Sent Successfully to the Applicants!';
                         document.getElementById('alertModal').style.display = 'block';
                         // Hide success message after 3 seconds
                         setTimeout(function () {
@@ -1896,14 +2136,17 @@ $stmt->close();
                         }, 3000);
                     } else {
                         // Show error alert
-                        document.getElementById('alertMessage').innerText = 'Failed to send to the Appliacnts. Please try again later.';
+                        document.getElementById('alertMessage').innerText =
+                            'Failed to send to the Appliacnts. Please try again later.';
                         document.getElementById('alertModal').style.display = 'block';
                     }
                 }
             };
             xhr.open('POST', 'Personnel_Send_Result.php');
             xhr.setRequestHeader('Content-Type', 'application/json');
-            xhr.send(JSON.stringify({ selectedRowIds: selectedRowIds }));
+            xhr.send(JSON.stringify({
+                selectedRowIds: selectedRowIds
+            }));
         });
         var cancelButtons = document.querySelectorAll('.cancel');
         cancelButtons.forEach(function (button) {
@@ -1932,10 +2175,238 @@ $stmt->close();
                 hideModal(button.closest('.modal').id);
             });
         });
+        // JavaScript for hovering effect to display English_Subject_1 data
+        const oralCommunicationCells = document.querySelectorAll('.editRow td[data-english-subject]');
+        oralCommunicationCells.forEach(cell => {
+            cell.addEventListener('mouseenter', function () {
+                const isOtherCoursesGrade = this.classList.contains('other_subjects');
+                if (isOtherCoursesGrade) {
+                    const englishSubject1 = this.getAttribute('data-english-subject');
+                    const tooltip = document.createElement('div');
+                    tooltip.classList.add('tooltip');
+                    tooltip.textContent = englishSubject1;
+                    document.body.appendChild(tooltip);
+                    const rect = this.getBoundingClientRect();
+                    tooltip.style.top = (rect.top + window.pageYOffset - tooltip.offsetHeight) + 'px';
+                    tooltip.style.left = (rect.left + window.pageXOffset + (this.offsetWidth - tooltip
+                        .offsetWidth) / 2) + 'px';
+                }
+            });
+            cell.addEventListener('mouseleave', function () {
+                const tooltip = document.querySelector('.tooltip');
+                if (tooltip) {
+                    tooltip.remove();
+                }
+            });
+        });
+        // JavaScript for hovering effect to display English_Subject_1 data
+        const scienceCells = document.querySelectorAll('.editRow td[data-science-subject]');
+        scienceCells.forEach(cell => {
+            cell.addEventListener('mouseenter', function () {
+                const isOtherCoursesGrade = this.classList.contains('other_subjects');
+                if (isOtherCoursesGrade) {
+                    const scienceSubject = this.getAttribute('data-science-subject');
+                    const tooltip = document.createElement('div');
+                    tooltip.classList.add('tooltip');
+                    tooltip.textContent = scienceSubject;
+                    document.body.appendChild(tooltip);
+                    const rect = this.getBoundingClientRect();
+                    tooltip.style.top = (rect.top + window.pageYOffset - tooltip.offsetHeight) + 'px';
+                    tooltip.style.left = (rect.left + window.pageXOffset + (this.offsetWidth - tooltip
+                        .offsetWidth) / 2) + 'px';
+                }
+            });
+            cell.addEventListener('mouseleave', function () {
+                const tooltip = document.querySelector('.tooltip');
+                if (tooltip) {
+                    tooltip.remove();
+                }
+            });
+        });
+        // JavaScript for hovering effect to display Math Subject data
+        const mathCells = document.querySelectorAll('.editRow td[data-math-subject]');
+        mathCells.forEach(cell => {
+            cell.addEventListener('mouseenter', function () {
+                const isOtherCoursesGrade = this.classList.contains('other_subjects');
+                if (isOtherCoursesGrade) {
+                    const mathSubject = this.getAttribute('data-math-subject');
+                    const tooltip = document.createElement('div');
+                    tooltip.classList.add('tooltip');
+                    tooltip.textContent = mathSubject;
+                    document.body.appendChild(tooltip);
+                    const rect = this.getBoundingClientRect();
+                    tooltip.style.top = (rect.top + window.pageYOffset - tooltip.offsetHeight) + 'px';
+                    tooltip.style.left = (rect.left + window.pageXOffset + (this.offsetWidth - tooltip
+                        .offsetWidth) / 2) + 'px';
+                }
+            });
+            cell.addEventListener('mouseleave', function () {
+                const tooltip = document.querySelector('.tooltip');
+                if (tooltip) {
+                    tooltip.remove();
+                }
+            });
+        });
 
+        $(document).ready(function () {
+            var table = new DataTable('#studentTable', {
+                searching: false,
+                paging: false,
 
+                info: false,
+                select: true,
+                order: [
+                    [0, 'asc']
+                ], // Default sorting by 'Applicant Number'
+                dom: 'frtip', // No default buttons in DataTable
+                columnDefs: [{
+                    targets: [0], // Column index (if '#' should not be sortable)
+                    orderable: false // Disable sorting for this column
+                },
+                {
+                    targets: [10], // Example column where sorting is disabled
+                    orderable: false // Disable sorting
+                },
+                ],
+            });
+            $('#studentTable tbody').on('click', 'tr', function () {
+                $(this).toggleClass('selected'); // Toggle selection class
+            });
+            // Excel export button (not displayed)
+            var excelButton = new $.fn.dataTable.Buttons(table, {
+                buttons: [{
+                    extend: 'excelHtml5',
+                    title: 'OUR Masterlist', // Optional Excel title
+                    filename: 'OUR Masterlist', // Optional file name when saving
+                }],
+            });
+
+            table.buttons(excelButton);
+
+            // Trigger Excel export when the custom button is clicked
+            $('#excelExportButton').click(function (e) {
+                e.preventDefault(); // Prevent default link behavior
+                table.buttons(0, 0).trigger(); // Trigger the Excel export
+            });
+
+            // Apply custom styling when the sorted column changes
+            table.on('order.dt', function () {
+                $('#studentTable tbody td').css('background-color', ''); // Reset backgrounds
+
+                var order = table.order()[0]; // Get sorting information
+                var sortedColumnIndex = order[0]; // Column index of the sorted column
+
+                $('#studentTable tbody tr').each(function () {
+                    $(this).children().eq(sortedColumnIndex).css('background-color', 'lightgreen');
+                });
+            });
+
+            table.trigger('order.dt'); // Apply initial styling
+        });
     </script>
 
+    <style>
+        /* Change the default background color for selected rows */
+        .dataTables_wrapper .dataTables_paginate .paginate_button.current,
+        .dataTables_wrapper .dataTables_paginate .paginate_button:hover,
+        table.dataTable tbody tr.selected,
+        table.dataTable tbody tr:hover,
+        .dataTables_wrapper .dataTables_filter input,
+        .dataTables_wrapper .dataTables_filter input:focus {
+            background-color: lightgray !important;
+            /* Change the default background color */
+            color: #000 !important;
+            /* Adjust text color to ensure visibility */
+        }
+
+        #studentTable td,
+        #studentTable th {
+            max-width: 150px;
+            /* Set a maximum width to control text wrapping */
+            white-space: normal;
+            /* Allow text to break into multiple lines */
+            word-wrap: break-word;
+            /* Ensure text wraps within the defined width */
+        }
+
+        /* Default color for unsorted columns */
+        th.sorting {
+            color: black;
+            /* Default color for unsorted columns */
+        }
+
+        /* Color for sorted columns */
+        th.sorting_asc,
+        th.sorting_desc {
+            color: green;
+            /* Color for sorted columns */
+        }
+
+        /* Optional: Custom icons for sorting arrows */
+        th.sorting_asc::after {
+            content: '\2191';
+            /* Up arrow for ascending */
+        }
+
+        th.sorting_desc::after {
+            content: '\2193';
+            /* Down arrow for descending */
+        }
+
+        @media (max-width: 768px) {
+
+            #studentTable th,
+            #studentTable td {
+                font-size: 18em;
+                /* Reduce font size on smaller screens */
+            }
+        }
+
+        /* Ensure proper text alignment */
+        #studentTable th {
+            text-align: center;
+            /* Center-align text in table headers */
+        }
+
+        #studentTable td {
+            text-align: left;
+            /* Left-align text in table body */
+        }
+
+        table.dataTable td {
+            padding: 10px;
+            /* Adjust padding to create space within each cell */
+        }
+
+        /* Add border-spacing between table cells */
+        table {
+            border-spacing: 10px;
+            /* Adds space between cells */
+        }
+
+        .table-data {
+            width: 100%;
+            /* Occupy full width */
+            overflow-x: auto;
+            /* Allow horizontal scrolling for wider tables */
+        }
+
+        /* Set the DataTable's width to ensure it occupies the full width of the parent */
+        #studentTable {
+            width: 100%;
+            /* Ensure full width on page load */
+        }
+
+        /* Adjust font size for smaller screens for better responsiveness */
+        @media (max-width: 768px) {
+
+            #studentTable th,
+            #studentTable td {
+                font-size: 0.8em;
+                /* Smaller font on smaller screens */
+            }
+        }
+    </style>
 
 
     </div>
