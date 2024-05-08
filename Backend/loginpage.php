@@ -90,7 +90,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                     exit();
                 }
             }elseif ($userType == 'admin' || $userType == 'Admin' ) {
-                header("Location: admin/dashboard_admin.php");
+                header("Location: admin/Admin_Dashboard.php");
                 exit();
             }
         } else {

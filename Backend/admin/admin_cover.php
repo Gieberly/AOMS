@@ -2,7 +2,7 @@
 include("../config.php"); 
 include("../includes/functions.php");
 include("../includes/fetch_data.php");
-include('../includesscript.php');
+include('../includes/script.php');
 session_start();
 
 
@@ -50,7 +50,7 @@ $full_name = $name . ' ' . $mname . ' ' . $last_name;
     <div class="box">
         <div class="close">&times;</div>
         <div class="registration-box">
-          <p>Personnel User Manual</p>
+          <p>Admin User Manual</p>
           <!-- Add images here -->
           <img src="../assets/images/personnel/1.png" alt="User's Manual">
           <img src="../assets/images/personnel/2.png" alt="User's Manual">
@@ -142,7 +142,7 @@ $full_name = $name . ' ' . $mname . ' ' . $last_name;
             $current_page = basename($_SERVER['PHP_SELF']);
             if ($current_page === 'admin_masterlist.php') {
             ?>
-                <form action=admin_masterlist.php" method="GET">
+                <form action="admin_masterlist.php" method="GET">
                     <div class="form-input">
                         <input type="search" name="search" placeholder="Search...">
                         <button type="submit" class="search-btn"><i id="searchIcon" class="bx bx-search" onclick="changeIcon()"></i></button>
