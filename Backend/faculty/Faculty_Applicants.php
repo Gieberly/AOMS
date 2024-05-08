@@ -1,9 +1,9 @@
 <?php
-include("Faculty_Cover.php");
 
+include ("Faculty_Cover.php");
+
+// Fetch the user's department
 $userId = $_SESSION['user_id'];
-
-// Fetch user's department
 $fetchDepartmentQuery = "SELECT Department FROM users WHERE id = ?";
 $stmtFetchDepartment = $conn->prepare($fetchDepartmentQuery);
 $stmtFetchDepartment->bind_param("i", $userId);
@@ -12,42 +12,19 @@ $stmtFetchDepartment->bind_result($department);
 $stmtFetchDepartment->fetch();
 $stmtFetchDepartment->close();
 
-// Check if the user's department is a college
-$checkIfCollege = "SELECT COUNT(*) FROM programs WHERE College = ?";
-$stmtCheckIfCollege = $conn->prepare($checkIfCollege);
-$stmtCheckIfCollege->bind_param("s", $department);
-$stmtCheckIfCollege->execute();
-$isCollege = $stmtCheckIfCollege->fetch();
-$stmtCheckIfCollege->close();
+// Check if the department is a college
+$isCollegeQuery = "SELECT COUNT(*) FROM programs WHERE College = ?";
+$stmtIsCollege = $conn->prepare($isCollegeQuery);
+$stmtIsCollege->bind_param("s", $department);
+$stmtIsCollege->execute();
+$stmtIsCollege->bind_result($isCollege);
+$stmtIsCollege->fetch();
+$stmtIsCollege->close();
 
-$allNonBoard = false;
-if ($isCollege) {
-    // Check all courses under the college to see if they are "Non-Board"
-    $fetchCoursesQuery = "SELECT Nature_of_Degree FROM programs WHERE College = ?";
-    $stmtFetchCourses = $conn->prepare($fetchCoursesQuery);
-    $stmtFetchCourses->bind_param("s", $department);
-    $stmtFetchCourses->execute();
-
-    // Bind the result to `Nature_of_Degree`
-    $stmtFetchCourses->bind_result($Nature_of_Degree);
-
-    $isAllNonBoard = true; // Flag to check if all are "Non-Board"
-    while ($stmtFetchCourses->fetch()) {
-        if ($Nature_of_Degree !== 'Non-Board') { // If any course is not "Non-Board"
-            $isAllNonBoard = false;
-            break;
-        }
-    }
-
-    $stmtFetchCourses->close();
-
-    $allNonBoard = $isAllNonBoard;
-}
-
-
-// Fetch relevant courses based on the department
+// Get the relevant courses
 $courses = [];
 if ($isCollege) {
+    // Fetch all courses under the specified college
     $fetchCoursesQuery = "SELECT Courses FROM programs WHERE College = ?";
     $stmtFetchCourses = $conn->prepare($fetchCoursesQuery);
     $stmtFetchCourses->bind_param("s", $department);
@@ -59,10 +36,10 @@ if ($isCollege) {
     }
     $stmtFetchCourses->close();
 } else {
-    $courses[] = $department; // Treat department as a specific course if not a college
+    $courses[] = $department; // If not a college, it's a specific course
 }
 
-// Store the search query in a session variable if it's set
+// Store the search query and filter in session if set
 if (isset($_GET['search'])) {
     $_SESSION['search'] = $_GET['search'];
 }
@@ -73,7 +50,7 @@ if (isset($_GET['filter'])) {
 $search = isset($_SESSION['search']) ? $_SESSION['search'] : '';
 $filter = isset($_SESSION['filter']) ? $_SESSION['filter'] : '';
 
-// Base query with dynamic `IN` clause for multiple courses
+// Base query for multiple or single courses
 $baseQuery = "SELECT *, 
               CASE 
                 WHEN Gr11_GWA IS NOT NULL THEN Gr11_GWA
@@ -90,33 +67,69 @@ $baseQuery = "SELECT *,
                    academic_classification LIKE ? OR 
                    degree_applied LIKE ?)";
 
+// Determine the filter and add specific conditions to the base query
 if ($filter == 'qualified') {
     $fetchStudentListQuery = $baseQuery . " AND Admission_Result = 'NOA(Admitted-Qualified)'";
 } else if ($filter == 'qualifiedNQ') {
     $fetchStudentListQuery = $baseQuery . " AND Admission_Result = 'NOA(Admitted-Not Qualified)'";
 } else if ($filter == 'nor_qualifier') {
-    $fetchStudentListQuery = $baseQuery . " AND (Personnel_Result = 'NOR(Possible Qualifier)' OR Personnel_Result = 'NOR(Possible Qualifier-Non-Board)')";
+    $baseQuery = $baseQuery . " AND (Personnel_Result = 'NOR(Possible Qualifier)' OR Personnel_Result = 'NOR(Possible Qualifier-Non-Board)')";
 } else {
     $fetchStudentListQuery = $baseQuery;
 }
 
-// Create dynamic parameter binding
+// Prepare the statement and bind parameters
 $stmtFetchStudentList = $conn->prepare($fetchStudentListQuery);
 
-$paramTypes = str_repeat('s', count($courses) + 6); // +6 for search parameters
+$paramTypes = str_repeat('s', count($courses) + 6); // For courses + 6 search parameters
 $searchParam = "%$search%";
 $bindVariables = array_merge($courses, array_fill(0, 6, $searchParam));
 
-// Ensure the correct number of parameters and types
 $stmtFetchStudentList->bind_param($paramTypes, ...$bindVariables);
 
 $stmtFetchStudentList->execute();
 $result = $stmtFetchStudentList->get_result();
 $stmtFetchStudentList->close();
 
-// Further processing with $result to display data
-?>
 
+$allNonBoard = false;
+if (!$isCollege) {
+    // If department is a course, check its nature of degree
+    $fetchNatureOfDegreeQuery = "SELECT Nature_of_Degree FROM programs WHERE Courses = ?";
+    $stmtFetchNatureOfDegree = $conn->prepare($fetchNatureOfDegreeQuery);
+    $stmtFetchNatureOfDegree->bind_param("s", $department);
+    $stmtFetchNatureOfDegree->execute();
+    $stmtFetchNatureOfDegree->bind_result($natureOfDegree);
+    $stmtFetchNatureOfDegree->fetch();
+    $stmtFetchNatureOfDegree->close();
+
+    $allNonBoard = ($natureOfDegree === "Non-Board"); // If the department is Non-Board
+} else {
+    // If department is a college, check if it has both Board and Non-Board courses
+    $fetchNatureOfDegreesQuery = "SELECT DISTINCT Nature_of_Degree FROM programs WHERE College = ?";
+    $stmtFetchNatureOfDegrees = $conn->prepare($fetchNatureOfDegreesQuery);
+    $stmtFetchNatureOfDegrees->bind_param("s", $department);
+    $stmtFetchNatureOfDegrees->execute();
+    $stmtFetchNatureOfDegrees->bind_result($distinctNature);
+    
+    $hasBoard = false;
+    $hasNonBoard = false;
+
+    while ($stmtFetchNatureOfDegrees->fetch()) {
+        if ($distinctNature === 'Board') {
+            $hasBoard = true;
+        } else if ($distinctNature === 'Non-Board') {
+            $hasNonBoard = true;
+        }
+    }
+
+    $stmtFetchNatureOfDegrees->close();
+
+    $allNonBoard = !$hasBoard; // True if there's no Board course
+}
+
+// Pass information to JavaScript
+?>
 
 
 
@@ -131,7 +144,9 @@ $stmtFetchStudentList->close();
 
 <body>
 
-
+<script>
+var isNonBoardOnly = <?php echo json_encode($allNonBoard); ?>;
+</script>
     <style>
         .cancel {
             padding: 10px 15px;
@@ -888,7 +903,7 @@ $stmtFetchStudentList->close();
                         <table id="studentTable">
                             <thead id="thead">
                                 <tr>
-                                <?php if (!$allNonBoard): ?>
+
                                     <th colspan="9" style="text-align: center;"></th>
                                     <th style="background-color: Yellow;text-align: center;" class="Board_only"
                                         colspan="3">English</th>
@@ -1212,7 +1227,7 @@ $stmtFetchStudentList->close();
                                 }
                                 ?>
                             </tbody>
-                            <?php endif; ?>
+
                         </table>
                     </div>
 
@@ -1372,11 +1387,11 @@ $stmtFetchStudentList->close();
 
 
 
-   
+
     </div>
 
     <script>
-    
+
 
 
         function confirmSubmission() {
@@ -1710,7 +1725,7 @@ $stmtFetchStudentList->close();
             });
         });
 
-  $(document).ready(function () {
+        $(document).ready(function () {
             $('#sort').click(function () {
                 var column = $('#dropdownMenu').val();
                 if (column === 'gwa') {
@@ -1766,7 +1781,7 @@ $stmtFetchStudentList->close();
             }
         });
 
- // JavaScript for hovering effect to display English_Subject_1 data
+        // JavaScript for hovering effect to display English_Subject_1 data
         const oralCommunicationCells = document.querySelectorAll('.editRow td[data-english-subject]');
         oralCommunicationCells.forEach(cell => {
             cell.addEventListener('mouseenter', function () {
@@ -1836,6 +1851,45 @@ $stmtFetchStudentList->close();
             });
         });
 
+
+        function toggleColumnsVisibility() {
+    // Get all rows from the table
+    var rows = document.querySelectorAll('#studentTable tbody tr');
+
+    rows.forEach(function (row) {
+        // Get the nature of degree from the 7th column (change as needed)
+        var natureOfDegree = row.querySelector('td:nth-child(7)').textContent.trim();
+
+        // Get all cells with the class 'Board_only'
+        var cells = row.querySelectorAll('.Board_only');
+
+        cells.forEach(function (cell) {
+            // If it's non-board only, hide 'Board_only' cells
+            if (isNonBoardOnly) {
+                cell.style.display = 'none';
+            } else if (natureOfDegree === 'Board') {
+                cell.style.display = 'table-cell';
+            } else {
+                cell.style.display = 'none';
+            }
+        });
+    });
+
+    // Adjust header visibility
+    var headerCells = document.querySelectorAll('.Board_only');
+    if (isNonBoardOnly) {
+        headerCells.forEach(function (headerCell) {
+            headerCell.style.display = 'none';
+        });
+    } else {
+        headerCells.forEach(function (headerCell) {
+            headerCell.style.display = 'table-cell';
+        });
+    }
+}
+
+// Call the function on page load or as needed
+toggleColumnsVisibility();
 
 
     </script>
