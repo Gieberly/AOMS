@@ -1,3 +1,4 @@
+
 <?php
 
 include ("Faculty_Cover.php");
@@ -349,8 +350,7 @@ if (!$isCollege) {
         }
 
         #lock,
-        #unlock,
-        #HideColumns {
+        #unlock, #HideColumns {
             background-color: transparent;
             border: none;
             cursor: pointer;
@@ -358,15 +358,13 @@ if (!$isCollege) {
         }
 
         #lock i,
-        #unlock i,
-        #HideColumns i {
+        #unlock i, #HideColumns i {
             font-size: 15px;
             color: black;
         }
 
         #lock:hover i,
-        #unlock:hover i,
-        #HideColumns:hover i {
+        #unlock:hover i, #HideColumns:hover i {
             color: green;
             transform: scale(1.2);
         }
@@ -838,14 +836,6 @@ if (!$isCollege) {
             </div>
 
 
-<!-- Overlay for closing the column visibility dropdown -->
-<div id="columnVisibilityOverlay" style="display: none; position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(0, 0, 0, 0.3); z-index: 1000;"></div>
-
-<!-- Custom dropdown for column visibility -->
-<div id="columnVisibilityDropdown" style="display: none; position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%); background: white; border: 1px solid #ccc; padding: 10px; z-index: 1001;">
-    <!-- Placeholder for column visibility options -->
-    <div id="colVisOptions"></div>
-</div>
             <div class="table-data" style="width: 100%; overflow-x: auto;">
                 <div class="order">
                     <div class="head">
@@ -859,8 +849,8 @@ if (!$isCollege) {
                             <button  style="display: none;"type="button" id="unlock" data-tooltip="Unlock Table">
                                 <i class='bx bx-lock-open'></i>
                             </button> -->
-                            <button type="button" id="HideColumns" data-tooltip="Column Visibility">
-                                <i class='bx bxs-hide'></i>
+                            <button  type="button" id="HideColumns" data-tooltip="Column Visibility">
+                            <i class='bx bxs-hide'></i>
                             </button>
                             <!-- Corrected code snippet -->
                             <button type="button" id="toggleSelection">
@@ -1977,7 +1967,8 @@ if (!$isCollege) {
         // Call the function on page load or as needed
         toggleColumnsVisibility();
 
-        $(document).ready(function () {
+
+$(document).ready(function () {
     // Initialize the DataTable
     var table = new DataTable('#studentTable', {
         searching: false,
@@ -1998,7 +1989,7 @@ if (!$isCollege) {
         ],
     });
 
-    // Excel export button (hidden)
+    // Create the Excel export button
     var excelButton = new $.fn.dataTable.Buttons(table, {
         buttons: [
             {
@@ -2009,56 +2000,31 @@ if (!$isCollege) {
         ],
     });
 
-    table.buttons(excelButton);
+    table.buttons(excelButton); // Attach the Excel export button (hidden)
 
-    // Create the hidden column visibility button
+    // Attach the custom button for column visibility
     var columnVisibilityButton = new $.fn.dataTable.Buttons(table, {
         buttons: [
             {
-                extend: 'colvis', // Column visibility control
+                extend: 'colvis', // Enable column visibility control
                 text: '', // No visible text (we use a custom button)
                 className: 'hidden-button', // Hide the default button
             },
         ],
     });
 
-    table.buttons(columnVisibilityButton);
-
-    // Add column visibility options to the custom dropdown
-    $('#colVisOptions').append(table.buttons(1, 0).containers());
+    table.buttons(columnVisibilityButton); // Attach the column visibility button (hidden)
 
     // Handle Excel export with a custom button
     $('#excelExportButton').click(function (e) {
         e.preventDefault(); // Prevent default behavior
-        table.buttons(0, 0).trigger(); // Trigger Excel export
+        table.buttons(0, 0).trigger(); // Trigger the Excel export
     });
 
     // Handle Column Visibility with a custom button
     $('#HideColumns').click(function (e) {
         e.preventDefault(); // Prevent default behavior
-
-        var dropdown = $('#columnVisibilityDropdown');
-        var overlay = $('#columnVisibilityOverlay');
-
-        if (dropdown.is(':visible')) {
-            dropdown.hide(); // Hide the dropdown if it's visible
-            overlay.hide(); // Hide the overlay
-        } else {
-            var buttonOffset = $(this).offset(); // Get the button position
-            dropdown.css({
-                top: buttonOffset.top + $(this).height(),
-                left: buttonOffset.left,
-            });
-
-            dropdown.show(); // Show the dropdown
-            overlay.show(); // Show the overlay
-        }
-    });
-
-    // Hide the column visibility dropdown when clicking on the overlay
-    $('#columnVisibilityOverlay').click(function () {
-        $('#columnVisibilityDropdown').hide(); // Hide the dropdown
-        $(this).hide(); // Hide the overlay
+        table.buttons(1, 0).trigger(); // Trigger the column visibility menu
     });
 
     // Apply custom styling when the sorted column changes
@@ -2075,48 +2041,20 @@ if (!$isCollege) {
 
     table.trigger('order.dt'); // Apply initial styling
 });
+
     </script>
 
     <style>
-        .overlay {
-            position: fixed;
-            top: 0;
-            left: 0;
-            right: 0;
-            bottom: 0;
-            background: rgba(0, 0, 0, 0.5);
-            /* Semi-transparent black background */
-            z-index: 1000;
-            /* High z-index to overlay above other content */
-            display: flex;
-            justify-content: center;
-            align-items: center;
-        }
-
-        .overlay-content {
-            background: #fff;
-            /* White background */
-            padding: 20px;
-            border-radius: 10px;
-            text-align: center;
-        }
-
-        .hidden {
-            display: none;
-        }
-
-        /* Change the default background color for selected rows */
-        .dataTables_wrapper .dataTables_paginate .paginate_button.current,
-        .dataTables_wrapper .dataTables_paginate .paginate_button:hover,
-        table.dataTable tbody tr.selected,
-        table.dataTable tbody tr:hover,
-        .dataTables_wrapper .dataTables_filter input,
-        .dataTables_wrapper .dataTables_filter input:focus {
-            background-color: lightgray !important;
-            /* Change the default background color */
-            color: #000 !important;
-            /* Adjust text color to ensure visibility */
-        }
+/* Change the default background color for selected rows */
+.dataTables_wrapper .dataTables_paginate .paginate_button.current,
+.dataTables_wrapper .dataTables_paginate .paginate_button:hover,
+table.dataTable tbody tr.selected,
+table.dataTable tbody tr:hover,
+.dataTables_wrapper .dataTables_filter input,
+.dataTables_wrapper .dataTables_filter input:focus {
+    background-color: lightgray !important; /* Change the default background color */
+    color: #000 !important; /* Adjust text color to ensure visibility */
+}
 
         /* Default color for unsorted columns */
         th.sorting {
