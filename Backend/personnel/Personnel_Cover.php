@@ -35,7 +35,7 @@ $full_name = $name . ' ' . $mname . ' ' . $last_name;
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>BSU OUR Admission Unit Personnel</title>
+    <title>BSU OUR Personnel Admission Unit Personnel</title>
     <link rel="icon" href="../assets/images/BSU Logo1.png" type="image/x-icon">
     <link rel="stylesheet" href="../assets/css/Personnel.css" />
     <script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
@@ -51,7 +51,7 @@ $full_name = $name . ' ' . $mname . ' ' . $last_name;
     <div class="box">
         <div class="close">&times;</div>
         <div class="registration-box">
-          <p>Personnel User Manual</p>
+          <p>OUR Personnel User Manual</p>
           <!-- Add images here -->
           <img src="../assets/images/personnel/1.png" alt="User's Manual">
           <img src="../assets/images/personnel/2.png" alt="User's Manual">

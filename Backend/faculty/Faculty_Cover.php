@@ -59,7 +59,7 @@ function getCourses($conn)
     <div class="box">
         <div class="close">&times;</div>
         <div class="registration-box">
-          <p>Faculty User Manual</p>
+          <p>Faculty Personnel User Manual</p>
           <!-- Add images here -->
           <img src="../assets/images/college/1.png" alt="User's Manual">
           <img src="../assets/images/college/2.png" alt="User's Manual">

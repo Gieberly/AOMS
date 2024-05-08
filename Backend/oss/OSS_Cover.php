@@ -46,7 +46,7 @@ function getCourses($conn)
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>BSU OSS Admission Personnel</title>
+    <title>BSU OSS Personnel Admission Personnel</title>
     <link rel="icon" href="../assets/images/BSU Logo1.png" type="image/x-icon">
     <link rel="stylesheet" href="../assets/css/Personnel.css" />
     <script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
@@ -62,7 +62,7 @@ function getCourses($conn)
     <div class="box">
         <div class="close">&times;</div>
         <div class="registration-box">
-          <p>OSS User Manual</p>
+          <p>OSS Personnel User Manual</p>
           <!-- Add images here -->
           <img src="../assets/images/oss/1.png" alt="User's Manual">
           <img src="../assets/images/oss/2.png" alt="User's Manual">
