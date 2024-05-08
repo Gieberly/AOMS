@@ -815,11 +815,11 @@ $stmt->close();
                             <!--    <input type="date" name="appointment_date" id="appointment_date">-->
                             <!--    <button type="submit"><i class='bx bx-filter'></i></button>-->
                             <!--</form>-->
-                            <button type="button" id="toggleSelection">
+                            <button type="button" id="toggleSelection" >
                                 <i class='bx bx-select-multiple'></i> Toggle Selection
                             </button>
 
-                            <button type="button" id="sendButton" style="display: none;">
+                            <button type="button" id="sendButton" data-tooltip="Send" style="display: none;">
                                 <i class='bx bx-send'></i>
                             </button>
                         </div>
@@ -866,6 +866,8 @@ $stmt->close();
                                     <th>Nature of Degree</th>
                                     <th>Program</th>
                                     <th>Academic Classification</th>
+                                    <th>Admission Test Score</th>
+
                                     <th style="display: none;" id="selectColumn">
                                         <input type="checkbox" id="selectAllCheckbox">
                                     </th>
@@ -887,6 +889,7 @@ $stmt->close();
                                     echo "<td>" . $row['nature_of_degree'] . "</td>";
                                     echo "<td>" . $row['degree_applied'] . "</td>";
                                     echo "<td>" . $row['academic_classification'] . "</td>";
+                                    echo "<td>" . $row['OSS_Admission_Test_Score'] . "</td>";
                                     echo "<td id='checkbox-{$row['id']}'><input type='checkbox'style='display: none;' class='select-checkbox'></td>";
                                     echo "</tr>";
                                     echo "</tr>";
