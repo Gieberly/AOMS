@@ -160,6 +160,8 @@ if (!$isCollege) {
     <script src="https://cdn.datatables.net/buttons/2.4.2/js/buttons.html5.min.js"></script>
     <script src="https://cdn.datatables.net/buttons/2.4.2/js/buttons.print.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.1.3/jszip.min.js"></script>
+    <script src="https://cdn.datatables.net/buttons/2.4.2/js/buttons.colVis.min.js"></script>
+
     <link rel="stylesheet" href="https://cdn.datatables.net/buttons/2.4.2/css/buttons.dataTables.min.css">
 </head>
 
@@ -1962,62 +1964,53 @@ if (!$isCollege) {
         toggleColumnsVisibility();
 
         $(document).ready(function () {
-            var table = new DataTable('#studentTable', {
-                searching: false,
-                paging: false,
-                
-                info: false,
-                select: true,
-                order: [[0, 'asc']], // Default sorting by 'Applicant Number'
-                dom: 'frtip', // No default buttons in DataTable
-                columnDefs: [
-                    {
-                        targets: [0], // Column index (if '#' should not be sortable)
-                        orderable: false // Disable sorting for this column
-                    },
-                    {
-                        targets: [10], // Example column where sorting is disabled
-                        orderable: false // Disable sorting
-                    },
-                ],
-            });
-            $('#studentTable tbody').on('click', 'tr', function () {
+    var table = new DataTable('#studentTable', {
+        searching: false, // Disable default search box
+        paging: false, // Disable pagination
+        info: false, // Disable info text
+        select: true, // Enable row selection
+        order: [[0, 'asc']], // Default sorting by first column
+        dom: 'Bfrtip', // Add buttons to DataTable
+        buttons: [
+            {
+                extend: 'excelHtml5', // Excel export button
+                title: 'Faculty Masterlist', // Optional Excel title
+                filename: 'Faculty Masterlist', // Optional file name when saving
+            },
+            {
+                extend: 'colvis', // Column visibility toggle
+                text: 'Show/Hide Columns', // Text for the button
+                className: 'btn-colvis', // Optional: CSS class for styling
+                columns: ':not(:first-child)', // Exclude first column from toggle
+            },
+        ],
+        columnDefs: [
+            {
+                targets: [0], // Disable sorting for the first column
+                orderable: false,
+            },
+        ],
+    });
+
+    // Handle custom events like row selection
+    $('#studentTable tbody').on('click', 'tr', function () {
         $(this).toggleClass('selected'); // Toggle selection class
     });
-            // Excel export button (not displayed)
-            var excelButton = new $.fn.dataTable.Buttons(table, {
-                buttons: [
-                    {
-                        extend: 'excelHtml5',
-                        title: 'Faculty Masterlist', // Optional Excel title
-                        filename: 'Faculty Masterlist', // Optional file name when saving
-                    }
-                ],
-            });
 
-            table.buttons(excelButton);
+    // Apply custom styling when sorted
+    table.on('order.dt', function () {
+        $('#studentTable tbody td').css('background-color', ''); // Reset backgrounds
 
-            // Trigger Excel export when the custom button is clicked
-            $('#excelExportButton').click(function (e) {
-                e.preventDefault(); // Prevent default link behavior
-                table.buttons(0, 0).trigger(); // Trigger the Excel export
-            });
+        var order = table.order()[0];
+        var sortedColumnIndex = order[0];
 
-            // Apply custom styling when the sorted column changes
-            table.on('order.dt', function () {
-                $('#studentTable tbody td').css('background-color', ''); // Reset backgrounds
-
-                var order = table.order()[0]; // Get sorting information
-                var sortedColumnIndex = order[0]; // Column index of the sorted column
-
-                $('#studentTable tbody tr').each(function () {
-                    $(this).children().eq(sortedColumnIndex).css('background-color', 'lightgreen');
-                });
-            });
-
-            table.trigger('order.dt'); // Apply initial styling
+        $('#studentTable tbody tr').each(function () {
+            $(this).children().eq(sortedColumnIndex).css('background-color', 'lightgreen');
         });
+    });
 
+    table.trigger('order.dt'); // Apply initial styling
+});
     </script>
 
     <style>
