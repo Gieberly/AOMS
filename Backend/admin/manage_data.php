@@ -4,8 +4,22 @@ include ("admin_cover.php");
 
 
 // Query to fetch data from admission_data_archive
-$query = "SELECT * FROM activity_log";
+$query = "SELECT * FROM academicclassification";
 $result = $conn->query($query);
+
+
+// Query to fetch data from users_archive
+$query2 = "SELECT * FROM admission_period";
+$result2 = $conn->query($query2);
+
+$query3 = "SELECT * FROM admission_period";
+$result3 = $conn->query($query3);
+
+$query4 = "SELECT * FROM ethnicity";
+$result4 = $conn->query($query4);
+
+$query5 = "SELECT * FROM programs";
+$result5 = $conn->query($query5);
 
 
 
@@ -751,19 +765,26 @@ $result = $conn->query($query);
                     </style>
 
                     <div class="table-container">
-                        <table id="studentTable" class="display responsive nowrap" style="width: 100%;">
+                        <table class="display" style="width: 100%;">
 
                             <!-- Thead Section -->
                             <thead id="thead">
                                 <tr>
                                     <th>#</th>
-                                    <th>Time Stamp</th>
-                                    <th>Email</th>
-                                    <th>IP Address</th>
-                                    <th>User Type</th>
-                                    <th>Operation</th>
-                                  
-                                    <th>Action</th>
+      <th>Classification</th>
+      <th>Description</th>
+      <th>Requirement1</th>
+      <th>Requirement2</th>
+      <th>Requirement3</th>
+      <th>Requirement4</th>
+      <th>Requirement5</th>
+      <th>Requirement6</th>
+      <th>Requirement7</th>
+      <th>Criteria1</th>
+      <th>Criteria2</th>
+      <th>Criteria3</th>
+      <th>Criteria4</th>
+      <th>Nature of Degree</th>
                                   
                                 </tr>
                             </thead>
@@ -771,28 +792,27 @@ $result = $conn->query($query);
                             <!-- Tbody Section -->
                             <tbody id="tbody">
                             <?php
-                    $rowNumber = 1; // To number each row
-                    while ($row = $result->fetch_assoc()) {
-                                    echo "<tr>";
-                                    echo "<td>{$rowNumber}</td>";  // Display the row number
-                                    echo "<td>" . $row['created_at'] . "</td>"; // 2
-                                    echo "<td>" . $row['email'] . "</td>"; // 3
-                                    echo "<td>" . $row['ip_address'] . "</td>"; // 4
-                                    echo "<td>" . $row['userType'] . "</td>"; // 5
-                                    echo "<td>" . $row['action'] . "</td>"; // 6
-                                    echo "<td>
-              <div class='button-container'>
-
-             
-              <button type='button' class='button inc-btn' data-tooltip='delete' onclick='deleteLog({$row['id']}, \"delete\")'>
-              <i class='bx bxs-trash' ></i>
-              </button>
-   
-              </div>
-              </td>"; // 9
-                                    echo "</tr>";
-                                    $rowNumber++; // Increment the counter for the next row
-                                }
+$rowNumber = 1; // To number each row
+while ($row = $result->fetch_assoc()) {
+    echo "<tr>";
+    echo "<td>{$rowNumber}</td>"; // Row number
+    echo "<td>{$row['Classification']}</td>"; // Display Classification
+    echo "<td>{$row['Description']}</td>"; // Display Description
+    echo "<td>{$row['Requirement1']}</td>"; // Display Requirement1
+    echo "<td>{$row['Requirement2']}</td>"; // Display Requirement2
+    echo "<td>{$row['Requirement3']}</td>"; // Display Requirement3
+    echo "<td>{$row['Requirement4']}</td>"; // Display Requirement4
+    echo "<td>{$row['Requirement5']}</td>"; // Display Requirement5
+    echo "<td>{$row['Requirement6']}</td>"; // Display Requirement6
+    echo "<td>{$row['Requirement7']}</td>"; // Display Requirement7
+    echo "<td>{$row['Criteria1']}</td>"; // Display Criteria1
+    echo "<td>{$row['Criteria2']}</td>"; // Display Criteria2
+    echo "<td>{$row['Criteria3']}</td>"; // Display Criteria3
+    echo "<td>{$row['Criteria4']}</td>"; // Display Criteria4
+    echo "<td>{$row['NatureOfDegree']}</td>"; // Display Nature of Degree
+    echo "</tr>";
+    $rowNumber++; // Increment for the next row
+}
                                 ?>
                             </tbody>
 
@@ -1571,7 +1591,123 @@ $result = $conn->query($query);
                 </div>
             </div>
 
-        
+            <div class="table-data">
+                <div class="order">
+                    <div class="head">
+                        <h3>List of archived Personnel</h3>
+                    </div>
+                    <div class="table-container">
+                        <table class="display" style="width: 100%;">
+
+                            <!-- Thead Section -->
+                            <tr>
+                <th>#</th>
+                <th>Last Name</th>
+                <th>First Name</th>
+                <th>Middle Name</th>
+                <th>Email</th>
+                <th>Department</th>
+                <th>Designation</th>
+                <th>User Type</th>
+                <th>Account Status</th>
+                <th>Actions</th>
+            </tr>
+        </thead>
+        <!-- Table Body -->
+        <tbody>
+            <?php
+            $rowNumber = 1;
+            while ($row = $result2->fetch_assoc()) {
+                echo "<tr>";
+                echo "<td>{$rowNumber}</td>";  // Row Number
+                echo "<td>{$row['last_name']}</td>";  // Last Name
+                echo "<td>{$row['name']}</td>";  // First Name
+                echo "<td>{$row['mname']}</td>";  // Middle Name
+                echo "<td>{$row['email']}</td>";  // Email
+                echo "<td>{$row['Department']}</td>";  // Department
+                echo "<td>{$row['Designation']}</td>";  // Designation
+                echo "<td>{$row['userType']}</td>";  // User Type
+                echo "<td>{$row['lstatus']}</td>";  // Account Status
+                echo "<td>
+                <div class='button-container'>
+  
+                <button type='button' class='button check-btn' data-tooltip='Retrieve' onclick='retrieveUser({$row['id']}, \"Retrieve\")'>
+                <i class='bx bxs-archive-out'></i>
+                </button>
+                <button type='button' class='button inc-btn' data-tooltip='delete' onclick='deletePersonnel({$row['id']}, \"delete\")'>
+                <i class='bx bxs-trash' ></i>
+                </button>
+     
+                </div>
+                </td>"; // 9
+                echo "</tr>";
+                $rowNumber++;
+            }
+            ?>
+        </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+
+            <div class="table-data">
+                <div class="order">
+                    <div class="head">
+                        <h3>List of archived Personnel</h3>
+                    </div>
+                    <div class="table-container">
+                        <table class="display" style="width: 100%;">
+
+                            <!-- Thead Section -->
+                            <tr>
+                <th>#</th>
+                <th>Last Name</th>
+                <th>First Name</th>
+                <th>Middle Name</th>
+                <th>Email</th>
+                <th>Department</th>
+                <th>Designation</th>
+                <th>User Type</th>
+                <th>Account Status</th>
+                <th>Actions</th>
+            </tr>
+        </thead>
+        <!-- Table Body -->
+        <tbody>
+            <?php
+            $rowNumber = 1;
+            while ($row = $result2->fetch_assoc()) {
+                echo "<tr>";
+                echo "<td>{$rowNumber}</td>";  // Row Number
+                echo "<td>{$row['last_name']}</td>";  // Last Name
+                echo "<td>{$row['name']}</td>";  // First Name
+                echo "<td>{$row['mname']}</td>";  // Middle Name
+                echo "<td>{$row['email']}</td>";  // Email
+                echo "<td>{$row['Department']}</td>";  // Department
+                echo "<td>{$row['Designation']}</td>";  // Designation
+                echo "<td>{$row['userType']}</td>";  // User Type
+                echo "<td>{$row['lstatus']}</td>";  // Account Status
+                echo "<td>
+                <div class='button-container'>
+  
+                <button type='button' class='button check-btn' data-tooltip='Retrieve' onclick='retrieveUser({$row['id']}, \"Retrieve\")'>
+                <i class='bx bxs-archive-out'></i>
+                </button>
+                <button type='button' class='button inc-btn' data-tooltip='delete' onclick='deletePersonnel({$row['id']}, \"delete\")'>
+                <i class='bx bxs-trash' ></i>
+                </button>
+     
+                </div>
+                </td>"; // 9
+                echo "</tr>";
+                $rowNumber++;
+            }
+            ?>
+        </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
             </div>
             </div>
         </main>
@@ -1686,7 +1822,7 @@ function retrieveUser(id) {
     });
 }
 
-function deleteLog(id) {
+function deleteUser(id) {
     // Show confirmation dialog
     $('.confirmation-dialog').show();
     $('.confirmation-dialog-overlay').show();
@@ -1698,7 +1834,7 @@ function deleteLog(id) {
         if (userConfirmed) {
             // User confirmed, send AJAX request to delete data
             $.ajax({
-                url: "delete_logs.php",
+                url: "delete_applicants.php",
                 type: "POST",
                 data: { delete_ids: [id] },
                 success: function(response) {
