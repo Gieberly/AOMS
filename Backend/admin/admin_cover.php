@@ -129,7 +129,7 @@ $full_name = $name . ' ' . $mname . ' ' . $last_name;
         <li class="">
             <a href="colleges.php" id="data-result-link" style="text-decoration:none">
                 <i class='bx bxs-book-alt'></i>
-                <span class="text">Manage Programs</span>
+                <span class="text">Manage Data</span>
             </a>
         </li>
 
@@ -142,7 +142,7 @@ $full_name = $name . ' ' . $mname . ' ' . $last_name;
         <li class="">
             <a href="activity_log.php" id="data-info-link" style="text-decoration:none">
             <i class='bx bxs-analyse'></i>
-                <span class="text">Activity logs</span>
+                <span class="text">Audit Trail</span>
             </a>
         </li>
 
