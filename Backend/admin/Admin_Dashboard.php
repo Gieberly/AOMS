@@ -1104,7 +1104,7 @@ $pending_result = $conn->query($pending_query);
                 // User confirmed, send the AJAX request to update the status
                 $.ajax({
                     type: 'POST',
-                    url: 'personnel/Personnel_UpdateStatus.php',
+                    url: 'update_status.php',
                     data: {
                         id: id,
                         status: status
