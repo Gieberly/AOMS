@@ -137,7 +137,8 @@ $stmt->close();
         }
 
         .button.inc-btn,
-        .button.check-btn {
+        .button.check-btn,
+        .button.archive-btn { 
             background: none;
             border: none;
             padding: 0;
@@ -145,7 +146,8 @@ $stmt->close();
         }
 
         .button.inc-btn i,
-        .button.check-btn i {
+        .button.check-btn i,
+        .button.archive-btn i {
             font-size: 13px;
         }
 
@@ -155,6 +157,9 @@ $stmt->close();
 
         .button.check-btn:hover i {
             color: green;
+        }
+        .button.archive-btn:hover i {
+            color: yellow;
         }
 
         .button-container .button::after {
@@ -856,7 +861,7 @@ $stmt->close();
               <button type='button' class='button inc-btn' data-tooltip='Incomplete' onclick='updateStatus({$row['id']}, \"Incomplete\")'>
                <i class='bx bxs-no-entry'></i>
               </button>
-              <button type='button' class='button inc-btn' data-tooltip='Archive' onclick='archive({$row['id']}, \"Archive\")'>
+              <button type='button' class='button archive-btn' data-tooltip='Archive' onclick='archive({$row['id']}, \"Archive\")'>
               <i class='bx bxs-box'></i>
              </button>
               </div>
