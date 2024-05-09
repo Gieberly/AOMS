@@ -776,15 +776,13 @@ $rowNumber = 1;
                             <?php
                     $rowNumber = 1; // To number each row
                     while ($row = $result->fetch_assoc()) {
-                                    echo "<tr class='editRow' data-id='" . $row['id'] . "' data-date='" . $row['application_date'] . "'>";
+                                    echo "<tr>";
                                     echo "<td>{$rowNumber}</td>";  // Display the row number
                                     echo "<td>" . $row['applicant_number'] . "</td>"; // 2
                                     echo "<td>" . $row['Last_Name'] . "</td>"; // 3
                                     echo "<td>" . $row['Name'] . "</td>"; // 4
                                     echo "<td>" . $row['Middle_Name'] . "</td>"; // 5
                                     echo "<td>" . $row['email'] . "</td>"; // 6
-                                    echo "<td>" . ($row['appointment_time'] ? date('g:i A') : '') . "</td>"; // 7
-                                    echo "<td  data-field='appointment_status'>{$row['appointment_status']}</td>"; // 8
                                     echo "<td>
               <div class='button-container'>
 
