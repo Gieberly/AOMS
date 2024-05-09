@@ -896,33 +896,48 @@ $rowNumber = 1;
 
                             <!-- Thead Section -->
                             <tr>
-     
-                <th>Actions</th>
-            </tr>
-        </thead>
-        <!-- Table Body -->
-        <tbody>
-            <?php
-            $rowNumber = 1;
-            while ($row = $result2->fetch_assoc()) {
-                echo "<tr>";
-       
-                echo "<td>
-                <div class='button-container'>
-  
-                <button type='button' class='button check-btn' data-tooltip='Retrieve' onclick='undoUser({$row['id']}, \"Retrieve\")'>
-                <i class='bx bxs-archive-out'></i>
-                </button>
-                <button type='button' class='button inc-btn' data-tooltip='delete' onclick='deleteUser({$row['id']}, \"delete\")'>
-                <i class='bx bxs-trash' ></i>
-                </button>
-     
-                </div>
-                </td>"; // 9
-                echo "</tr>";
-                $rowNumber++;
-            }
-            ?>
+                            <thead id="thead">
+                                <tr>
+                                    <th>#</th>
+                                    <th>Applicant #</th>
+                                    <th>Last Name</th>
+                                    <th>First Name</th>
+                                    <th>Middle Name</th>
+                                    <th>email</th>
+
+                                    <th>Action</th>
+
+                                </tr>
+                            </thead>
+
+                            <!-- Tbody Section -->
+                            <tbody id="tbody">
+                                <?php
+                                $rowNumber = 1; // To number each row
+                                while ($row = $result2->fetch_assoc()) {
+                                    echo "<tr>";
+                                    echo "<td>{$rowNumber}</td>";  // Display the row number
+                                    echo "<td>" . $row['Department'] . "</td>"; // 2
+                                    echo "<td>" . $row['Last_Name'] . "</td>"; // 3
+                                    echo "<td>" . $row['name'] . "</td>"; // 4
+                                    echo "<td>" . $row['mname'] . "</td>"; // 5
+                                    echo "<td>" . $row['email'] . "</td>"; // 6
+                                    echo "<td>
+              <div class='button-container'>
+
+              <button type='button' class='button check-btn' data-tooltip='Retrieve' onclick='undoUser({$row['id']}, \"Retrieve\")'>
+              <i class='bx bxs-archive-out'></i>
+              </button>
+              <button type='button' class='button inc-btn' data-tooltip='delete' onclick='deleteUser({$row['id']}, \"delete\")'>
+              <i class='bx bxs-trash' ></i>
+              </button>
+   
+              </div>
+              </td>"; // 9
+                                    echo "</tr>";
+                                    $rowNumber++; // Increment the counter for the next row
+                                }
+                                ?>
         </tbody>
                         </table>
                     </div>
