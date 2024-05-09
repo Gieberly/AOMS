@@ -893,7 +893,6 @@ $result2 = $conn->query($query2);
 
                             <!-- Thead Section -->
                             <tr>
-                <th>#</th>
                 <th>Last Name</th>
                 <th>First Name</th>
                 <th>Middle Name</th>
@@ -911,7 +910,6 @@ $result2 = $conn->query($query2);
             $rowNumber = 1;
             while ($row = $result2->fetch_assoc()) {
                 echo "<tr>";
-                echo "<td>{$rowNumber}</td>";  // Row Number
                 echo "<td>{$row['last_name']}</td>";  // Last Name
                 echo "<td>{$row['name']}</td>";  // First Name
                 echo "<td>{$row['mname']}</td>";  // Middle Name
@@ -933,7 +931,6 @@ $result2 = $conn->query($query2);
                 </div>
                 </td>"; // 9
                 echo "</tr>";
-                $rowNumber++;
             }
             ?>
         </tbody>
