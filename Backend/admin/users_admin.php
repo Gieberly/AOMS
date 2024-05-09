@@ -1616,53 +1616,7 @@ $result = $conn->query($query);
 
     <script>
 
-         
-// Function to display success message
-function showSuccessMessage(message) {
-  var archiveMessage = document.getElementById('archive-message');
-  archiveMessage.innerHTML = message;
-  var archiveDiv = document.getElementById('archive');
-  archiveDiv.style.display = 'block';
-  // Hide the success message after 3 seconds
-  setTimeout(function() {
-    archiveDiv.style.display = 'none';
-    // Reload the page after the message disappears
-    location.reload();
-  }, 2000);
-}
-
-function archiveUser(id) {
-    // Show confirmation dialog
-    $('.confirmation-dialog').show();
-    $('.confirmation-dialog-overlay').show();
-    $('.confirmation-dialog p').text('Are you sure you want to archive this data?');
-
-    // Handle button clicks in the confirmation dialog
-    $('.confirmation-buttons button').click(function() {
-        var userConfirmed = $(this).data('confirmed');
-        if (userConfirmed) {
-            // User confirmed, send AJAX request to delete data
-            $.ajax({
-                url: "admission_archive.php",
-                type: "POST",
-                data: { delete_ids: [id] },
-                success: function(response) {
-                    // Show response message in success message div
-                    showSuccessMessage(response);
-                    // Reload or update the table as needed
-                },
-                error: function(xhr, status, error) {
-                    console.error(xhr.responseText); // Log error message
-                    // Handle error as needed
-                }
-            });
-        }
-
-        // Hide the confirmation dialog and overlay
-        $('.confirmation-dialog').hide();
-        $('.confirmation-dialog-overlay').hide();
-    });
-}
+  
 // Initialize the DataTable
 $(document).ready(function() {
     $('#studentTable').DataTable({
@@ -1678,318 +1632,7 @@ $(document).ready(function() {
     });
 });
 
-        function confirmSubmission() {
-            document.getElementById("confirmationDialoga").style.display = "block";
-            document.getElementById("confirmationDialoga").dataset.formId = "updateProfileForm";
-            var inputApplicantNumber = document.getElementById("applicant_number").value;
-
-            // AJAX request to check if the input applicant number exists in the database
-            var xhr = new XMLHttpRequest();
-            xhr.onreadystatechange = function () {
-                if (xhr.readyState === XMLHttpRequest.DONE) {
-                    if (xhr.status === 200) {
-                        var response = xhr.responseText;
-                        // If the applicant number exists in the database, display the validation modal
-                        if (response === 'exists') {
-                            document.getElementById("applicantNoValidation").style.display = "block";
-                        } else {
-                            // If the applicant number does not exist in the database, proceed with submission
-                            document.getElementById("updateProfileForm").submit(); // Assuming your form ID is "updateProfileForm"
-                        }
-                    } else {
-                        // Handle error if AJAX request fails
-                        console.error("AJAX request failed.");
-                    }
-                }
-            };
-            xhr.open("POST", "check_applicant_number.php", true); // Replace "check_applicant_number.php" with your PHP script to check the database
-            xhr.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
-            xhr.send("applicant_number=" + inputApplicantNumber);
-        }
-
-        // Close modal when "OK" button is clicked
-        document.getElementById("valCloseBtn").addEventListener("click", function () {
-            document.getElementById("applicantNoValidation").style.display = "none";
-        });
-        function confirmSubmission2() {
-            document.getElementById("confirmationDialoga").style.display = "block";
-            document.getElementById("confirmationDialoga").dataset.formId = "updateProfileForm2";
-        }
-
-        function submitForm() {
-            var formId = document.getElementById("confirmationDialoga").dataset.formId;
-            document.getElementById("confirmationDialoga").style.display = "none";
-            document.getElementById(formId).submit();
-        }
-
-        function cancelSubmit() {
-            document.getElementById("confirmationDialoga").style.display = "none";
-        }
-        $(document).ready(function () {
-
-            // Check if there is a selected tab stored in local storage
-            var selectedTab = localStorage.getItem('selectedTab');
-
-            // If a tab was previously selected, show its content
-            if (selectedTab) {
-                $('#' + selectedTab).prop('checked', true); // Check the radio button corresponding to the selected tab
-                $('.tab-content').hide(); // Hide all tab contents
-                $('#content' + selectedTab.substr(3)).show(); // Show the content of the selected tab
-            } else {
-                // If no tab was previously selected, default to the first tab
-                $('#tab1').prop('checked', true);
-                $('#content1').show();
-            }
-
-            // Store the ID of the selected tab in localStorage when a tab is clicked
-            $('.tab').click(function () {
-                var selectedTabId = $(this).attr('id');
-                localStorage.setItem('selectedTab', selectedTabId);
-
-                // Hide all tab contents and show the content of the selected tab
-                $('.tab-content').hide();
-                $('#content' + selectedTabId.substr(3)).show();
-            });
-            // Check if there is a selected row stored in local storage
-            var selectedRowIdApplicants = localStorage.getItem('selectedRowIdApplicants');
-            if (selectedRowIdApplicants) {
-
-                // Highlight the selected row
-                $('tr[data-id="' + selectedRowIdApplicants + '"]').addClass('selected');
-
-                // Populate form fields with data corresponding to the selected row
-                populateForm(selectedRowIdApplicants);
-
-                // Show the todo div
-                $('.todo').show();
-            }
-
-            $('.editRow').click(function (event) {
-                // Check if the click target is not a button, checkbox, or its child elements
-                if (!$(event.target).is('button') && !$(event.target).is('i') && !$(event.target).is(':checkbox')) {
-                    // Get the 'data-id' attribute from the clicked row
-                    var userId = $(this).data('id');
-
-                    // Highlight the clicked row
-                    $('.editRow').removeClass('selected');
-                    $(this).addClass('selected');
-
-                    // Populate form fields with data corresponding to the clicked row
-                    populateForm(userId);
-
-                    // Show the todo div
-                    $('.todo').show();
-
-                    // Store the selected row ID in local storage
-                    localStorage.setItem('selectedRowIdApplicants', userId);
-                }
-            });
-
-            // Click event handler for the close button
-            $('.close-form').click(function () {
-                // Hide the todo div
-                $('.todo').hide();
-                // Remove the selected class from all table rows
-                $('.editRow').removeClass('selected');
-
-                // Clear the selected row ID from local storage
-                localStorage.removeItem('selectedRowIdApplicants');
-            });
-
-            function populateForm(userId) {
-                // Send an AJAX request to fetch the user data based on the user ID
-                $.ajax({
-                    url: 'Personnel_fetchStudentdata.php', // replace with the actual URL for fetching user data
-                    type: 'POST',
-                    data: {
-                        userId: userId
-                    },
-                    dataType: 'json',
-                    success: function (response) {
-                        $('#applicantPicture').attr('src', response.id_picture);
-                        $('#updateProfileForm input[name="Gr11_A1"]').val(response.Gr11_A1);
-                        $('#updateProfileForm input[name="academic_classification"]').val(response.academic_classification);
-                        $('#updateProfileForm input[name="college"]').val(response.college);
-                        $('#updateProfileForm input[name="id"]').val(response.id);
-                        $('#updateProfileForm input[name="high_school_name_address"]').val(response.high_school_name_address);
-                        $('#updateProfileForm input[name="lrn"]').val(response.lrn);
-                        $('#updateProfileForm input[name="degree_applied"]').val(response.degree_applied);
-                        $('#updateProfileForm input[name="nature_of_degree"]').val(response.nature_of_degree);
-                        $('#updateProfileForm input[name="Gr11_A1"]').val(response.Gr11_A1);
-                        $('#updateProfileForm input[name="Gr11_A2"]').val(response.Gr11_A2);
-                        $('#updateProfileForm input[name="Gr11_A3"]').val(response.Gr11_A3);
-                        $('#updateProfileForm input[name="Gr11_GWA"]').val(response.Gr11_GWA);
-                        $('#updateProfileForm input[name="GWA_OTAS"]').val(response.GWA_OTAS);
-                        $('#updateProfileForm select[name="nature_qualification"]').val(response.nature_qualification);
-                        $('#updateProfileForm select[name="Degree_Remarks"]').val(response.Degree_Remarks);
-                        $('#updateProfileForm input[name="English_Subject_1"]').val(response.English_Subject_1);
-                        $('#updateProfileForm input[name="English_Subject_2"]').val(response.English_Subject_2);
-                        $('#updateProfileForm input[name="English_Subject_3"]').val(response.English_Subject_3);
-                        $('#updateProfileForm input[name="Science_Subject_1"]').val(response.Science_Subject_1);
-                        $('#updateProfileForm input[name="Science_Subject_2"]').val(response.Science_Subject_2);
-                        $('#updateProfileForm input[name="Science_Subject_3"]').val(response.Science_Subject_3);
-                        $('#updateProfileForm input[name="Math_Subject_1"]').val(response.Math_Subject_1);
-                        $('#updateProfileForm input[name="Math_Subject_2"]').val(response.Math_Subject_2);
-                        $('#updateProfileForm input[name="Gr12_A1"]').val(response.Gr12_A1);
-                        $('#updateProfileForm input[name="Gr12_A2"]').val(response.Gr12_A2);
-                        $('#updateProfileForm input[name="Gr12_A3"]').val(response.Gr12_A3);
-                        $('#updateProfileForm input[name="Gr12_GWA"]').val(response.Gr12_GWA);
-                        $('#updateProfileForm input[name="English_Oral_Communication_Grade"]').val(response.English_Oral_Communication_Grade);
-                        $('#updateProfileForm input[name="English_Reading_Writing_Grade"]').val(response.English_Reading_Writing_Grade);
-                        $('#updateProfileForm input[name="English_Academic_Grade"]').val(response.English_Academic_Grade);
-                        $('#updateProfileForm input[name="English_Other_Courses_Grade"]').val(response.English_Other_Courses_Grade);
-                        $('#updateProfileForm input[name="English_Other_Courses_Grade_2"]').val(response.English_Other_Courses_Grade_2);
-                        $('#updateProfileForm input[name="English_Other_Courses_Grade_3"]').val(response.English_Other_Courses_Grade_3);
-                        $('#updateProfileForm input[name="Science_Earth_Science_Grade"]').val(response.Science_Earth_Science_Grade);
-                        $('#updateProfileForm input[name="academic_classification"]').val(response.academic_classification);
-                        $('#updateProfileForm input[name="Science_Earth_and_Life_Science_Grade"]').val(response.Science_Earth_and_Life_Science_Grade);
-                        $('#updateProfileForm input[name="Science_Physical_Science_Grade"]').val(response.Science_Physical_Science_Grade);
-                        $('#updateProfileForm input[name="Science_Disaster_Readiness_Grade"]').val(response.Science_Disaster_Readiness_Grade);
-                        $('#updateProfileForm input[name="Science_Other_Courses_Grade"]').val(response.Science_Other_Courses_Grade);
-                        $('#updateProfileForm input[name="Science_Other_Courses_Grade_2"]').val(response.Science_Other_Courses_Grade_2);
-                        $('#updateProfileForm input[name="Science_Other_Courses_Grade_3"]').val(response.Science_Other_Courses_Grade_3);
-                        $('#updateProfileForm input[name="Math_General_Mathematics_Grade"]').val(response.Math_General_Mathematics_Grade);
-                        $('#updateProfileForm input[name="Math_Statistics_and_Probability_Grade"]').val(response.Math_Statistics_and_Probability_Grade);
-                        $('#updateProfileForm input[name="Math_Other_Courses_Grade"]').val(response.Math_Other_Courses_Grade);
-                        $('#updateProfileForm input[name="Math_Other_Courses_Grade_2"]').val(response.Math_Other_Courses_Grade_2);
-                        $('#updateProfileForm input[name="Old_HS_English_Grade"]').val(response.Old_HS_English_Grade);
-                        $('#updateProfileForm input[name="Old_HS_Math_Grade"]').val(response.Old_HS_Math_Grade);
-                        $('#updateProfileForm input[name="Old_HS_Science_Grade"]').val(response.Old_HS_Science_Grade);
-                        $('#updateProfileForm input[name="ALS_English"]').val(response.ALS_English);
-                        $('#updateProfileForm input[name="ALS_Math"]').val(response.ALS_Math);
-
-                        $('#updateProfileForm input[name="Requirements"]').val(response.Requirements);
-                        $('#updateProfileForm input[name="OSS_Endorsement_Slip"]').val(response.OSS_Endorsement_Slip);
-                        $('#updateProfileForm input[name="OSS_Admission_Test_Score"]').val(response.OSS_Admission_Test_Score);
-                        $('#updateProfileForm input[name="OSS_Remarks"]').val(response.OSS_Remarks);
-                        $('#updateProfileForm input[name="Qualification_Nature_Degree"]').val(response.Qualification_Nature_Degree);
-                        $('#updateProfileForm textarea[name="Requirements_Remarks"]').val(response.Requirements_Remarks);
-
-                        $('#updateProfileForm input[name="Interview_Result"]').val(response.Interview_Result);
-                        $('#updateProfileForm input[name="Endorsed"]').val(response.Endorsed);
-                        $('#updateProfileForm input[name="Confirmed_Slot"]').val(response.Confirmed_Slot);
-                        $('#updateProfileForm input[name="Final_Remarks"]').val(response.Final_Remarks);
-                        $('#updateProfileForm input[name="degree_applied"]').val(response.degree_applied);
-                        $('#updateProfileForm input[name="nature_of_degree"]').val(response.nature_of_degree);
-
-                        $('#updateProfileForm input[name="college"]').val(response.college);
-                        $('#applicantPicture').attr('src', response.id_picture);
-                        $('#updateProfileForm2 input[name="Name"]').val(response.Name);
-                        $('#updateProfileForm2 input[name="Middle_Name"]').val(response.Middle_Name);
-                        $('#updateProfileForm2 input[name="Last_Name"]').val(response.Last_Name);
-                        $('#updateProfileForm2 input[name="applicant_number"]').val(response.applicant_number);
-                        $('#updateProfileForm2 input[name="birthplace"]').val(response.birthplace);
-                        $('#updateProfileForm2 select[name="gender"]').val(response.gender);
-                        $('#updateProfileForm2 input[name="birthdate"]').val(response.birthdate);
-                        $('#updateProfileForm2 input[name="age"]').val(response.age);
-                        $('#updateProfileForm2 input[name="civil_status"]').val(response.civil_status);
-                        $('#updateProfileForm2 input[name="citizenship"]').val(response.citizenship);
-                        $('#updateProfileForm2 input[name="nationality"]').val(response.nationality);
-                        $('#updateProfileForm input[name="Requirements_Remarks"]').val(response.Requirements_Remarks);
-                        $('#updateProfileForm input[name="Requirements"]').val(response.Requirements);
-                        $('#updateProfileForm2 input[name="phone_number"]').val(response.phone_number);
-                        $('#updateProfileForm2 input[name="facebook"]').val(response.facebook);
-                        $('#updateProfileForm2 input[name="email"]').val(response.email);
-                        $('#updateProfileForm2 input[name="contact_person_1"]').val(response.contact_person_1);
-                        $('#updateProfileForm2 input[name="contact_person_1_mobile"]').val(response.contact1_phone);
-                        $('#updateProfileForm2 select[name="relationship_1"]').val(response.relationship_1);
-                        $('#updateProfileForm2 input[name="contact_person_2"]').val(response.contact_person_2);
-                        $('#updateProfileForm2 input[name="contact_person_2_mobile"]').val(response.contact_person_2_mobile);
-                        $('#updateProfileForm2 select[name="relationship_2"]').val(response.relationship_2);
-                        $('#updateProfileForm2 select[name="academic_classification"]').val(response.academic_classification);
-
-                        $('#updateProfileForm2 select[name="college"]').val(response.college);
-                        $('#updateProfileForm2 input[name="id"]').val(response.id);
-                        $('#updateProfileForm2 input[name="high_school_name_address"]').val(response.high_school_name_address);
-                        $('#updateProfileForm2 input[name="lrn"]').val(response.lrn);
-                        $('#updateProfileForm2 select[name="degree_applied"]').val(response.degree_applied);
-                        $('#updateProfileForm2 select[name="nature_of_degree"]').val(response.nature_of_degree);
-                        var academicClassification = response.academic_classification;
-
-
-
-                        // Show the relevant div based on academic classification
-                        $('.SHS-Average,.Gr-12-Average, .ALS, .Subjects, .GWA-OTAS, .Transferee, .Gr-12, .HS-Graduate, .2nd-degree, .Remarks').hide(); // Hide all divs first
-                        if (academicClassification === 'Senior High School Graduate') {
-                            $('.Gr-12-Average, .Subjects,.Remarks ').show();
-                        } else if (academicClassification === 'Currently enrolled as Grade 12') {
-                            $('.SHS-Average, .Subjects, .Remarks').show();
-                        } else if (academicClassification === 'Transferee') {
-                            $('.Transferee, .GWA-OTAS, .Remarks').show();
-                        } else if (academicClassification === 'ALS/PEPT Completer') {
-                            $('.ALS, .GWA-OTAS, .Remarks').show();
-                        } else if (academicClassification === 'High School (Old Curriculum) Graduate') {
-                            $('.HS-Graduate, .GWA-OTAS, .Remarks').show();
-                        } else if (academicClassification === 'Second Degree') {
-                            $('.2nd-degree, .GWA-OTAS, .Remarks').show();
-                        }
-
-                        // Add similar logic for other form fields
-                        // Display the form for editing
-                        $('.todo').show();
-                    },
-                    error: function (error) {
-                        console.error('Error fetching user data: ', error);
-                    }
-                });
-            }
-        });
-
-        // Click event handler for the close button
-        $('.close-form').click(function () {
-            // Hide the form
-            $('.todo').hide();
-        });
-
-
-          
-// Function to display success message
-function showSuccessMessage(message) {
-  var archiveMessage = document.getElementById('archive-message');
-  archiveMessage.innerHTML = message;
-  var archiveDiv = document.getElementById('archive');
-  archiveDiv.style.display = 'block';
-  // Hide the success message after 3 seconds
-  setTimeout(function() {
-    archiveDiv.style.display = 'none';
-    // Reload the page after the message disappears
-    location.reload();
-  }, 2000);
-}
-
-function archiveUser(id) {
-    // Show confirmation dialog
-    $('.confirmation-dialog').show();
-    $('.confirmation-dialog-overlay').show();
-    $('.confirmation-dialog p').text('Are you sure you want to archive this data?');
-
-    // Handle button clicks in the confirmation dialog
-    $('.confirmation-buttons button').click(function() {
-        var userConfirmed = $(this).data('confirmed');
-        if (userConfirmed) {
-            // User confirmed, send AJAX request to delete data
-            $.ajax({
-                url: "user_archive.php",
-                type: "POST",
-                data: { delete_ids: [id] },
-                success: function(response) {
-                    // Show response message in success message div
-                    showSuccessMessage(response);
-                    // Reload or update the table as needed
-                },
-                error: function(xhr, status, error) {
-                    console.error(xhr.responseText); // Log error message
-                    // Handle error as needed
-                }
-            });
-        }
-
-        // Hide the confirmation dialog and overlay
-        $('.confirmation-dialog').hide();
-        $('.confirmation-dialog-overlay').hide();
-    });
-}
-    
+      
 function showToast(message, type) {
     // Display the toast message
     $('#toast-body').text(message);
@@ -2057,176 +1700,55 @@ function updateStatus(id, status) {
     });
 }
 
+ 
+          
+// Function to display success message
+function showSuccessMessage(message) {
+  var archiveMessage = document.getElementById('archive-message');
+  archiveMessage.innerHTML = message;
+  var archiveDiv = document.getElementById('archive');
+  archiveDiv.style.display = 'block';
+  // Hide the success message after 3 seconds
+  setTimeout(function() {
+    archiveDiv.style.display = 'none';
+    // Reload the page after the message disappears
+    location.reload();
+  }, 2000);
+}
 
+function archiveUser(id) {
+    // Show confirmation dialog
+    $('.confirmation-dialog').show();
+    $('.confirmation-dialog-overlay').show();
+    $('.confirmation-dialog p').text('Are you sure you want to archive this data?');
 
-        var toggleState = false; // Initial state
-
-        document.getElementById('toggleSubjects').addEventListener('click', function () {
-            var coreSubjects = document.querySelectorAll('.core_subject');
-            var otherSubjects = document.querySelectorAll('.other_subject');
-
-            if (toggleState) { // If currently showing other subjects, switch to showing core subjects
-                coreSubjects.forEach(function (subject) {
-                    subject.style.display = 'block';
-                });
-
-                otherSubjects.forEach(function (subject) {
-                    subject.style.display = 'none';
-                });
-
-                this.textContent = "Other Subjects"; // Update text
-                toggleState = false; // Update toggle state
-            } else { // If currently showing core subjects, switch to showing other subjects
-                coreSubjects.forEach(function (subject) {
-                    subject.style.display = 'none';
-                });
-
-                otherSubjects.forEach(function (subject) {
-                    subject.style.display = 'block';
-                });
-
-                this.textContent = "Show Core Subjects"; // Update text
-                toggleState = true; // Update toggle state
-            }
-        });
-
-        function showToast(message, type) {
-            // Display a toast message
-            $('#toast-body').text(message);
-            $('#toast').removeClass().addClass('toast').addClass(type).addClass('show');
-
-            // Hide the toast after a few seconds
-            setTimeout(function () {
-                $('#toast').removeClass('show');
-            }, 3000);
-        }
-        document.addEventListener('DOMContentLoaded', function () {
-            var successMessage = document.getElementById('successMessage');
-
-            if (successMessage) {
-                successMessage.style.display = 'block';
-
-                setTimeout(function () {
-                    successMessage.style.display = 'none';
-                }, 3000);
-            }
-        });
-        document.addEventListener("DOMContentLoaded", function () {
-            // Add click event listener to each row
-            var rows = document.querySelectorAll('.editRow');
-            rows.forEach(function (row) {
-                row.addEventListener('click', function () {
-                    // Remove 'selected' class from all rows
-                    rows.forEach(function (r) {
-                        r.classList.remove('selected');
-                    });
-
-                    // Add 'selected' class to the clicked row
-                    this.classList.add('selected');
-                });
-            });
-        });
-        document.getElementById('toggleSelection').addEventListener('click', function () {
-            var sendButton = document.getElementById('sendButton');
-            var selectColumn = document.getElementById('selectColumn');
-            var checkboxes = document.querySelectorAll('.select-checkbox');
-
-            // Toggle the visibility of sendButton, selectColumn, and checkboxes
-            sendButton.style.display = sendButton.style.display === 'none' ? 'block' : 'none';
-            selectColumn.style.display = selectColumn.style.display === 'none' ? 'table-cell' : 'none';
-
-            checkboxes.forEach(function (checkbox) {
-                checkbox.style.display = checkbox.style.display === 'none' ? 'block' : 'none';
-            });
-        });
-
-        document.getElementById('selectAllCheckbox').addEventListener('change', function () {
-            var checkboxes = document.querySelectorAll('.select-checkbox');
-
-            // Iterate through all checkboxes and set their checked property accordingly
-            checkboxes.forEach(function (checkbox) {
-                checkbox.checked = document.getElementById('selectAllCheckbox').checked;
-            });
-        });
-        function hideModal(modalId) {
-            document.getElementById(modalId).style.display = 'none';
-        }
-
-        document.getElementById('sendButton').addEventListener('click', function () {
-            // Check if any checkboxes are checked
-            var checkboxes = document.querySelectorAll('.select-checkbox:checked');
-            if (checkboxes.length === 0) {
-                // Show the noSelectionModal if no checkboxes are checked
-                document.getElementById('noSelectionModal').style.display = 'block';
-                return; // Exit the function to prevent showing the confirmation modal
-            }
-
-            // Show confirmation modal
-            document.getElementById('confirmationModal').style.display = 'block';
-        });
-
-        document.getElementById('confirmSend').addEventListener('click', function () {
-            // Close confirmation modal
-            document.getElementById('confirmationModal').style.display = 'none';
-
-            // Get the selected row IDs
-            var selectedRowIds = [];
-            var checkboxes = document.querySelectorAll('.select-checkbox:checked');
-            checkboxes.forEach(function (checkbox) {
-                selectedRowIds.push(checkbox.parentNode.parentNode.dataset.id);
-            });
-
-            // AJAX call to send_selected_applicants.php
-            var xhr = new XMLHttpRequest();
-            xhr.onreadystatechange = function () {
-                if (xhr.readyState === XMLHttpRequest.DONE) {
-                    if (xhr.status === 200) {
-                        // Show success alert
-                        document.getElementById('alertMessage').innerText = 'Sent Successfully to the OSS!';
-                        document.getElementById('alertModal').style.display = 'block';
-                        // Hide success message after 3 seconds
-                        setTimeout(function () {
-                            document.getElementById('alertModal').style.display = 'none';
-                        }, 3000);
-                    } else {
-                        // Show error alert
-                        document.getElementById('alertMessage').innerText = 'Failed to send to the OSS. Please try again later.';
-                        document.getElementById('alertModal').style.display = 'block';
-                    }
+    // Handle button clicks in the confirmation dialog
+    $('.confirmation-buttons button').click(function() {
+        var userConfirmed = $(this).data('confirmed');
+        if (userConfirmed) {
+            // User confirmed, send AJAX request to delete data
+            $.ajax({
+                url: "user_archive.php",
+                type: "POST",
+                data: { delete_ids: [id] },
+                success: function(response) {
+                    // Show response message in success message div
+                    showSuccessMessage(response);
+                    // Reload or update the table as needed
+                },
+                error: function(xhr, status, error) {
+                    console.error(xhr.responseText); // Log error message
+                    // Handle error as needed
                 }
-            };
-            xhr.open('POST', 'send_selected_applicants.php');
-            xhr.setRequestHeader('Content-Type', 'application/json');
-            xhr.send(JSON.stringify({ selectedRowIds: selectedRowIds }));
-        });
-        var cancelButtons = document.querySelectorAll('.cancel');
-        cancelButtons.forEach(function (button) {
-            button.addEventListener('click', function () {
-                document.getElementById('confirmationModal').style.display = 'none';
-                document.getElementById('alertModal').style.display = 'none';
             });
-        });
+        }
 
-
-
-        // Close modals on close button click
-        var closeButtons = document.querySelectorAll('.close');
-        closeButtons.forEach(function (button) {
-            button.addEventListener('click', function () {
-                document.getElementById('noSelectionModal').style.display = 'none';
-                document.getElementById('confirmationModal').style.display = 'none';
-                document.getElementById('alertModal').style.display = 'none';
-            });
-        });
-
-        // Close modals when clicking on the exit button
-        var exitButtons = document.querySelectorAll('.exit');
-        exitButtons.forEach(function (button) {
-            button.addEventListener('click', function () {
-                hideModal(button.closest('.modal').id);
-            });
-        });
-
+        // Hide the confirmation dialog and overlay
+        $('.confirmation-dialog').hide();
+        $('.confirmation-dialog-overlay').hide();
+    });
+}
+  
 
 
     </script>
