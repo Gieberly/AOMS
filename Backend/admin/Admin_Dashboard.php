@@ -1242,7 +1242,7 @@ $pending_result = $conn->query($pending_query);
             <div class="table-data">
                 <div class="order" id="programsContainer">
                     <div class="head">
-                        <h3>Monitoring table</h3>
+                        <h4>Monitoring table</h4>
                         <!-- Add this input field for date filtering -->
 
                         <div class="headfornaturetosort">
@@ -1289,7 +1289,7 @@ $pending_result = $conn->query($pending_query);
                     </style>
 
                     <div class="table-container">
-                        <table>
+                        <table id="programs">
                             <thead id="thead">
                                 <tr>
                                     <th colspan="10" style="text-align: center;"></th>
@@ -1539,7 +1539,7 @@ $pending_result = $conn->query($pending_query);
                         </div>
                         <div class="table-responsive">
                             <!-- Table for displaying student data -->
-                            <table id="dashboard" class="display responsive wrap " width="100%">
+                            <table id="Archive" class="display responsive wrap " width="100%">
                                 <!-- table header -->
                                 <h4>Archive Logs</h4>
                                 <thead>
@@ -1722,6 +1722,12 @@ $pending_result = $conn->query($pending_query);
     </style>
     <script>
         new DataTable('#dashboard', { 
+    order: [[3, 'desc']]
+});
+new DataTable('#programs', { 
+    order: [[3, 'desc']]
+});
+new DataTable('#Archive', { 
     order: [[3, 'desc']]
 });
 function showToast(message, type) {
