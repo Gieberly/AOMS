@@ -924,9 +924,17 @@ $rowNumber = 1;
                 echo "<td>{$row['userType']}</td>";  // User Type
                 echo "<td>{$row['lstatus']}</td>";  // Account Status
                 echo "<td>
-                    <button onclick='retrieveUser({$row['id']})'>Retrieve</button>
-                    <button onclick='deleteUser({$row['id']})'>Delete</button>
-                </td>";
+                <div class='button-container'>
+  
+                <button type='button' class='button check-btn' data-tooltip='Retrieve' onclick='undoUser({$row['id']}, \"Retrieve\")'>
+                <i class='bx bxs-archive-out'></i>
+                </button>
+                <button type='button' class='button inc-btn' data-tooltip='delete' onclick='deleteUser({$row['id']}, \"delete\")'>
+                <i class='bx bxs-trash' ></i>
+                </button>
+     
+                </div>
+                </td>"; // 9
                 echo "</tr>";
                 $rowNumber++;
             }
