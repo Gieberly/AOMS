@@ -1033,6 +1033,48 @@ $pending_result = $conn->query($pending_query);
         }
     </style>
     <script>
+         function updateStatus(id, status) {
+        // Show the confirmation dialog
+        $('.confirmation-dialog').show();
+        $('.confirmation-dialog-overlay').show();
+
+        // Set the message in the dialog
+        $('.confirmation-dialog p').text('Are you sure you want to set the status to ' + status + '?');
+
+        // Handle button clicks in the confirmation dialog
+        $('.confirmation-buttons button').click(function() {
+            var userConfirmed = $(this).data('confirmed');
+            if (userConfirmed) {
+                // User confirmed, send the AJAX request to update the status
+                $.ajax({
+                    type: 'POST',
+                    url: 'personnel/Personnel_UpdateStatus.php',
+                    data: {
+                        id: id,
+                        status: status
+                    },
+                    dataType: 'json', // Expect JSON response
+                    success: function(response) {
+                        if (response.success) {
+                            // Update the status in the table cell
+                            $('[data-id="' + id + '"] [data-field="appointment_status"]').text(
+                                status);
+                            showToast(response.message, 'success');
+                        } else {
+                            showToast(response.message, 'error');
+                        }
+                    },
+                    error: function(error) {
+                        console.error('Error updating status:', error);
+                    }
+                });
+            }
+
+            // Hide the confirmation dialog and overlay
+            $('.confirmation-dialog').hide();
+            $('.confirmation-dialog-overlay').hide();
+        });
+    }
         document.addEventListener('DOMContentLoaded', function () {
             var ctxPersonnel = document.getElementById('PersonnelChart').getContext('2d');
             var userCounts = <?php echo json_encode($userCounts); ?>;
