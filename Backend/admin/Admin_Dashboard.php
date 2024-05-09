@@ -1,5 +1,5 @@
 <?php
-include("admin_cover.php");
+include ("admin_cover.php");
 
 // Capture selected academic year from POST data
 $startYear = isset($_POST['start_year']) ? mysqli_real_escape_string($conn, $_POST['start_year']) : null;
@@ -320,6 +320,10 @@ function fetchPrograms($conn)
 
 // Call the fetchPrograms function to get programs data
 $programs = fetchPrograms($conn);
+
+// Fetch pending accounts from the users table
+$pending_query = "SELECT * FROM users WHERE lstatus = 'Pending'";
+$pending_result = $conn->query($pending_query);
 ?>
 <!DOCTYPE html>
 <html lang="en" dir="ltr">
@@ -338,7 +342,7 @@ $programs = fetchPrograms($conn);
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
     <!--Custom CSS-->
     <link rel="icon" href="..\assets_admin\images\BSU Logo1.png" type="image/x-icon">
-    <link rel="stylesheet" href="..\assets_admin\css\admin.css" />
+    <link rel="stylesheet" href="..\assets_admin\css\Personnel.css" />
     <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.9.4/Chart.js"></script>
 </head>
 
@@ -358,25 +362,13 @@ $programs = fetchPrograms($conn);
                             <li><a class="active" href="dashboard_admin.php" style="text-decoration:none">Home</a></li>
                         </ul>
                     </div>
-                    <!--dropdown-->
-                    <div class="dropdown">
-                        <a class="btn btn-success dropdown-toggle" style="border-radius: 20px;" href="#" role="button" data-toggle="dropdown" aria-expanded="false">
-                            <i class='bx bx-calendar'></i> Admission Period
-                        </a>
-                        <div class="dropdown-menu " id="admission_periods" style="border-radius: 10px;">
-                            <?php generateAdmissionPeriodDropdown($conn); ?>
-                        </div>
-                        <div class="btn-group mr-2" role="group">
-                            <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#admissionAddModal" style="border-radius: 20px;">
-                                <i class='bx bx-folder-plus'></i> New admission
-                            </button>
-                        </div>
-                    </div>
+
 
                 </div>
                 <div>
                     <!--Modal-->
-                    <div class="modal fade" id="admissionAddModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+                    <div class="modal fade" id="admissionAddModal" tabindex="-1" role="dialog"
+                        aria-labelledby="exampleModalLabel" aria-hidden="true">
                         <div class="modal-dialog">
                             <div class="modal-content">
                                 <div class="modal-header border-bottom-0">
@@ -400,11 +392,13 @@ $programs = fetchPrograms($conn);
 
                                         <div class="form-group">
                                             <label for="start">Start of Admission</label>
-                                            <input type="date" class="form-control" id="start" name="start" placeholder="Enter date">
+                                            <input type="date" class="form-control" id="start" name="start"
+                                                placeholder="Enter date">
                                         </div>
                                         <div class="form-group">
                                             <label for="end">End of Admission</label>
-                                            <input type="date" class="form-control" id="end" name="end" placeholder="Enter Admission End">
+                                            <input type="date" class="form-control" id="end" name="end"
+                                                placeholder="Enter Admission End">
                                         </div>
                                         <div class="form-group">
                                             <label for="sem">Select Semester</label>
@@ -419,16 +413,19 @@ $programs = fetchPrograms($conn);
                                             <label for="acad">Academic Year</label>
                                             <div class="row">
                                                 <div class="col">
-                                                    <input type="text" class="form-control" id="start_year" name="start_year" placeholder="YYYY">
+                                                    <input type="text" class="form-control" id="start_year"
+                                                        name="start_year" placeholder="YYYY">
                                                 </div>
                                                 -
                                                 <div class="col">
-                                                    <input type="text" class="form-control" id="end_year" name="end_year" placeholder="YYYY">
+                                                    <input type="text" class="form-control" id="end_year"
+                                                        name="end_year" placeholder="YYYY">
                                                 </div>
                                             </div>
                                         </div>
                                         <div class="modal-footer border-top-0 d-flex justify-content-center">
-                                            <button type="button" class="btn btn-danger" data-dismiss="modal">Close</button>
+                                            <button type="button" class="btn btn-danger"
+                                                data-dismiss="modal">Close</button>
                                             <button type="submit" class="btn btn-success">Save Admission</button>
                                         </div>
                                     </div>
@@ -438,7 +435,8 @@ $programs = fetchPrograms($conn);
                     </div>
                     <!--Modal End-->
                     <!-- Edit Staff Modal -->
-                    <div class="modal fade" id="userEditModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+                    <div class="modal fade" id="userEditModal" tabindex="-1" aria-labelledby="exampleModalLabel"
+                        aria-hidden="true">
                         <div class="modal-dialog">
                             <div class="modal-content">
                                 <div class="modal-header border-bottom-0">
@@ -474,11 +472,13 @@ $programs = fetchPrograms($conn);
                                         </div>
                                         <div class="mb-3">
                                             <label for="">Department</label>
-                                            <input type="text" name="dept" id="dept" class="form-control" placeholder="Enter Designation" />
+                                            <input type="text" name="dept" id="dept" class="form-control"
+                                                placeholder="Enter Designation" />
                                         </div>
                                         <div class="input-group mb-3">
                                             <label for="">Designation</label>
-                                            <input type="text" name="designation" id="designation" class="form-control" placeholder="Enter Designation" />
+                                            <input type="text" name="designation" id="designation" class="form-control"
+                                                placeholder="Enter Designation" />
                                         </div>
                                         <div class="form-group">
                                             <div class="input-group mb-3">
@@ -651,10 +651,12 @@ $programs = fetchPrograms($conn);
                             <thead id="thead">
                                 <tr>
                                     <th colspan="10" style="text-align: center;"></th>
-                                    <th style="background-color: #C9DAF8;text-align: center;" class="Board_only" colspan="2">Admitted as per College submission</th>
+                                    <th style="background-color: #C9DAF8;text-align: center;" class="Board_only"
+                                        colspan="2">Admitted as per College submission</th>
                                     <th></th>
 
-                                    <th style="background-color: #F4CCCC;text-align: center;" class="Board_only" colspan="3">Not Admitted</th>
+                                    <th style="background-color: #F4CCCC;text-align: center;" class="Board_only"
+                                        colspan="3">Not Admitted</th>
 
                                     <th></th>
                                     <th></th>
@@ -696,22 +698,22 @@ $programs = fetchPrograms($conn);
                                     echo "<td>" . $program['Nature_of_Degree'] . "</td>";
                                     echo "<td>" . $program['No_of_Sections'] . "</td>";
                                     echo "<td>" . $program['No_of_Students_Per_Section'] . "</td>";
-                                    echo "<td>" .  $total_slots . "</td>"; // Display total 
-
+                                    echo "<td>" . $total_slots . "</td>"; // Display total 
+                                
                                     echo "<td>" . $program['num_applicants'] . "</td>"; // Display number of applicant
                                     $total_remaining = $program['No_of_Sections'] * $program['No_of_Students_Per_Section'] - $program['num_applicants'];
 
-                                    echo "<td>" .  $total_remaining . "</td>"; // Display remaining slots
+                                    echo "<td>" . $total_remaining . "</td>"; // Display remaining slots
                                     echo '<td style="background-color: #FFFF00; text-align: center;">' . ($total_slots - $total_count) . '</td>'; // Display total
                                     echo '<td style="background-color: #C9DAF8; text-align: center;">' . $program['aq_count'] . '</td>'; // Display Admitted Qualified count
                                     echo '<td style="background-color: #C9DAF8; text-align: center;">' . $program['anq_count'] . '</td>'; // Display Admitted Not Qualified count
-
+                                
                                     echo "<td>" . $total_count . "</td>"; // Display Total count
-
+                                
                                     echo '<td style="background-color: #F4CCCC; text-align: center;">' . $program['pq_count'] . '</td>'; // Display Possible Qualifier count
                                     echo '<td style="background-color: #F4CCCC; text-align: center;">' . $program['pqn_count'] . '</td>'; // Display PQ(NB) count
                                     echo '<td style="background-color: #F4CCCC; text-align: center;">' . $program['nq_count'] . '</td>'; // Display NQ count
-
+                                
                                     $total_counts = $program['pq_count'] + $program['pqn_count'] + $program['nq_count'];
                                     echo "<td>" . $total_counts . "</td>";
                                     echo '<td style="background-color: #FFE599; text-align: center;">' . ($total_counts + $total_count) . '</td>'; // Display total
@@ -791,35 +793,59 @@ $programs = fetchPrograms($conn);
                                 </thead>
                                 <tbody id="datalist">
                                     <?php
-                                    // Counter for numbering the students
-                                    $counter = 1;
-                                    $pending = getPendingAccounts();
-                                    if (mysqli_num_rows($pending) > 0) {
-                                        foreach ($pending as $pend) {
-                                    ?>
-                                            <tr>
-                                                <td><?php echo $counter++; ?></td>
-                                                <td><?= $pend['last_name']; ?></td>
-                                                <td><?= $pend['name']; ?></td>
-                                                <td><?= $pend['mname']; ?></td>
-                                                <td><?= $pend['email']; ?></td>
-                                                <td><?= $pend['Department']; ?></td>
-                                                <td><?= $pend['Designation']; ?></td>
-                                                <td><?= $pend['userType']; ?></td>
-                                                <td><?= $pend['lstatus']; ?></td>
-                                                <td>
-                                                    <button class="approve-btn btn btn-success btn-sm" data-id="<?= $pend['id'] ?>" data-name="Approved">Approve</button>
-                                                    <button class="reject-btn btn btn-danger btn-sm" data-id="<?= $pend['id'] ?>" data-name="Rejected">Reject</button>
-                                                </td>
-                                            </tr>
-                                    <?php
-                                        }
+                                    $rowNumber = 1; // Initialize a counter for the row numbers
+                                    while ($row = $pending_result->fetch_assoc()) {
+                                        echo "<tr>";
+                                        echo "<td>{$rowNumber}</td>"; // Display the row number
+                                        echo "<td>{$row['lastname']}</td>";
+                                        echo "<td>{$row['firstname']}</td>";
+                                        echo "<td>{$row['middlename']}</td>";
+                                        echo "<td>{$row['email']}</td>";
+                                        echo "<td>{$row['department']}</td>";
+                                        echo "<td>{$row['designation']}</td>";
+                                        echo "<td>{$row['usertype']}</td>";
+                                        echo "<td>{$row['lstatus']}</td>"; // Display account status
+                                    
+                                        // Action buttons for Approve/Reject with appropriate event handling
+                                        echo "<td>
+                                  <div class='button-container'>
+                                       <button type='button' class='button check-btn' data-tooltip='Approve' onclick='updateStatus({$row['id']}, \"Approved\")'>
+                                        <i class='bx bxs-check-circle'></i>
+                                   </button>
+                            <button type='button' class='button inc-btn' data-tooltip='Reject' onclick='updateStatus({$row['id']}, \"Rejected\")'>
+                                <i class='bx bxs-no-entry'></i>
+                            </button>
+                        </div>
+                    </td>";
+
+                                        echo "</tr>"; // End of the row
+                                        $rowNumber++; // Increment the row counter
                                     }
                                     ?>
                                 </tbody>
                             </table>
                         </div>
                     </div>
+                    <style>
+                          .button.inc-btn i,
+    .button.check-btn i,
+    .button.delete-btn i {
+        font-size: 13px;
+        color: black;
+    }
+
+    .button.inc-btn:hover i {
+        color: orange;
+    }
+
+    .button.check-btn:hover i {
+        color: green;
+    }
+
+    .button.delete-btn:hover i {
+        color: red;
+    }
+                    </style>
                 </div>
                 <!--OffCanvas-->
                 <!--End of Canvass-->
@@ -882,8 +908,8 @@ $programs = fetchPrograms($conn);
                                     $counter = 1;
                                     $archive = getArchiveLogs();
                                     if (mysqli_num_rows($archive) > 0) {
-                                        foreach ($archive  as $arch) {
-                                    ?>
+                                        foreach ($archive as $arch) {
+                                            ?>
                                             <tr>
                                                 <td><?php echo $counter++; ?></td>
                                                 <td><?= $arch['id']; ?></td>
@@ -892,7 +918,7 @@ $programs = fetchPrograms($conn);
                                                 <td><?= $arch['archive_datetime']; ?></td>
 
                                             </tr>
-                                    <?php
+                                            <?php
                                         }
                                     }
                                     ?>
@@ -989,7 +1015,7 @@ $programs = fetchPrograms($conn);
         }
     </style>
     <script>
-        document.addEventListener('DOMContentLoaded', function() {
+        document.addEventListener('DOMContentLoaded', function () {
             var ctxPersonnel = document.getElementById('PersonnelChart').getContext('2d');
             var userCounts = <?php echo json_encode($userCounts); ?>;
             var approvedUserCounts = <?php echo json_encode($approvedUserCounts); ?>;
@@ -1010,7 +1036,7 @@ $programs = fetchPrograms($conn);
                     }, {
                         label: 'Approved Count',
                         data: [approvedUserCounts.Personnel, approvedUserCounts.Faculty,
-                            approvedUserCounts.OSS
+                        approvedUserCounts.OSS
                         ],
                         backgroundColor: 'rgba(75, 192, 192, 0.2)',
                         borderColor: 'rgba(75, 192, 192, 1)',
@@ -1018,7 +1044,7 @@ $programs = fetchPrograms($conn);
                     }, {
                         label: 'Pending Count',
                         data: [pendingUserCounts.Personnel, pendingUserCounts.Faculty,
-                            pendingUserCounts.OSS
+                        pendingUserCounts.OSS
                         ],
                         backgroundColor: 'rgba(255, 159, 64, 0.2)',
                         borderColor: 'rgba(255, 159, 64, 1)',
@@ -1026,7 +1052,7 @@ $programs = fetchPrograms($conn);
                     }, {
                         label: 'Rejected Count',
                         data: [rejectedUserCounts.Personnel, rejectedUserCounts.Faculty,
-                            rejectedUserCounts.OSS
+                        rejectedUserCounts.OSS
                         ],
                         backgroundColor: 'rgba(255, 99, 132, 0.2)',
                         borderColor: 'rgba(255, 99, 132, 1)',
@@ -1043,7 +1069,7 @@ $programs = fetchPrograms($conn);
             });
         });
 
-        document.addEventListener('DOMContentLoaded', function() {
+        document.addEventListener('DOMContentLoaded', function () {
             // Get the availableBox element
             var availableBox = document.getElementById('available-box');
 
@@ -1051,7 +1077,7 @@ $programs = fetchPrograms($conn);
             var programsContainer = document.getElementById('programsContainer');
 
             // Add click event listener to the availableBox
-            availableBox.addEventListener('click', function(e) {
+            availableBox.addEventListener('click', function (e) {
                 e.preventDefault(); // Prevent the default link behavior
                 if (programsContainer.style.display === 'none') {
                     programsContainer.style.display = 'block'; // Show programsContainer
@@ -1161,188 +1187,6 @@ $programs = fetchPrograms($conn);
             });
         }
 
-        $(document).ready(function() {
-            $('.approve-btn, .reject-btn').click(function() {
-                var id = $(this).data('id');
-                var valueName = $(this).data('name');
 
-                // Send an AJAX request to update the value in the database
-                $.ajax({
-                    url: 'update_status.php',
-                    type: 'POST',
-                    data: {
-                        id: id,
-                        name: valueName
-                    },
-                    success: function(response) {
-                        console.log(response);
-                        location.reload();
-                    },
-                    error: function(xhr, status, error) {
-                        console.error(xhr.responseText); // Log the error message
-                    }
-                });
-            });
-        });
-
-
-        // Edit button click event listener
-        $(document).on('click', '.editUserBtn', function() {
-            // Get the staff ID from the button value
-            var staff_id = $(this).val();
-
-            // AJAX request to fetch current data of the staff member
-            $.ajax({
-                type: "GET",
-                url: "dashboard_code.php?staff_id=" + staff_id,
-                success: function(response) {
-                    var res = jQuery.parseJSON(response);
-                    if (res.status == 404) {
-                        alert(res.message);
-                    } else if (res.status == 200) {
-                        // Populate modal fields with current data
-                        $('#staff_id').val(res.data.id);
-                        $('#fname').val(res.data.name);
-                        $('#mname').val(res.data.mname);
-                        $('#lname').val(res.data.last_name);
-                        $('#email').val(res.data.email);
-                        $('#status').val(res.data.lstatus);
-                        $('#office').val(res.data.userType);
-                        $('#dept').val(res.data.Department);
-                        $('#designation').val(res.data.Designation);
-                        // Optionally, you can also populate other fields here
-
-                        // Show the edit modal
-                        $('#userEditModal').modal('show');
-                    }
-                }
-            });
-        });
-        $(document).on('submit', '#updateUser', function(e) {
-            e.preventDefault();
-
-            var formData = new FormData(this);
-            formData.append("update_user", true);
-
-            $.ajax({
-                type: "POST",
-                url: "dashboard_code.php",
-                data: formData,
-                processData: false,
-                contentType: false,
-                success: function(response) {
-                    var res = JSON.parse(response);
-
-                    if (res.status == 422) {
-                        $('#error-message-edit').text(res.message).show(); // Show error message
-                        $('#message-edit').hide(); // Hide success message
-                    } else if (res.status == 200) {
-                        $('#message').text(res.message).show(); // Show success message
-                        $('#error-message-edit').hide(); // Hide error message
-
-                        // Close the modal after a delay
-                        setTimeout(function() {
-                            $('#userEditModal').modal('hide');
-                        }, 2000); // Adjust the delay time as needed
-                        setTimeout(function() {
-                            location.reload();
-                        }, 3000);
-                    } else if (res.status == 500) {
-                        alert(res.message); // Show any other error messages
-                    }
-                },
-                error: function(xhr, status, error) {
-                    // Handle error response
-                    console.error(xhr.responseText);
-                }
-            });
-        });
-        ///Save Admission
-        $(document).on('submit', '#saveAdmission', function(e) {
-            e.preventDefault();
-
-            var formData = new FormData(this);
-            formData.append("save_admission", true);
-
-            $.ajax({
-                type: "POST",
-                url: "create_admission.php",
-                data: formData,
-                processData: false,
-                contentType: false,
-                responsive: true,
-                success: function(response) {
-                    console.log("Response:", response);
-                    var res = JSON.parse(response);
-
-                    console.log("Status:", res.status);
-                    if (res.status == 422) {
-                        $('#error-message-add').text(res.message);
-                        $('#error-message-add').show();
-                        $('#message-add').hide(); // Hide success message
-                    } else if (res.status == 200) {
-                        if (!res.message) { // If there is no error message
-                            console.log("No error message. Closing modal...");
-                            setTimeout(function() {
-                                $('##saveAdmission').modal(
-                                    'hide'); // Close the modal after 5 seconds
-                                console.log("Modal closed");
-                            }, 5000); // 5 seconds timeout
-                        } else {
-                            $('#message-add').text(res.message);
-                            $('#message-add').show();
-                            $('#error-message-add').hide(); // Hide error message
-
-                            setTimeout(function() {
-                                $('#saveAdmission').modal(
-                                    'hide'); // Close the modal after 5 seconds
-                                console.log("Modal closed");
-                            }, 2000);
-
-                            setTimeout(function() {
-                                location.reload(); // Refresh the page
-                                console.log("Page refreshed");
-                            }, 3000);
-                        }
-                    } else if (res.status == 500) {
-                        $('#error-message-add').text(res.message);
-                        $('#error-message-add').show();
-                        $('#message-add').hide(); // Hide success message
-                    }
-                },
-                error: function(xhr, status, error) {
-                    console.error(xhr.responseText);
-                }
-            });
-        });
-
-        //undo admission data archiving
-        $(document).on('click', '.undoUserBtn', function() {
-            var archiveId = $(this).val(); // Get the archive ID from the button value
-            var targetYear = new Date().getFullYear(); // Get the current year (you can change this if needed)
-
-            // Send both archive_id and target_year parameters in the AJAX request
-            $.ajax({
-                type: "POST",
-                url: "undo_archive.php", // PHP endpoint to handle undo request
-                data: {
-                    archive_id: archiveId,
-                    target_year: targetYear
-                }, // Pass archive ID and target year to PHP endpoint
-                success: function(response) {
-                    // Handle success response
-                    console.log("Response:", response);
-                    alert(response); // Display success message or perform other actions
-                    // You may want to reload the page or update the table after successful undo
-                    // location.reload();
-                },
-                error: function(xhr, status, error) {
-                    // Handle error response
-                    console.error(xhr.responseText);
-                    alert('Error: ' + xhr
-                        .responseText); // Display error message or perform other actions
-                }
-            });
-        });
     </script>
     <!-- CONTENT -->
