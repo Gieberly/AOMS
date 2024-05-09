@@ -803,7 +803,7 @@ $result = $conn->query($query);
             echo "<button type='button' class='button delete-btn' data-tooltip='Reject' onclick='updateStatus({$row['id']}, \"Rejected\")'>";
             echo "<i class='bx bxs-x-circle'></i>";
             echo "</button>";
-            echo "<button type='button' class='button archive-btn' data-tooltip='Archive' onclick='archiveUser({$srow['id']}, \"Archive\")'>";
+            echo "<button type='button' class='button archive-btn' data-tooltip='Archive' onclick='archiveUser({$row['id']}, \"Archive\")'>";
             echo "<i class='bx bxs-box'></i>";
             echo "</button>";
             echo "</div>";
