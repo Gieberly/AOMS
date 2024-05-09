@@ -753,7 +753,7 @@ include ("admin_cover.php");
 
                     <div id="table-container">
                         <!--staff-->
-                        <table id="studentTable" class="display responsive wrap " width="100%">
+                        <table id="users" class="display responsive wrap " width="100%">
                             <thead>
                                 <tr>
                                     <th>#</th>
@@ -765,7 +765,7 @@ include ("admin_cover.php");
                                     <th>User Type</th>
                                     <th>Department</th>
                                     <th>Designation</th>
-                                  
+                                    <th>Status</th>
                                     <th>Action</th>
 
                                 </tr>
@@ -1630,7 +1630,7 @@ include ("admin_cover.php");
 
 
     <script>
-      new DataTable('#studentTable', {
+      new DataTable('#users', {
             order: [[3, 'desc']]
         });
 
