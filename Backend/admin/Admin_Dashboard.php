@@ -1415,7 +1415,7 @@ $pending_result = $conn->query($pending_query);
                         </div>
                         <div class="table-responsive">
                             <!-- Table for displaying student data -->
-                            <table class="display responsive wrap" width="100%" id="courses">
+                            <table id="dashboard" class="display responsive wrap" width="100%" id="courses">
                                 <!-- table header -->
                                 <h4>Pending Accounts</h4>
                                 <thead>
@@ -1721,6 +1721,9 @@ $pending_result = $conn->query($pending_query);
     }
     </style>
     <script>
+        new DataTable('#dashboard', {
+    order: [[3, 'desc']]
+});
 function showToast(message, type) {
     // Display the toast message
     $('#toast-body').text(message);
