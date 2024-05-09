@@ -886,6 +886,7 @@ window.addEventListener("click", function (event) {
     <h2>Add New Program</h2>
     <form id="addProgramForm" action="add_program.php" method="POST">
       <div class="form-group">
+        <br>
         <label for="college">College:</label>
         <input class="input" type="text" id="college" name="college" required>
       </div>
