@@ -1653,6 +1653,11 @@ $stmt->close();
         </main>
         <!-- MAIN -->
     </section>
+
+    <!-- Success message div -->
+<div class="success-message" id="archive" style="display: none;">
+  <p id="archive-message"></p>
+</div>
     <div id="toast" class="toast" role="alert" aria-live="assertive" aria-atomic="true">
         <div class="toast-header">
         </div>
