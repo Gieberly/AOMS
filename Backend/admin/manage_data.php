@@ -4,7 +4,7 @@ include ("admin_cover.php");
 
 
 // Query to fetch data from admission_data_archive
-$query = "SELECT * FROM academicclassification";
+$query = "SELECT * FROM programs";
 $result = $conn->query($query);
 
 
@@ -16,10 +16,8 @@ $result2 = $conn->query($query2);
 $query4 = "SELECT * FROM ethnicity";
 $result4 = $conn->query($query4);
 
-$query5 = "SELECT * FROM programs";
+$query5 = "SELECT * FROM academicclassification";
 $result5 = $conn->query($query5);
-
-
 
 ?>
 
@@ -716,6 +714,42 @@ $result5 = $conn->query($query5);
             <div class="table-data">
                 <div class="order">
                     <div class="head">
+                        <h3>Academic Year Schedule</h3>
+                    </div>
+                    <div class="table-container">
+                        <table class="" style="width: 100%;">
+
+                            <!-- Thead Section -->
+                            <tr>
+                            <th>College</th>
+    <th>Courses</th>
+    <th>Nature of Degree</th>
+    <th>Sections</th> <!-- Number of sections -->
+    <th>Students Per Section</th>
+</tr>
+        </thead>
+        <!-- Table Body -->
+        <tbody>
+            <?php
+            $rowNumber = 1;
+            while ($row2 = $result->fetch_assoc()) {
+              
+                echo "<td>{$row['College']}</td>"; // College
+                echo "<td>{$row['Courses']}</td>"; // Courses
+                echo "<td>{$row['Nature_of_Degree']}</td>"; // Nature of Degree
+                echo "<td>{$row['No_of_Sections']}</td>"; // Number of Sections
+                $rowNumber++; // Increment for the next row
+            }
+            ?>
+        </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+
+            <div class="table-data">
+                <div class="order">
+                    <div class="head">
                         <h3>List of Classification</h3>
                         <!-- Add this input field for date filtering -->
 
@@ -763,7 +797,7 @@ $result5 = $conn->query($query5);
                     </style>
 
                     <div class="table-container">
-                        <table class="display" style="width: 100%;">
+                        <table class="" style="width: 100%;">
 
                             <!-- Thead Section -->
                             <thead id="thead">
@@ -791,23 +825,23 @@ $result5 = $conn->query($query5);
                             <tbody id="tbody">
                             <?php
 $rowNumber = 1; // To number each row
-while ($row = $result->fetch_assoc()) {
+while ($row5 = $result5->fetch_assoc()) {
     echo "<tr>";
     echo "<td>{$rowNumber}</td>"; // Row number
-    echo "<td>{$row['Classification']}</td>"; // Display Classification
-    echo "<td>{$row['Description']}</td>"; // Display Description
-    echo "<td>{$row['Requirement1']}</td>"; // Display Requirement1
-    echo "<td>{$row['Requirement2']}</td>"; // Display Requirement2
-    echo "<td>{$row['Requirement3']}</td>"; // Display Requirement3
-    echo "<td>{$row['Requirement4']}</td>"; // Display Requirement4
-    echo "<td>{$row['Requirement5']}</td>"; // Display Requirement5
-    echo "<td>{$row['Requirement6']}</td>"; // Display Requirement6
-    echo "<td>{$row['Requirement7']}</td>"; // Display Requirement7
-    echo "<td>{$row['Criteria1']}</td>"; // Display Criteria1
-    echo "<td>{$row['Criteria2']}</td>"; // Display Criteria2
-    echo "<td>{$row['Criteria3']}</td>"; // Display Criteria3
-    echo "<td>{$row['Criteria4']}</td>"; // Display Criteria4
-    echo "<td>{$row['NatureOfDegree']}</td>"; // Display Nature of Degree
+    echo "<td>{$row5['Classification']}</td>"; // Display Classification
+    echo "<td>{$row5['Description']}</td>"; // Display Description
+    echo "<td>{$row5['Requirement1']}</td>"; // Display Requirement1
+    echo "<td>{$row5['Requirement2']}</td>"; // Display Requirement2
+    echo "<td>{$row5['Requirement3']}</td>"; // Display Requirement3
+    echo "<td>{$row5['Requirement4']}</td>"; // Display Requirement4
+    echo "<td>{$row5['Requirement5']}</td>"; // Display Requirement5
+    echo "<td>{$row5['Requirement6']}</td>"; // Display Requirement6
+    echo "<td>{$row5['Requirement7']}</td>"; // Display Requirement7
+    echo "<td>{$row5['Criteria1']}</td>"; // Display Criteria1
+    echo "<td>{$row5['Criteria2']}</td>"; // Display Criteria2
+    echo "<td>{$row5['Criteria3']}</td>"; // Display Criteria3
+    echo "<td>{$row5['Criteria4']}</td>"; // Display Criteria4
+    echo "<td>{$row5['NatureOfDegree']}</td>"; // Display Nature of Degree
    
     echo "</tr>";
     $rowNumber++; // Increment for the next row
@@ -1593,7 +1627,7 @@ while ($row = $result->fetch_assoc()) {
             <div class="table-data">
                 <div class="order">
                     <div class="head">
-                        <h3>List of archived Personnel</h3>
+                        <h3>Academic Year Schedule</h3>
                     </div>
                     <div class="table-container">
                         <table class="" style="width: 100%;">
@@ -1640,7 +1674,7 @@ while ($row = $result->fetch_assoc()) {
             <div class="table-data">
                 <div class="order">
                     <div class="head">
-                        <h3>List of archived Personnel</h3>
+                        <h3>List of Applicant Ethnicity</h3>
                     </div>
                     <div class="table-container">
                         <table class="" style="width: 100%;">
@@ -1648,7 +1682,6 @@ while ($row = $result->fetch_assoc()) {
                             <!-- Thead Section -->
 <tr>
     <th>#</th> <!-- Row numbering -->
-    <th>Ethnicity ID</th> <!-- Ethnicity ID -->
     <th>Ethnicity Name</th> <!-- Ethnicity Name -->
 </tr>
         </thead>
@@ -1659,7 +1692,6 @@ while ($row = $result->fetch_assoc()) {
             while ($row4 = $result4->fetch_assoc()) {
                 echo "<tr>";
                 echo "<td>{$rowNumber}</td>"; // Display row number
-                echo "<td>{$row4['ethnicity_id']}</td>"; // Display Ethnicity ID
                 echo "<td>{$row4['ethnicity_name']}</td>"; // Display Ethnicity Name
                 echo "</tr>";
                 $rowNumber++;
