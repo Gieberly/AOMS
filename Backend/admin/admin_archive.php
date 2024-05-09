@@ -2,75 +2,7 @@
 
 include("admin_cover.php");
 
-// Fetch courses from the programs table
-$courses_query = "SELECT DISTINCT Courses FROM programs";
-$courses_result = $conn->query($courses_query);
 
-$courses = array();
-while ($row = $courses_result->fetch_assoc()) {
-    $courses[] = $row['Courses'];
-}
-
-$colleges_query = "SELECT DISTINCT College FROM programs";
-$colleges_result = $conn->query($colleges_query);
-
-$colleges = array();
-while ($row = $colleges_result->fetch_assoc()) {
-    $colleges[] = $row['College'];
-}
-
-// Query to retrieve the last entered applicant number
-$last_applicant_number_query = "SELECT applicant_number FROM admission_data ORDER BY applicant_number DESC LIMIT 1";
-$last_applicant_number_result = $conn->query($last_applicant_number_query);
-$last_applicant_number = '';
-if ($last_applicant_number_result->num_rows > 0) {
-    $row = $last_applicant_number_result->fetch_assoc();
-    $last_applicant_number = $row['applicant_number'];
-}
-
-// Fetch classifications from the academicclassification table
-$classifications_query = "SELECT Classification FROM academicclassification";
-$classifications_result = $conn->query($classifications_query);
-
-$classifications = array();
-while ($row = $classifications_result->fetch_assoc()) {
-    $classifications[] = $row['Classification'];
-}
-
-
-// Store the search query in a session variable if it's set
-if (isset($_GET['search'])) {
-    $_SESSION['search'] = $_GET['search'];
-}
-
-// Retrieve the stored search query from session if it exists
-$search = isset($_SESSION['search']) ? $_SESSION['search'] : '';
-
-$filterDate = isset($_GET['appointment_date']) ? $_GET['appointment_date'] : '';
-
-$query = "SELECT * FROM admission_data_archive WHERE 
-            (
-              `Name` LIKE '%$search%' OR 
-              `Middle_Name` LIKE '%$search%' OR 
-              `Last_Name` LIKE '%$search%' OR 
-              `academic_classification` LIKE '%$search%' OR 
-              TRIM(`nature_of_degree`) = '$search' OR 
-              TRIM(`appointment_status`) = '$search' 
-            )
-            ORDER BY applicant_number ASC";
-
-$result = $conn->query($query);
-
-// Fetch user information from the database based on user ID
-$userID = $_SESSION['user_id'];
-$stmt = $conn->prepare("SELECT name, email, userType, status FROM users WHERE id = ?");
-$stmt->bind_param("i", $userID);
-$stmt->execute();
-$stmt->bind_result($name, $email, $userType, $status);
-$stmt->fetch();
-
-// Close statement
-$stmt->close();
 ?>
 
 <head>
