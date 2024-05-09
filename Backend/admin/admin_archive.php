@@ -1660,7 +1660,7 @@ function deleteUser(id) {
     // Show confirmation dialog
     $('.confirmation-dialog').show();
     $('.confirmation-dialog-overlay').show();
-    $('.confirmation-dialog p').text('Are you sure you want to retrieve this data?');
+    $('.confirmation-dialog p').text('Are you sure you want to permanently delete this data?');
 
     // Handle button clicks in the confirmation dialog
     $('.confirmation-buttons button').click(function() {
