@@ -127,7 +127,7 @@ $full_name = $name . ' ' . $mname . ' ' . $last_name;
         </li>
     
         <li class="">
-            <a href="colleges.php" id="data-result-link" style="text-decoration:none">
+            <a href="manage_data.php" id="data-result-link" style="text-decoration:none">
                 <i class='bx bxs-book-alt'></i>
                 <span class="text">Manage Data</span>
             </a>
