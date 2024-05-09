@@ -2188,16 +2188,16 @@ $stmt->close();
         select: true,
         order: [[0, 'asc']], // Default sorting
         dom: 'frtip', // Minimal layout
-        columnDefs: [
-            {
-                targets: [0], // Column index (disable sorting)
-                orderable: false, // Disable sorting
-            },
-            {
-                targets: [10], // Example column (disable sorting)
-                orderable: false, // Disable sorting
-            },
-        ],
+        // columnDefs: [
+        //     {
+        //         targets: [0], // Column index (disable sorting)
+        //         orderable: false, // Disable sorting
+        //     },
+        //     {
+        //         targets: [10], // Example column (disable sorting)
+        //         orderable: false, // Disable sorting
+        //     },
+        // ],
     });
 
     // Create the Excel export button
