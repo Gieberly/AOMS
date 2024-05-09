@@ -778,37 +778,36 @@ $result = $conn->query($query);
                             </thead>
                             <tbody id="stafflist">
       <tbody id="stafflist">
-     <?php
+      <?php
         // Loop through each result and populate the table
         $counter = 1; 
         while ($row = $result->fetch_assoc()) {
             echo "<tr>";
-            echo "<td>" . $counter . "</td>";
-            echo "<td>" . htmlspecialchars($row['last_name']) . "</td>";
-            echo "<td>" . htmlspecialchars($row['name']) . "</td>";
-            echo "<td>" . htmlspecialchars($row['mname']) . "</td>";
-            echo "<td>" . htmlspecialchars($row['email']) . "</td>";
-            echo "<td>" . htmlspecialchars($row['created_date']) . "</td>";
-            echo "<td>" . htmlspecialchars($row['userType']) . "</td>";
-            echo "<td>" . htmlspecialchars($row['Department']) . "</td>";
-            echo "<td>" . htmlspecialchars($row['Designation']) . "</td>";
-            echo "<td>" . htmlspecialchars($row['status']) . "</td>";
-            
-            // Example action buttons (e.g., Edit and Delete)
-              // Action buttons with event handlers
-              echo "<td>";
-              echo "<div class='button-container'>";
-              echo "<button type='button' class='button check-btn' data-tooltip='Approve' onclick='updateStatus({$row['id']}, \"Approved\")'>";
-              echo "<i class='bx bxs-check-circle'></i>";
-              echo "</button>";
-              echo "<button type='button' class='button delete-btn' data-tooltip='Reject' onclick='updateStatus({$row['id']}, \"Rejected\")'>";
-              echo "<i class='bx bxs-x-circle'></i>";
-              echo "</button>";
-              echo "<button type='button' class='button archive-btn' data-tooltip='Archive' onclick='archiveUser({$srow['id']}, \"Archive\")'>";
-              echo "<i class='bx bxs-box'></i>";
-              echo "</button>";
-              echo "</div>";
-              echo "</td>";
+            echo "<td>{$counter}</td>"; // Display the counter value
+            echo "<td>{$row['last_name']}</td>"; // Last name
+            echo "<td>{$row['name']}</td>"; // First name
+            echo "<td>{$row['mname']}</td>"; // Middle name
+            echo "<td>{$row['email']}</td>"; // Email address
+            echo "<td>{$row['created_date']}</td>"; // Created date
+            echo "<td>{$row['userType']}</td>"; // User type
+            echo "<td>{$row['Department']}</td>"; // Department
+            echo "<td>{$row['Designation']}</td>"; // Designation
+            echo "<td>{$row['lstatus']}</td>"; // Status (e.g., active/inactive)
+
+            // Action buttons with event handlers
+            echo "<td>";
+            echo "<div class='button-container'>";
+            echo "<button type='button' class='button check-btn' data-tooltip='Approve' onclick='updateStatus({$row['id']}, \"Approved\")'>";
+            echo "<i class='bx bxs-check-circle'></i>";
+            echo "</button>";
+            echo "<button type='button' class='button delete-btn' data-tooltip='Reject' onclick='updateStatus({$row['id']}, \"Rejected\")'>";
+            echo "<i class='bx bxs-x-circle'></i>";
+            echo "</button>";
+            echo "<button type='button' class='button archive-btn' data-tooltip='Archive' onclick='archiveUser({$srow['id']}, \"Archive\")'>";
+            echo "<i class='bx bxs-box'></i>";
+            echo "</button>";
+            echo "</div>";
+            echo "</td>";
             
             echo "</tr>";
             $counter++;
