@@ -298,7 +298,7 @@ include ("admin_cover.php");
 
         #deleteConfirmationModal,
         #errorModal,
-        #selectRowModal,
+        #selectstaffModal,
         #sendSuccessModal {
             display: none;
         }
@@ -778,7 +778,7 @@ include ("admin_cover.php");
     // Fetch all staff members from the database
     $staffMembers = getAllStaff();
     
-    if ($staffMembers->num_rows > 0) {
+    if ($staffMembers->num_staffs > 0) {
         while ($staff = $staffMembers->fetch_assoc()) {
             echo "<tr>";
             echo "<td>{$counter}</td>"; // Display the counter value
@@ -807,7 +807,7 @@ include ("admin_cover.php");
             echo "</div>";
             echo "</td>";
             
-            echo "</tr>"; // End of the row
+            echo "</tr>"; // End of the staff
 
             $counter++; // Increment the counter for the next staff member
         }
@@ -1519,8 +1519,8 @@ include ("admin_cover.php");
                                         $distinct_colleges_query = "SELECT DISTINCT College FROM programs";
                                         $distinct_colleges_result = $conn->query($distinct_colleges_query);
 
-                                        while ($college_row = $distinct_colleges_result->fetch_assoc()) {
-                                            $college_name = $college_row['College'];
+                                        while ($college_staff = $distinct_colleges_result->fetch_assoc()) {
+                                            $college_name = $college_staff['College'];
                                             ?>
                                             <optgroup label="<?php echo $college_name; ?>">
                                                 <?php
@@ -1533,8 +1533,8 @@ include ("admin_cover.php");
                                                 $stmt->close();
 
                                                 // Display courses
-                                                while ($course_row = $courses_for_college_result->fetch_assoc()) {
-                                                    $course_name = $course_row['Courses'];
+                                                while ($course_staff = $courses_for_college_result->fetch_assoc()) {
+                                                    $course_name = $course_staff['Courses'];
                                                     ?>
                                                     <option value="<?php echo $course_name; ?>"><?php echo $course_name; ?>
                                                     </option>
@@ -1787,38 +1787,38 @@ include ("admin_cover.php");
                 $('.tab-content').hide();
                 $('#content' + selectedTabId.substr(3)).show();
             });
-            // Check if there is a selected row stored in local storage
-            var selectedRowIdApplicants = localStorage.getItem('selectedRowIdApplicants');
-            if (selectedRowIdApplicants) {
+            // Check if there is a selected staff stored in local storage
+            var selectedstaffIdApplicants = localStorage.getItem('selectedstaffIdApplicants');
+            if (selectedstaffIdApplicants) {
 
-                // Highlight the selected row
-                $('tr[data-id="' + selectedRowIdApplicants + '"]').addClass('selected');
+                // Highlight the selected staff
+                $('tr[data-id="' + selectedstaffIdApplicants + '"]').addClass('selected');
 
-                // Populate form fields with data corresponding to the selected row
-                populateForm(selectedRowIdApplicants);
+                // Populate form fields with data corresponding to the selected staff
+                populateForm(selectedstaffIdApplicants);
 
                 // Show the todo div
                 $('.todo').show();
             }
 
-            $('.editRow').click(function (event) {
+            $('.editstaff').click(function (event) {
                 // Check if the click target is not a button, checkbox, or its child elements
                 if (!$(event.target).is('button') && !$(event.target).is('i') && !$(event.target).is(':checkbox')) {
-                    // Get the 'data-id' attribute from the clicked row
+                    // Get the 'data-id' attribute from the clicked staff
                     var userId = $(this).data('id');
 
-                    // Highlight the clicked row
-                    $('.editRow').removeClass('selected');
+                    // Highlight the clicked staff
+                    $('.editstaff').removeClass('selected');
                     $(this).addClass('selected');
 
-                    // Populate form fields with data corresponding to the clicked row
+                    // Populate form fields with data corresponding to the clicked staff
                     populateForm(userId);
 
                     // Show the todo div
                     $('.todo').show();
 
-                    // Store the selected row ID in local storage
-                    localStorage.setItem('selectedRowIdApplicants', userId);
+                    // Store the selected staff ID in local storage
+                    localStorage.setItem('selectedstaffIdApplicants', userId);
                 }
             });
 
@@ -1826,11 +1826,11 @@ include ("admin_cover.php");
             $('.close-form').click(function () {
                 // Hide the todo div
                 $('.todo').hide();
-                // Remove the selected class from all table rows
-                $('.editRow').removeClass('selected');
+                // Remove the selected class from all table staffs
+                $('.editstaff').removeClass('selected');
 
-                // Clear the selected row ID from local storage
-                localStorage.removeItem('selectedRowIdApplicants');
+                // Clear the selected staff ID from local storage
+                localStorage.removeItem('selectedstaffIdApplicants');
             });
 
             function populateForm(userId) {
@@ -2025,16 +2025,16 @@ function updateStatus(id, status) {
 
 
         document.addEventListener("DOMContentLoaded", function () {
-            // Add click event listener to each row
-            var rows = document.querySelectorAll('.editRow');
-            rows.forEach(function (row) {
-                row.addEventListener('click', function () {
-                    // Remove 'selected' class from all rows
-                    rows.forEach(function (r) {
+            // Add click event listener to each staff
+            var staffs = document.querySelectorAll('.editstaff');
+            staffs.forEach(function (staff) {
+                staff.addEventListener('click', function () {
+                    // Remove 'selected' class from all staffs
+                    staffs.forEach(function (r) {
                         r.classList.remove('selected');
                     });
 
-                    // Add 'selected' class to the clicked row
+                    // Add 'selected' class to the clicked staff
                     this.classList.add('selected');
                 });
             });
@@ -2082,11 +2082,11 @@ function updateStatus(id, status) {
             // Close confirmation modal
             document.getElementById('confirmationModal').style.display = 'none';
 
-            // Get the selected row IDs
-            var selectedRowIds = [];
+            // Get the selected staff IDs
+            var selectedstaffIds = [];
             var checkboxes = document.querySelectorAll('.select-checkbox:checked');
             checkboxes.forEach(function (checkbox) {
-                selectedRowIds.push(checkbox.parentNode.parentNode.dataset.id);
+                selectedstaffIds.push(checkbox.parentNode.parentNode.dataset.id);
             });
 
             // AJAX call to send_selected_applicants.php
@@ -2110,7 +2110,7 @@ function updateStatus(id, status) {
             };
             xhr.open('POST', 'send_selected_applicants.php');
             xhr.setRequestHeader('Content-Type', 'application/json');
-            xhr.send(JSON.stringify({ selectedRowIds: selectedRowIds }));
+            xhr.send(JSON.stringify({ selectedstaffIds: selectedstaffIds }));
         });
         var cancelButtons = document.querySelectorAll('.cancel');
         cancelButtons.forEach(function (button) {
@@ -2145,7 +2145,7 @@ function updateStatus(id, status) {
     </script>
 
     <style>
-        /* Change the default background color for selected rows */
+        /* Change the default background color for selected staffs */
         .dataTables_wrapper .dataTables_paginate .paginate_button.current,
         .dataTables_wrapper .dataTables_paginate .paginate_button:hover,
         table.dataTable tbody tr.selected,
@@ -2171,15 +2171,15 @@ function updateStatus(id, status) {
             /* Color for sorted columns */
         }
 
-        /* Optional: Custom icons for sorting arrows */
+        /* Optional: Custom icons for sorting arstaffs */
         th.sorting_asc::after {
             content: '\2191';
-            /* Up arrow for ascending */
+            /* Up arstaff for ascending */
         }
 
         th.sorting_desc::after {
             content: '\2193';
-            /* Down arrow for descending */
+            /* Down arstaff for descending */
         }
 
         @media (max-width: 768px) {
