@@ -786,7 +786,7 @@ $result = $conn->query($query);
         echo "<td>{$staff['userType']}</td>";
         echo "<td>{$staff['Department']}</td>";
         echo "<td>{$staff['Designation']}</td>";
-        echo "<td>{$staff['status']}</td>";
+        echo "<td>{$staff['lstatus']}</td>";
         
         // Action buttons
         echo "<td>";
