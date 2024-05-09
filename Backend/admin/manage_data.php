@@ -732,7 +732,7 @@ $result5 = $conn->query($query5);
         <tbody>
             <?php
             $rowNumber = 1;
-            while ($row2 = $result->fetch_assoc()) {
+            while ($row = $result->fetch_assoc()) {
               
                 echo "<td>{$row['College']}</td>"; // College
                 echo "<td>{$row['Courses']}</td>"; // Courses
