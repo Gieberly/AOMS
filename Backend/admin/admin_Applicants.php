@@ -849,12 +849,16 @@ $stmt->close();
                                     echo "<td  data-field='appointment_status'>{$row['appointment_status']}</td>"; // 8
                                     echo "<td>
               <div class='button-container'>
+
               <button type='button' class='button check-btn' data-tooltip='Complete' onclick='updateStatus({$row['id']}, \"Complete\")'>
                 <i class='bx bxs-check-circle'></i>
               </button>
               <button type='button' class='button inc-btn' data-tooltip='Incomplete' onclick='updateStatus({$row['id']}, \"Incomplete\")'>
                <i class='bx bxs-no-entry'></i>
               </button>
+              <button type='button' class='button inc-btn' data-tooltip='Archive' onclick='archive({$row['id']}, \"Archive\")'>
+              <i class='bx bxs-box'></i>
+             </button>
               </div>
               </td>"; // 9
                                     echo "<td id='checkbox-{$row['id']}'><input type='checkbox' style='display: none;' class='select-checkbox'></td>"; // 10
@@ -1538,7 +1542,7 @@ $stmt->close();
                                 </select>
                             </div>
 
-                    </div>
+                    
 
                     <br>
                     <p class="personal_information">Academic Classification</p>
@@ -1635,7 +1639,7 @@ $stmt->close();
                     <button type="button" class="submit" onclick="confirmSubmission2()">Submit</button>
                     </form>
 
-
+                    </div>
                 </div>
             </div>
             </div>
