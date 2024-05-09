@@ -907,7 +907,6 @@ $rowNumber = 1;
             while ($row = $result2->fetch_assoc()) {
                 echo "<tr>";
        
-                echo "<td>{$row['lstatus']}</td>";  // Account Status
                 echo "<td>
                 <div class='button-container'>
   
