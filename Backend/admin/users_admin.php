@@ -765,7 +765,7 @@ include ("admin_cover.php");
                                     <th>User Type</th>
                                     <th>Department</th>
                                     <th>Designation</th>
-                                    <th>Status</th>
+                                  
                                     <th>Action</th>
 
                                 </tr>
