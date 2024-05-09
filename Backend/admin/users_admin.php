@@ -2075,27 +2075,7 @@ function updateStatus(id, status) {
             }
         });
 
-        function showToast(message, type) {
-            // Display a toast message
-            $('#toast-body').text(message);
-            $('#toast').removeClass().addClass('toast').addClass(type).addClass('show');
 
-            // Hide the toast after a few seconds
-            setTimeout(function () {
-                $('#toast').removeClass('show');
-            }, 3000);
-        }
-        document.addEventListener('DOMContentLoaded', function () {
-            var successMessage = document.getElementById('successMessage');
-
-            if (successMessage) {
-                successMessage.style.display = 'block';
-
-                setTimeout(function () {
-                    successMessage.style.display = 'none';
-                }, 3000);
-            }
-        });
         document.addEventListener("DOMContentLoaded", function () {
             // Add click event listener to each row
             var rows = document.querySelectorAll('.editRow');
