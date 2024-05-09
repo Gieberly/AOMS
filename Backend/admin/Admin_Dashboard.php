@@ -589,7 +589,7 @@ $pending_result = $conn->query($pending_query);
                         <i class='bx bx-user-x'></i>
                         <span class="text">
                             <h3 id="applicants-with-results"><?php echo $countRejectedUsers; ?></h3>
-                            <p>Rejected Accounts</p>
+                            <p>Rejected Personnel Accounts</p>
                         </span>
                     </li>
 

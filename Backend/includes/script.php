@@ -18,6 +18,5 @@
 <script src="https://cdn.datatables.net/buttons/3.0.2/js/buttons.html5.min.js"></script>
 <!--Your Other Script-->
 <script src="..\assets_admin\js\mdb.umd.min.js"></script>
-<script src="..\assets_admin\js\adminVs2.js"></script>
 <!--Alert-->
 <script src="//cdn.jsdelivr.net/npm/alertifyjs@1.13.1/build/alertify.min.js"></script>
