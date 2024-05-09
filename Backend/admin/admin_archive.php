@@ -7,14 +7,12 @@ include ("admin_cover.php");
 $query = "SELECT * FROM admission_data_archive";
 $result = $conn->query($query);
 
-
-$rowNumber = 1;
-
-
 // Query to fetch data from users_archive
 $query2 = "SELECT * FROM users_archive";
 $result2 = $conn->query($query2);
 
+
+$rowNumber = 1;
 
 
 ?>
@@ -898,51 +896,42 @@ $result2 = $conn->query($query2);
 
                             <!-- Thead Section -->
                             <tr>
-
-                                <th>#</th>
-                                <th>Last Name</th>
-                                <th>First Name</th>
-                                <th>Middle Name</th>
-                                <th>Email</th>
-                                <th>Department</th>
-                                <th>Designation</th>
-                                <th>User Type</th>
-                                <th>Account Status</th>
-                                <th>Actions</th>
-                            </tr>
-                            </thead>
-                            <tbody id="datalist">
-                                <?php
-                                $rowNumber = 1; // Reset row number for the second table
-                                while ($row = $result2->fetch_assoc()) {
-                                    echo "<tr>";
-                                    echo "<td>{$rowNumber}</td>";
-                                    echo "<td>{$row['last_name']}</td>";
-                                    echo "<td>{$row['name']}</td>";
-                                    echo "<td>{$row['mname']}</td>";
-                                    echo "<td>{$row['mname']}</td>";
-                                    echo "<td>{$row['Department']}</td>";
-                                    echo "<td>{$row['Designation']}</td>";
-                                    echo "<td>{$row['userType']}</td>";
-                                    echo "<td>{$row['lstatus']}</td>"; // Display account status
-                                
-                                    // Action buttons for Approve/Reject with appropriate event handling
-                                    echo "<td>
-                                          <div class='button-container'>
-                                          <button type='button' class='button check-btn' data-tooltip='Approve' onclick='updateStatus({$row['id']}, \"Approved\")'>
-                                          <i class='bx bxs-check-circle'></i>
-                                          </button>
-                                          <button type='button' class='button delete-btn'  data-tooltip='Reject' onclick='updateStatus({$row['id']}, \"Rejected\")'>
-                                          <i class='bx bxs-x-circle'></i>
-                                          </button>
-                                          </div>
-                                    </td>";
-
-                                    echo "</tr>"; // End of the row
-                                    $rowNumber++; // Increment the row counter
-                                }
-                                ?>
-                            </tbody>
+                <th>#</th>
+                <th>Last Name</th>
+                <th>First Name</th>
+                <th>Middle Name</th>
+                <th>Email</th>
+                <th>Department</th>
+                <th>Designation</th>
+                <th>User Type</th>
+                <th>Account Status</th>
+                <th>Actions</th>
+            </tr>
+        </thead>
+        <!-- Table Body -->
+        <tbody>
+            <?php
+            $rowNumber = 1;
+            while ($row = $result2->fetch_assoc()) {
+                echo "<tr>";
+                echo "<td>{$rowNumber}</td>";  // Row Number
+                echo "<td>{$row['last_name']}</td>";  // Last Name
+                echo "<td>{$row['name']}</td>";  // First Name
+                echo "<td>{$row['mname']}</td>";  // Middle Name
+                echo "<td>{$row['email']}</td>";  // Email
+                echo "<td>{$row['Department']}</td>";  // Department
+                echo "<td>{$row['Designation']}</td>";  // Designation
+                echo "<td>{$row['userType']}</td>";  // User Type
+                echo "<td>{$row['lstatus']}</td>";  // Account Status
+                echo "<td>
+                    <button onclick='retrieveUser({$row['id']})'>Retrieve</button>
+                    <button onclick='deleteUser({$row['id']})'>Delete</button>
+                </td>";
+                echo "</tr>";
+                $rowNumber++;
+            }
+            ?>
+        </tbody>
                         </table>
                     </div>
                 </div>
