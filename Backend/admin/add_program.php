@@ -1,8 +1,5 @@
 <?php
-session_start(); // Ensure sessions are enabled
-
-require 'config.php';
-
+include("../config.php");
 // Retrieve form data
 $college = $_POST['college'];
 $courses = $_POST['courses'];
