@@ -896,7 +896,8 @@ $rowNumber = 1;
 
                             <!-- Thead Section -->
                             <tr>
-    
+                <th>#</th>
+        
             </tr>
         </thead>
         <!-- Table Body -->
@@ -905,7 +906,8 @@ $rowNumber = 1;
             $rowNumber = 1;
             while ($row = $result2->fetch_assoc()) {
                 echo "<tr>";
-
+                echo "<td>{$rowNumber}</td>";  // Row Number
+    
                 echo "</tr>";
                 $rowNumber++;
             }
