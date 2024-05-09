@@ -2,7 +2,6 @@
 
 include ("admin_cover.php");
 
-
 // Define the user types to fetch
 $userTypes = ['Personnel', 'Faculty', 'OSS'];
 
@@ -72,30 +71,29 @@ $result = $conn->query($query);
             position: relative;
         }
 
-        .button.delete-btn,
+        .button.inc-btn,
         .button.check-btn,
-        .button.archive-btn {
+        .button.archive-btn { 
             background: none;
             border: none;
             padding: 0;
             cursor: pointer;
         }
 
-        .button.delete-btn i,
+        .button.inc-btn i,
         .button.check-btn i,
         .button.archive-btn i {
             font-size: 13px;
             color: black;
         }
 
-        .button.delete-btn:hover i {
+        .button.inc-btn:hover i {
             color: orange;
         }
 
         .button.check-btn:hover i {
             color: green;
         }
-
         .button.archive-btn:hover i {
             color: blue;
         }
@@ -699,23 +697,21 @@ $result = $conn->query($query);
                 </div>
                 <div class="button-container">
 
-                <div class="btn-group mr-2">
-                                    <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#add_Staff" style="border-radius: 20px;">
-                                        <i class='bx bx-folder-plus'></i> Add Personnel
-                                    </button>
-                                </div>
-                            </div>
+                    <a href="excel_export_appointments.php" class="btn-download">
+                        <i class='bx bxs-file-export'></i>
+                        <span class="text">Excel Export</span>
+                    </a>
                 </div>
             </div>
 
             <div class="table-data">
                 <div class="order">
                     <div class="head">
-                        <h3>List of Personnel</h3>
+                        <h3>List of Applicants</h3>
                         <!-- Add this input field for date filtering -->
 
                         <div class="headfornaturetosort">
-                            <!-- <form method="GET" action="" id="calendarFilterForm">
+                            <form method="GET" action="" id="calendarFilterForm">
                                 <label for="appointment_date"></label>
                                 <input type="date" name="appointment_date" id="appointment_date">
                                 <button type="submit"><i class='bx bx-filter'></i></button>
@@ -726,7 +722,7 @@ $result = $conn->query($query);
 
                             <button type="button" id="sendButton" style="display: none;">
                                 <i class='bx bx-send'></i>
-                            </button> -->
+                            </button>
                         </div>
                     </div>
                     <style>
@@ -757,9 +753,8 @@ $result = $conn->query($query);
                         }
                     </style>
 
-                    <div id="table-container">
-                        <!--staff-->
-                        <table id="studentTable" class="display responsive wrap " width="100%">
+                    <div class="table-container">
+                    <table id="studentTable" class="display responsive wrap " width="100%">
                             <thead>
                                 <tr>
                                     <th>#</th>
@@ -816,7 +811,6 @@ $result = $conn->query($query);
 </tbody>
 
                         </table>
-
                     </div>
 
 
@@ -1490,105 +1484,102 @@ $result = $conn->query($query);
                                 </select>
                             </div>
 
+                    
 
+                    <br>
+                    <p class="personal_information">Academic Classification</p>
 
+                    <div class="data-container3">
+
+                        <div class="form-group">
+                            <!-- College -->
+                            <label class="small-label" for="college">College</label>
+                            <select name="college" class="input" id="college">
+                                <?php foreach ($colleges as $college) { ?>
+                                    <option value="<?php echo $college; ?>"><?php echo $college; ?></option>
+                                <?php } ?>
+                            </select>
                             <br>
-                            <p class="personal_information">Academic Classification</p>
+                            <!-- Degree -->
+                            <label class="small-label" for="degree_applied">Degree</label>
+                            <select name="degree_applied" class="input" id="degree_applied">
+                                <?php
+                                // Fetch distinct colleges from programs table
+                                $distinct_colleges_query = "SELECT DISTINCT College FROM programs";
+                                $distinct_colleges_result = $conn->query($distinct_colleges_query);
 
-                            <div class="data-container3">
-
-                                <div class="form-group">
-                                    <!-- College -->
-                                    <label class="small-label" for="college">College</label>
-                                    <select name="college" class="input" id="college">
-                                        <?php foreach ($colleges as $college) { ?>
-                                            <option value="<?php echo $college; ?>"><?php echo $college; ?></option>
-                                        <?php } ?>
-                                    </select>
-                                    <br>
-                                    <!-- Degree -->
-                                    <label class="small-label" for="degree_applied">Degree</label>
-                                    <select name="degree_applied" class="input" id="degree_applied">
+                                while ($college_row = $distinct_colleges_result->fetch_assoc()) {
+                                    $college_name = $college_row['College'];
+                                    ?>
+                                    <optgroup label="<?php echo $college_name; ?>">
                                         <?php
-                                        // Fetch distinct colleges from programs table
-                                        $distinct_colleges_query = "SELECT DISTINCT College FROM programs";
-                                        $distinct_colleges_result = $conn->query($distinct_colleges_query);
+                                        // Fetch courses associated with this college
+                                        $courses_for_college_query = "SELECT Courses FROM programs WHERE College = ?";
+                                        $stmt = $conn->prepare($courses_for_college_query);
+                                        $stmt->bind_param("s", $college_name);
+                                        $stmt->execute();
+                                        $courses_for_college_result = $stmt->get_result();
+                                        $stmt->close();
 
-                                        while ($college_row = $distinct_colleges_result->fetch_assoc()) {
-                                            $college_name = $college_row['College'];
+                                        // Display courses
+                                        while ($course_row = $courses_for_college_result->fetch_assoc()) {
+                                            $course_name = $course_row['Courses'];
                                             ?>
-                                            <optgroup label="<?php echo $college_name; ?>">
-                                                <?php
-                                                // Fetch courses associated with this college
-                                                $courses_for_college_query = "SELECT Courses FROM programs WHERE College = ?";
-                                                $stmt = $conn->prepare($courses_for_college_query);
-                                                $stmt->bind_param("s", $college_name);
-                                                $stmt->execute();
-                                                $courses_for_college_result = $stmt->get_result();
-                                                $stmt->close();
-
-                                                // Display courses
-                                                while ($course_row = $courses_for_college_result->fetch_assoc()) {
-                                                    $course_name = $course_row['Courses'];
-                                                    ?>
-                                                    <option value="<?php echo $course_name; ?>"><?php echo $course_name; ?>
-                                                    </option>
-                                                    <?php
-                                                }
-                                                ?>
-                                            </optgroup>
+                                            <option value="<?php echo $course_name; ?>"><?php echo $course_name; ?>
+                                            </option>
                                             <?php
                                         }
                                         ?>
-                                    </select>
+                                    </optgroup>
+                                    <?php
+                                }
+                                ?>
+                            </select>
 
 
-                                </div>
+                        </div>
 
-                                <div class="form-group">
-                                    <!-- Academic Classification -->
-                                    <label class="small-label" for="academic_classification">Classification</label>
-                                    <select name="academic_classification" class="input" id="academic_classification">
-                                        <?php foreach ($classifications as $classification) { ?>
-                                            <option value="<?php echo $classification; ?>"><?php echo $classification; ?>
-                                            </option>
-                                        <?php } ?>
-                                    </select>
-                                    <br>
-                                    <!-- Nature -->
-                                    <label class="small-label" for="nature_of_degree"
-                                        style="white-space: nowrap;">Nature of
-                                        degree</label>
-                                    <select name="nature_of_degree" class="input" id="nature_of_degree">
-                                        <option value="Board">Board</option>
-                                        <option value="Non-Board">Non-Board</option>
-                                    </select>
-                                </div>
-                            </div>
-
+                        <div class="form-group">
+                            <!-- Academic Classification -->
+                            <label class="small-label" for="academic_classification">Classification</label>
+                            <select name="academic_classification" class="input" id="academic_classification">
+                                <?php foreach ($classifications as $classification) { ?>
+                                    <option value="<?php echo $classification; ?>"><?php echo $classification; ?>
+                                    </option>
+                                <?php } ?>
+                            </select>
                             <br>
-                            <p class="personal_information">Academic Background </p>
-                            <div class="data-container3">
-                                <!-- Academic Background -->
-                                <div class="form-group">
-                                    <label class="small-label" for="high_school_name_address"
-                                        style="white-space: nowrap;">LAST
-                                        SCHOOL ATTENDED</label>
-                                    <input name="high_school_name_address" class="input" id="high_school_name_address"
-                                        value="<?php echo $admissionData['high_school_name_address']; ?>"
-                                        oninput="this.value = this.value.replace(/[^0-9]/g, '');">
-                                </div>
-                                <div class="form-group">
-                                    <label class="small-label" for="lrn" style="white-space: nowrap;">LRN</label>
-                                    <input name="lrn" class="input" id="lrn"
-                                        value="<?php echo $admissionData['lrn']; ?>">
-                                </div>
-                            </div>
+                            <!-- Nature -->
+                            <label class="small-label" for="nature_of_degree" style="white-space: nowrap;">Nature of
+                                degree</label>
+                            <select name="nature_of_degree" class="input" id="nature_of_degree">
+                                <option value="Board">Board</option>
+                                <option value="Non-Board">Non-Board</option>
+                            </select>
+                        </div>
+                    </div>
 
-                            <br>
-                            <input type="hidden" name="id" value="<?php echo $admissionData['id']; ?>">
-                            <button type="button" class="submit" onclick="confirmSubmission2()">Submit</button>
-                        </form>
+                    <br>
+                    <p class="personal_information">Academic Background </p>
+                    <div class="data-container3">
+                        <!-- Academic Background -->
+                        <div class="form-group">
+                            <label class="small-label" for="high_school_name_address" style="white-space: nowrap;">LAST
+                                SCHOOL ATTENDED</label>
+                            <input name="high_school_name_address" class="input" id="high_school_name_address"
+                                value="<?php echo $admissionData['high_school_name_address']; ?>"
+                                oninput="this.value = this.value.replace(/[^0-9]/g, '');">
+                        </div>
+                        <div class="form-group">
+                            <label class="small-label" for="lrn" style="white-space: nowrap;">LRN</label>
+                            <input name="lrn" class="input" id="lrn" value="<?php echo $admissionData['lrn']; ?>">
+                        </div>
+                    </div>
+
+                    <br>
+                    <input type="hidden" name="id" value="<?php echo $admissionData['id']; ?>">
+                    <button type="button" class="submit" onclick="confirmSubmission2()">Submit</button>
+                    </form>
 
                     </div>
                 </div>
@@ -1600,9 +1591,9 @@ $result = $conn->query($query);
     </section>
 
     <!-- Success message div -->
-    <div class="success-message" id="archive" style="display: none;">
-        <p id="archive-message"></p>
-    </div>
+<div class="success-message" id="archive" style="display: none;">
+  <p id="archive-message"></p>
+</div>
     <div id="toast" class="toast" role="alert" aria-live="assertive" aria-atomic="true">
         <div class="toast-header">
         </div>
@@ -1626,89 +1617,68 @@ $result = $conn->query($query);
 
     <script>
 
+         
+// Function to display success message
+function showSuccessMessage(message) {
+  var archiveMessage = document.getElementById('archive-message');
+  archiveMessage.innerHTML = message;
+  var archiveDiv = document.getElementById('archive');
+  archiveDiv.style.display = 'block';
+  // Hide the success message after 3 seconds
+  setTimeout(function() {
+    archiveDiv.style.display = 'none';
+    // Reload the page after the message disappears
+    location.reload();
+  }, 2000);
+}
 
-        // Function to display success message
-        function showSuccessMessage(message) {
-            var archiveMessage = document.getElementById('archive-message');
-            archiveMessage.innerHTML = message;
-            var archiveDiv = document.getElementById('archive');
-            archiveDiv.style.display = 'block';
-            // Hide the success message after 3 seconds
-            setTimeout(function () {
-                archiveDiv.style.display = 'none';
-                // Reload the page after the message disappears
-                location.reload();
-            }, 2000);
-        }
+function archiveUser(id) {
+    // Show confirmation dialog
+    $('.confirmation-dialog').show();
+    $('.confirmation-dialog-overlay').show();
+    $('.confirmation-dialog p').text('Are you sure you want to archive this data?');
 
-        function undoUser(id) {
-            // Show confirmation dialog
-            $('.confirmation-dialog').show();
-            $('.confirmation-dialog-overlay').show();
-            $('.confirmation-dialog p').text('Are you sure you want to retrieve this data?');
-
-            // Handle button clicks in the confirmation dialog
-            $('.confirmation-buttons button').click(function () {
-                var userConfirmed = $(this).data('confirmed');
-                if (userConfirmed) {
-                    // User confirmed, send AJAX request to delete data
-                    $.ajax({
-                        url: "undo_App_Archive.php",
-                        type: "POST",
-                        data: { delete_ids: [id] },
-                        success: function (response) {
-                            // Show response message in success message div
-                            showSuccessMessage(response);
-                            // Reload or update the table as needed
-                        },
-                        error: function (xhr, status, error) {
-                            console.error(xhr.responseText); // Log error message
-                            // Handle error as needed
-                        }
-                    });
+    // Handle button clicks in the confirmation dialog
+    $('.confirmation-buttons button').click(function() {
+        var userConfirmed = $(this).data('confirmed');
+        if (userConfirmed) {
+            // User confirmed, send AJAX request to delete data
+            $.ajax({
+                url: "admission_archive.php",
+                type: "POST",
+                data: { delete_ids: [id] },
+                success: function(response) {
+                    // Show response message in success message div
+                    showSuccessMessage(response);
+                    // Reload or update the table as needed
+                },
+                error: function(xhr, status, error) {
+                    console.error(xhr.responseText); // Log error message
+                    // Handle error as needed
                 }
-
-                // Hide the confirmation dialog and overlay
-                $('.confirmation-dialog').hide();
-                $('.confirmation-dialog-overlay').hide();
             });
         }
 
-        function deleteUser(id) {
-            // Show confirmation dialog
-            $('.confirmation-dialog').show();
-            $('.confirmation-dialog-overlay').show();
-            $('.confirmation-dialog p').text('Are you sure you want to permanently delete this data?');
-
-            // Handle button clicks in the confirmation dialog
-            $('.confirmation-buttons button').click(function () {
-                var userConfirmed = $(this).data('confirmed');
-                if (userConfirmed) {
-                    // User confirmed, send AJAX request to delete data
-                    $.ajax({
-                        url: "delete_applicants.php",
-                        type: "POST",
-                        data: { delete_ids: [id] },
-                        success: function (response) {
-                            // Show response message in success message div
-                            showSuccessMessage(response);
-                            // Reload or update the table as needed
-                        },
-                        error: function (xhr, status, error) {
-                            console.error(xhr.responseText); // Log error message
-                            // Handle error as needed
-                        }
-                    });
-                }
-
-                // Hide the confirmation dialog and overlay
-                $('.confirmation-dialog').hide();
-                $('.confirmation-dialog-overlay').hide();
-            });
-        }
-        new DataTable('#studentTable', {
-            order: [[3, 'desc']]
-        });
+        // Hide the confirmation dialog and overlay
+        $('.confirmation-dialog').hide();
+        $('.confirmation-dialog-overlay').hide();
+    });
+}
+// Initialize the DataTable
+$(document).ready(function() {
+    $('#studentTable').DataTable({
+        searching: false,
+        paging: false,
+        info: false,
+        order: [[0, 'asc']],
+        columnDefs: [
+            {
+                targets: 9, // Index of the hidden column
+                visible: false
+            }
+        ]
+    });
+});
 
         function confirmSubmission() {
             document.getElementById("confirmationDialoga").style.display = "block";
@@ -1829,40 +1799,143 @@ $result = $conn->query($query);
             });
 
             function populateForm(userId) {
-    // Send an AJAX request to fetch the user data based on the user ID
-    $.ajax({
-        url: 'fetchusers.php', // replace with the actual URL for fetching user data
-        type: 'POST',
-        data: {
-            userId: userId
-        },
-        dataType: 'json',
-        success: function (response) {
-            // Populate form fields with user data
-            $('#updateProfileForm input[name="last_name"]').val(response.last_name);
-            $('#updateProfileForm input[name="name"]').val(response.name);
-            $('#updateProfileForm input[name="mname"]').val(response.mname); // Middle name
-            $('#updateProfileForm input[name="email"]').val(response.email);
-            $('#updateProfileForm input[name="password"]').val(response.password); // Consider hashing if displayed
-            $('#updateProfileForm select[name="userType"]').val(response.userType); // Assuming a dropdown for userType
-            $('#updateProfileForm select[name="status"]').val(response.status); // Assuming a dropdown for status
-            $('#updateProfileForm select[name="lstatus"]').val(response.lstatus); // Loan status
-            $('#updateProfileForm input[name="Department"]').val(response.Department);
-            $('#updateProfileForm input[name="Designation"]').val(response.Designation);
-            $('#updateProfileForm input[name="verification_code"]').val(response.verification_code);
-            $('#updateProfileForm input[name="token"]').val(response.token);
-            $('#updateProfileForm input[name="token_expire"]').val(response.token_expire); // Requires datetime handling
-            $('#updateProfileForm select[name="state"]').val(response.state); // Assuming a dropdown for state
-            
-            // Show the form for editing
-            $('.todo').show();
-        },
-        error: function (error) {
-            console.error('Error fetching user data:', error);
-        }
-    });
-}
+                // Send an AJAX request to fetch the user data based on the user ID
+                $.ajax({
+                    url: 'Personnel_fetchStudentdata.php', // replace with the actual URL for fetching user data
+                    type: 'POST',
+                    data: {
+                        userId: userId
+                    },
+                    dataType: 'json',
+                    success: function (response) {
+                        $('#applicantPicture').attr('src', response.id_picture);
+                        $('#updateProfileForm input[name="Gr11_A1"]').val(response.Gr11_A1);
+                        $('#updateProfileForm input[name="academic_classification"]').val(response.academic_classification);
+                        $('#updateProfileForm input[name="college"]').val(response.college);
+                        $('#updateProfileForm input[name="id"]').val(response.id);
+                        $('#updateProfileForm input[name="high_school_name_address"]').val(response.high_school_name_address);
+                        $('#updateProfileForm input[name="lrn"]').val(response.lrn);
+                        $('#updateProfileForm input[name="degree_applied"]').val(response.degree_applied);
+                        $('#updateProfileForm input[name="nature_of_degree"]').val(response.nature_of_degree);
+                        $('#updateProfileForm input[name="Gr11_A1"]').val(response.Gr11_A1);
+                        $('#updateProfileForm input[name="Gr11_A2"]').val(response.Gr11_A2);
+                        $('#updateProfileForm input[name="Gr11_A3"]').val(response.Gr11_A3);
+                        $('#updateProfileForm input[name="Gr11_GWA"]').val(response.Gr11_GWA);
+                        $('#updateProfileForm input[name="GWA_OTAS"]').val(response.GWA_OTAS);
+                        $('#updateProfileForm select[name="nature_qualification"]').val(response.nature_qualification);
+                        $('#updateProfileForm select[name="Degree_Remarks"]').val(response.Degree_Remarks);
+                        $('#updateProfileForm input[name="English_Subject_1"]').val(response.English_Subject_1);
+                        $('#updateProfileForm input[name="English_Subject_2"]').val(response.English_Subject_2);
+                        $('#updateProfileForm input[name="English_Subject_3"]').val(response.English_Subject_3);
+                        $('#updateProfileForm input[name="Science_Subject_1"]').val(response.Science_Subject_1);
+                        $('#updateProfileForm input[name="Science_Subject_2"]').val(response.Science_Subject_2);
+                        $('#updateProfileForm input[name="Science_Subject_3"]').val(response.Science_Subject_3);
+                        $('#updateProfileForm input[name="Math_Subject_1"]').val(response.Math_Subject_1);
+                        $('#updateProfileForm input[name="Math_Subject_2"]').val(response.Math_Subject_2);
+                        $('#updateProfileForm input[name="Gr12_A1"]').val(response.Gr12_A1);
+                        $('#updateProfileForm input[name="Gr12_A2"]').val(response.Gr12_A2);
+                        $('#updateProfileForm input[name="Gr12_A3"]').val(response.Gr12_A3);
+                        $('#updateProfileForm input[name="Gr12_GWA"]').val(response.Gr12_GWA);
+                        $('#updateProfileForm input[name="English_Oral_Communication_Grade"]').val(response.English_Oral_Communication_Grade);
+                        $('#updateProfileForm input[name="English_Reading_Writing_Grade"]').val(response.English_Reading_Writing_Grade);
+                        $('#updateProfileForm input[name="English_Academic_Grade"]').val(response.English_Academic_Grade);
+                        $('#updateProfileForm input[name="English_Other_Courses_Grade"]').val(response.English_Other_Courses_Grade);
+                        $('#updateProfileForm input[name="English_Other_Courses_Grade_2"]').val(response.English_Other_Courses_Grade_2);
+                        $('#updateProfileForm input[name="English_Other_Courses_Grade_3"]').val(response.English_Other_Courses_Grade_3);
+                        $('#updateProfileForm input[name="Science_Earth_Science_Grade"]').val(response.Science_Earth_Science_Grade);
+                        $('#updateProfileForm input[name="academic_classification"]').val(response.academic_classification);
+                        $('#updateProfileForm input[name="Science_Earth_and_Life_Science_Grade"]').val(response.Science_Earth_and_Life_Science_Grade);
+                        $('#updateProfileForm input[name="Science_Physical_Science_Grade"]').val(response.Science_Physical_Science_Grade);
+                        $('#updateProfileForm input[name="Science_Disaster_Readiness_Grade"]').val(response.Science_Disaster_Readiness_Grade);
+                        $('#updateProfileForm input[name="Science_Other_Courses_Grade"]').val(response.Science_Other_Courses_Grade);
+                        $('#updateProfileForm input[name="Science_Other_Courses_Grade_2"]').val(response.Science_Other_Courses_Grade_2);
+                        $('#updateProfileForm input[name="Science_Other_Courses_Grade_3"]').val(response.Science_Other_Courses_Grade_3);
+                        $('#updateProfileForm input[name="Math_General_Mathematics_Grade"]').val(response.Math_General_Mathematics_Grade);
+                        $('#updateProfileForm input[name="Math_Statistics_and_Probability_Grade"]').val(response.Math_Statistics_and_Probability_Grade);
+                        $('#updateProfileForm input[name="Math_Other_Courses_Grade"]').val(response.Math_Other_Courses_Grade);
+                        $('#updateProfileForm input[name="Math_Other_Courses_Grade_2"]').val(response.Math_Other_Courses_Grade_2);
+                        $('#updateProfileForm input[name="Old_HS_English_Grade"]').val(response.Old_HS_English_Grade);
+                        $('#updateProfileForm input[name="Old_HS_Math_Grade"]').val(response.Old_HS_Math_Grade);
+                        $('#updateProfileForm input[name="Old_HS_Science_Grade"]').val(response.Old_HS_Science_Grade);
+                        $('#updateProfileForm input[name="ALS_English"]').val(response.ALS_English);
+                        $('#updateProfileForm input[name="ALS_Math"]').val(response.ALS_Math);
 
+                        $('#updateProfileForm input[name="Requirements"]').val(response.Requirements);
+                        $('#updateProfileForm input[name="OSS_Endorsement_Slip"]').val(response.OSS_Endorsement_Slip);
+                        $('#updateProfileForm input[name="OSS_Admission_Test_Score"]').val(response.OSS_Admission_Test_Score);
+                        $('#updateProfileForm input[name="OSS_Remarks"]').val(response.OSS_Remarks);
+                        $('#updateProfileForm input[name="Qualification_Nature_Degree"]').val(response.Qualification_Nature_Degree);
+                        $('#updateProfileForm textarea[name="Requirements_Remarks"]').val(response.Requirements_Remarks);
+
+                        $('#updateProfileForm input[name="Interview_Result"]').val(response.Interview_Result);
+                        $('#updateProfileForm input[name="Endorsed"]').val(response.Endorsed);
+                        $('#updateProfileForm input[name="Confirmed_Slot"]').val(response.Confirmed_Slot);
+                        $('#updateProfileForm input[name="Final_Remarks"]').val(response.Final_Remarks);
+                        $('#updateProfileForm input[name="degree_applied"]').val(response.degree_applied);
+                        $('#updateProfileForm input[name="nature_of_degree"]').val(response.nature_of_degree);
+
+                        $('#updateProfileForm input[name="college"]').val(response.college);
+                        $('#applicantPicture').attr('src', response.id_picture);
+                        $('#updateProfileForm2 input[name="Name"]').val(response.Name);
+                        $('#updateProfileForm2 input[name="Middle_Name"]').val(response.Middle_Name);
+                        $('#updateProfileForm2 input[name="Last_Name"]').val(response.Last_Name);
+                        $('#updateProfileForm2 input[name="applicant_number"]').val(response.applicant_number);
+                        $('#updateProfileForm2 input[name="birthplace"]').val(response.birthplace);
+                        $('#updateProfileForm2 select[name="gender"]').val(response.gender);
+                        $('#updateProfileForm2 input[name="birthdate"]').val(response.birthdate);
+                        $('#updateProfileForm2 input[name="age"]').val(response.age);
+                        $('#updateProfileForm2 input[name="civil_status"]').val(response.civil_status);
+                        $('#updateProfileForm2 input[name="citizenship"]').val(response.citizenship);
+                        $('#updateProfileForm2 input[name="nationality"]').val(response.nationality);
+                        $('#updateProfileForm input[name="Requirements_Remarks"]').val(response.Requirements_Remarks);
+                        $('#updateProfileForm input[name="Requirements"]').val(response.Requirements);
+                        $('#updateProfileForm2 input[name="phone_number"]').val(response.phone_number);
+                        $('#updateProfileForm2 input[name="facebook"]').val(response.facebook);
+                        $('#updateProfileForm2 input[name="email"]').val(response.email);
+                        $('#updateProfileForm2 input[name="contact_person_1"]').val(response.contact_person_1);
+                        $('#updateProfileForm2 input[name="contact_person_1_mobile"]').val(response.contact1_phone);
+                        $('#updateProfileForm2 select[name="relationship_1"]').val(response.relationship_1);
+                        $('#updateProfileForm2 input[name="contact_person_2"]').val(response.contact_person_2);
+                        $('#updateProfileForm2 input[name="contact_person_2_mobile"]').val(response.contact_person_2_mobile);
+                        $('#updateProfileForm2 select[name="relationship_2"]').val(response.relationship_2);
+                        $('#updateProfileForm2 select[name="academic_classification"]').val(response.academic_classification);
+
+                        $('#updateProfileForm2 select[name="college"]').val(response.college);
+                        $('#updateProfileForm2 input[name="id"]').val(response.id);
+                        $('#updateProfileForm2 input[name="high_school_name_address"]').val(response.high_school_name_address);
+                        $('#updateProfileForm2 input[name="lrn"]').val(response.lrn);
+                        $('#updateProfileForm2 select[name="degree_applied"]').val(response.degree_applied);
+                        $('#updateProfileForm2 select[name="nature_of_degree"]').val(response.nature_of_degree);
+                        var academicClassification = response.academic_classification;
+
+
+
+                        // Show the relevant div based on academic classification
+                        $('.SHS-Average,.Gr-12-Average, .ALS, .Subjects, .GWA-OTAS, .Transferee, .Gr-12, .HS-Graduate, .2nd-degree, .Remarks').hide(); // Hide all divs first
+                        if (academicClassification === 'Senior High School Graduate') {
+                            $('.Gr-12-Average, .Subjects,.Remarks ').show();
+                        } else if (academicClassification === 'Currently enrolled as Grade 12') {
+                            $('.SHS-Average, .Subjects, .Remarks').show();
+                        } else if (academicClassification === 'Transferee') {
+                            $('.Transferee, .GWA-OTAS, .Remarks').show();
+                        } else if (academicClassification === 'ALS/PEPT Completer') {
+                            $('.ALS, .GWA-OTAS, .Remarks').show();
+                        } else if (academicClassification === 'High School (Old Curriculum) Graduate') {
+                            $('.HS-Graduate, .GWA-OTAS, .Remarks').show();
+                        } else if (academicClassification === 'Second Degree') {
+                            $('.2nd-degree, .GWA-OTAS, .Remarks').show();
+                        }
+
+                        // Add similar logic for other form fields
+                        // Display the form for editing
+                        $('.todo').show();
+                    },
+                    error: function (error) {
+                        console.error('Error fetching user data: ', error);
+                    }
+                });
+            }
+        });
 
         // Click event handler for the close button
         $('.close-form').click(function () {
@@ -1870,120 +1943,48 @@ $result = $conn->query($query);
             $('.todo').hide();
         });
 
-      
-// Function to display success message
-function showSuccessMessage(message) {
-  var archiveMessage = document.getElementById('archive-message');
-  archiveMessage.innerHTML = message;
-  var archiveDiv = document.getElementById('archive');
-  archiveDiv.style.display = 'block';
-  // Hide the success message after 3 seconds
-  setTimeout(function() {
-    archiveDiv.style.display = 'none';
-    // Reload the page after the message disappears
-    location.reload();
-  }, 2000);
-}
 
-function archiveUser(id) {
-    // Show confirmation dialog
-    $('.confirmation-dialog').show();
-    $('.confirmation-dialog-overlay').show();
-    $('.confirmation-dialog p').text('Are you sure you want to archive this data?');
+        function updateStatus(id, status) {
+            // Show the confirmation dialog
+            $('.confirmation-dialog').show();
+            $('.confirmation-dialog-overlay').show();
 
-    // Handle button clicks in the confirmation dialog
-    $('.confirmation-buttons button').click(function() {
-        var userConfirmed = $(this).data('confirmed');
-        if (userConfirmed) {
-            // User confirmed, send AJAX request to delete data
-            $.ajax({
-                url: "user_archive.php",
-                type: "POST",
-                data: { delete_ids: [id] },
-                success: function(response) {
-                    // Show response message in success message div
-                    showSuccessMessage(response);
-                    // Reload or update the table as needed
-                },
-                error: function(xhr, status, error) {
-                    console.error(xhr.responseText); // Log error message
-                    // Handle error as needed
+            // Set the message in the dialog
+            $('.confirmation-dialog p').text('Are you sure you want to set the status to ' + status + '?');
+
+            // Handle button clicks in the confirmation dialog
+            $('.confirmation-buttons button').click(function () {
+                var userConfirmed = $(this).data('confirmed');
+                if (userConfirmed) {
+                    // User confirmed, send the AJAX request to update the status
+                    $.ajax({
+                        type: 'POST',
+                        url: 'Personnel_UpdateStatus.php',
+                        data: {
+                            id: id,
+                            status: status
+                        },
+                        dataType: 'json', // Expect JSON response
+                        success: function (response) {
+                            if (response.success) {
+                                // Update the status in the table cell
+                                $('[data-id="' + id + '"] [data-field="appointment_status"]').text(status);
+                                showToast(response.message, 'success');
+                            } else {
+                                showToast(response.message, 'error');
+                            }
+                        },
+                        error: function (error) {
+                            console.error('Error updating status:', error);
+                        }
+                    });
                 }
+
+                // Hide the confirmation dialog and overlay
+                $('.confirmation-dialog').hide();
+                $('.confirmation-dialog-overlay').hide();
             });
         }
-
-        // Hide the confirmation dialog and overlay
-        $('.confirmation-dialog').hide();
-        $('.confirmation-dialog-overlay').hide();
-    });
-}
-    
-function showToast(message, type) {
-    // Display the toast message
-    $('#toast-body').text(message);
-    $('#toast').removeClass().addClass('toast').addClass(type).addClass('show');
-
-    // Hide the toast and reload the page after a few seconds
-    setTimeout(function () {
-        $('#toast').removeClass('show');
-        if (type === 'success') {
-            // Reload the page only for success messages
-            location.reload();
-        }
-    }, 3000);
-}
-        document.addEventListener('DOMContentLoaded', function () {
-            var successMessage = document.getElementById('successMessage');
-
-            if (successMessage) {
-                successMessage.style.display = 'block';
-
-                setTimeout(function () {
-                    successMessage.style.display = 'none';
-                }, 3000);
-            }
-        });
-function updateStatus(id, status) {
-    // Show the confirmation dialog
-    $('.confirmation-dialog').show();
-    $('.confirmation-dialog-overlay').show();
-
-    // Set the message in the dialog
-    $('.confirmation-dialog p').text('Are you sure you want to set the status to ' + status + '?');
-
-    // Handle button clicks in the confirmation dialog
-    $('.confirmation-buttons button').off('click').on('click', function () {
-        var userConfirmed = $(this).data('confirmed');
-        if (userConfirmed) {
-            // User confirmed, send the AJAX request to update the status
-            $.ajax({
-                type: 'POST',
-                url: 'update_status.php',
-                data: {
-                    id: id,
-                    lstatus: status // Corrected to use 'lstatus' as key
-                },
-                dataType: 'json', // Expect JSON response
-                success: function (response) {
-                    if (response.success) {
-                        // Show success message with toast and reload after 3 seconds
-                        showToast(response.message, 'success');
-                    } else {
-                        showToast(response.message, 'error');
-                    }
-                },
-                error: function (error) {
-                    console.error('Error updating status:', error);
-                    showToast('An error occurred while updating the status', 'error');
-                }
-            });
-        }
-
-        // Hide the confirmation dialog and overlay
-        $('.confirmation-dialog').hide();
-        $('.confirmation-dialog-overlay').hide();
-    });
-}
 
 
 
@@ -2018,7 +2019,27 @@ function updateStatus(id, status) {
             }
         });
 
+        function showToast(message, type) {
+            // Display a toast message
+            $('#toast-body').text(message);
+            $('#toast').removeClass().addClass('toast').addClass(type).addClass('show');
 
+            // Hide the toast after a few seconds
+            setTimeout(function () {
+                $('#toast').removeClass('show');
+            }, 3000);
+        }
+        document.addEventListener('DOMContentLoaded', function () {
+            var successMessage = document.getElementById('successMessage');
+
+            if (successMessage) {
+                successMessage.style.display = 'block';
+
+                setTimeout(function () {
+                    successMessage.style.display = 'none';
+                }, 3000);
+            }
+        });
         document.addEventListener("DOMContentLoaded", function () {
             // Add click event listener to each row
             var rows = document.querySelectorAll('.editRow');
