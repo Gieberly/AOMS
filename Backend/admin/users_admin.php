@@ -1669,12 +1669,12 @@ $(document).ready(function() {
       
        
         order: [[0, 'asc']],
-        columnDefs: [
-            {
-                targets: 9, // Index of the hidden column
-                visible: false
-            }
-        ]
+        // columnDefs: [
+        //     {
+        //         targets: 9, // Index of the hidden column
+        //         visible: false
+        //     }
+        // ]
     });
 });
 
