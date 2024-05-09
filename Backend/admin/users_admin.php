@@ -2,6 +2,11 @@
 
 include ("admin_cover.php");
 
+$userTypes = ['Personnel', 'Faculty', 'OSS'];
+
+// Create a query to fetch users with specific userTypes
+$query = "SELECT * FROM users WHERE userType IN ('" . implode("','", $userTypes) . "')";
+$result = $conn->query($query);
 
 ?>
 
@@ -769,35 +774,31 @@ include ("admin_cover.php");
 <tbody id="stafflist">
 <tbody id="stafflist">
 <?php
-$counter = 1; // Initialize a counter for numbering the staff members
-
-// Fetch all staff members from the database
-$staffMembers = getAllStaff();
-
-if ($staffMembers->num_rows > 0) {
-while ($staff = $staffMembers->fetch_assoc()) {
-echo "<tr>";
+        // Loop through each result and populate the table
+        $counter = 1; 
+        while ($row = $result->fetch_assoc()) {
+            echo "<tr>";
 echo "<td>{$counter}</td>"; // Display the counter value
-echo "<td>{$staff['last_name']}</td>"; // Last name
-echo "<td>{$staff['name']}</td>"; // First name
-echo "<td>{$staff['mname']}</td>"; // Middle name
-echo "<td>{$staff['email']}</td>"; // Email address
-echo "<td>{$staff['created_date']}</td>"; // Created date
-echo "<td>{$staff['userType']}</td>"; // User type
-echo "<td>{$staff['Department']}</td>"; // Department
-echo "<td>{$staff['Designation']}</td>"; // Designation
-echo "<td>{$staff['lstatus']}</td>"; // Status (e.g., active/inactive)
+echo "<td>{$row['last_name']}</td>"; // Last name
+echo "<td>{$row['name']}</td>"; // First name
+echo "<td>{$row['mname']}</td>"; // Middle name
+echo "<td>{$row['email']}</td>"; // Email address
+echo "<td>{$row['created_date']}</td>"; // Created date
+echo "<td>{$row['userType']}</td>"; // User type
+echo "<td>{$row['Department']}</td>"; // Department
+echo "<td>{$row['Designation']}</td>"; // Designation
+echo "<td>{$row['lstatus']}</td>"; // Status (e.g., active/inactive)
 
 // Action buttons with event handlers
 echo "<td>";
 echo "<div class='button-container'>";
-echo "<button type='button' class='button check-btn' data-tooltip='Approve' onclick='updateStatus({$staff['id']}, \"Approved\")'>";
+echo "<button type='button' class='button check-btn' data-tooltip='Approve' onclick='updateStatus({$row['id']}, \"Approved\")'>";
 echo "<i class='bx bxs-check-circle'></i>";
 echo "</button>";
-echo "<button type='button' class='button delete-btn' data-tooltip='Reject' onclick='updateStatus({$staff['id']}, \"Rejected\")'>";
+echo "<button type='button' class='button delete-btn' data-tooltip='Reject' onclick='updateStatus({$row['id']}, \"Rejected\")'>";
 echo "<i class='bx bxs-x-circle'></i>";
 echo "</button>";
-echo "<button type='button' class='button archive-btn' data-tooltip='Archive' onclick='archiveUser({$staff['id']}, \"Archive\")'>";
+echo "<button type='button' class='button archive-btn' data-tooltip='Archive' onclick='archiveUser({$row['id']}, \"Archive\")'>";
 echo "<i class='bx bxs-box'></i>";
 echo "</button>";
 echo "</div>";
@@ -806,12 +807,6 @@ echo "</td>";
 echo "</tr>"; // End of the row
 
 $counter++; // Increment the counter for the next staff member
-}
-} else {
-// If no staff members found, display a message
-echo "<tr>";
-echo "<td colspan='11'>No staff members found</td>"; // The colspan should span all columns
-echo "</tr>";
 }
 ?>
 </tbody>
