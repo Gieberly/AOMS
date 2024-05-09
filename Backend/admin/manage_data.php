@@ -798,18 +798,19 @@ $rowNumber++; // Increment for the next row
                     </div>
 <script>
 document.getElementById("toggleAddProgram").addEventListener("click", function () {
-  document.getElementById("addProgramModal").style.display = "block";
+  document.getElementById("addProgramModal").style.display = "block"; // Open modal
 });
 
-document.querySelector(".close").addEventListener("click", function () {
-  document.getElementById("addProgramModal").style.display = "none";
+document.getElementById("closeButton").addEventListener("click", function () {
+  document.getElementById("addProgramModal").style.display = "none"; // Close modal
 });
 
 window.addEventListener("click", function (event) {
-  if (event.target == document.getElementById("addProgramModal")) {
+  if (event.target === document.getElementById("addProgramModal")) { // Close by clicking outside
     document.getElementById("addProgramModal").style.display = "none";
   }
 });
+
 
 
 </script>
@@ -865,24 +866,24 @@ window.addEventListener("click", function (event) {
   border-radius: 10px;
 }
 
-.close {
+#closeButton {
   color: #aaa;
-  float: right;
+  float: right; /* Position to the right */
   font-size: 28px;
   font-weight: bold;
 }
 
-.close:hover,
-.close:focus {
-  color: black;
+#closeButton:hover,
+#closeButton:focus {
+  color: black; /* Change color on hover */
   text-decoration: none;
-  cursor: pointer;
+  cursor: pointer; /* Change cursor to pointer */
 }
                     </style>
 <!-- Modal for adding new program -->
 <div id="addProgramModal" class="modalB">
   <div class="modal-contentB">
-    <span class="close">&times;</span>
+  <span id="closeButton">&times;</span>
     <h2>Add New Program</h2>
     <form id="addProgramForm" action="add_program.php" method="POST">
       <div class="form-group">
