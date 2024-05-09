@@ -1721,22 +1721,27 @@ $pending_result = $conn->query($pending_query);
     }
     </style>
     <script>
-      function showToast(message, type) {
-    // Set the message and class based on the type of message (success or error)
-    $('#toast-body').text(message);
-    $('#toast').removeClass('success error').addClass(type);
+        function showToast(message, type) {
+            // Display a toast message
+            $('#toast-body').text(message);
+            $('#toast').removeClass().addClass('toast').addClass(type).addClass('show');
 
-    // Show the toast notification
-    $('#toast').toast('show');
+            // Hide the toast after a few seconds
+            setTimeout(function () {
+                $('#toast').removeClass('show');
+            }, 3000);
+        }
+        document.addEventListener('DOMContentLoaded', function () {
+            var successMessage = document.getElementById('successMessage');
 
-    // If it's a success message, reload the page after a delay
-    if (type === 'success') {
-        setTimeout(function () {
-            location.reload(); // Reload the page after 3 seconds
-        }, 3000);
-    }
-}
+            if (successMessage) {
+                successMessage.style.display = 'block';
 
+                setTimeout(function () {
+                    successMessage.style.display = 'none';
+                }, 3000);
+            }
+        });
 function updateStatus(id, status) {
     // Show the confirmation dialog
     $('.confirmation-dialog').show();
