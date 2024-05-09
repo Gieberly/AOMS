@@ -678,7 +678,7 @@ $result5 = $conn->query($query5);
             <button data-confirmed="false">Cancel</button>
         </div>
     </div>
-   
+
     <section id="content">
         <?php
 
@@ -728,137 +728,111 @@ $result5 = $conn->query($query5);
                                 <i class='bx bx-send'></i>
                             </button> -->
 <!-- Button to toggle the add data div -->
-<button type="button" id="toggleAddDataDiv">
-    <i class='bx bxs-add-to-queue'></i> Add 
+<button type="button" id="openAddProgramModal">
+    <i class='bx bxs-add-to-queue'></i> Add
 </button>
 <style>
-/* General styles for the add data div */
-#addDataDiv {
-    display: none; /* Initially hidden */
-    background-color: #f9f9f9; /* Light background color */
-    border: 1px solid #ccc; /* Light gray border */
-    border-radius: 10px; /* Rounded corners */
-    padding: 20px; /* Padding inside the div */
-    max-width: 500px; /* Maximum width to control form width */
-    margin: 20px auto; /* Center the div and add space around */
-    box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.1); /* Add a subtle shadow */
+    /* Background overlay for modal */
+.modal-overlay {
+    display: none; /* Hidden by default */
+    position: fixed; /* Fixed position for the overlay */
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.5); /* Dark translucent background */
+    z-index: 999; /* High z-index to appear above other content */
 }
 
-/* Styles for the form */
-#addProgramForm {
+/* Modal content */
+.modal {
+    display: none; /* Hidden by default */
+    position: fixed;
+    top: 50%; /* Center vertically */
+    left: 50%; /* Center horizontally */
+    transform: translate(-50%, -50%); /* Center using translation */
+    background: white;
+    border-radius: 10px;
+    padding: 20px;
+    z-index: 1000; /* Above the overlay */
+    max-width: 500px; /* Limit modal width */
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2); /* Add shadow for depth */
+}
+
+/* Close button for the modal */
+.modal-close {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    cursor: pointer;
+    font-size: 20px;
+    color: #aaa; /* Light gray for the close icon */
+    transition: color 0.3s;
+}
+
+.modal-close:hover {
+    color: #555; /* Darker gray on hover */
+}
+
+/* Form styling within the modal */
+.modal-form {
     display: flex;
-    flex-direction: column; /* Arrange elements vertically */
+    flex-direction: column;
 }
 
-/* Style for form groups */
-.form-group {
-    margin-bottom: 15px; /* Space between form fields */
+.modal-form .form-group {
+    margin-bottom: 15px;
 }
 
-/* Style for form labels */
-.form-group label {
-    font-size: 16px; /* Larger font for labels */
-    color: #333; /* Dark text color */
+.modal-form .form-group label {
+    font-size: 16px;
 }
 
-/* Style for input fields */
-.input {
-    padding: 10px; /* Add padding inside the input field */
-    border: 1px solid #ccc; /* Light gray border */
-    border-radius: 5px; /* Rounded corners */
-    box-sizing: border-box; /* Ensure padding doesn't affect size */
-    font-size: 14px; /* Text size within the input */
+.modal-form .input {
+    padding: 10px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
 }
 
-/* Change border color on focus */
-.input:focus {
-    border-color: #4CAF50; /* Green border when focused */
-    outline: none; /* Remove default focus outline */
+.modal-form .submit {
+    background-color: #4CAF50;
+    color: white;
+    padding: 10px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background-color 0.3s;
 }
 
-/* Style for the submit button */
-.submit {
-    background-color: #4CAF50; /* Green background */
-    color: white; /* White text */
-    padding: 10px 20px; /* Padding around the text */
-    border: none; /* No border */
-    border-radius: 5px; /* Rounded corners */
-    cursor: pointer; /* Change cursor on hover */
-    transition: background-color 0.3s; /* Smooth transition on hover */
+.modal-form .submit:hover {
+    background-color: #45a049;
 }
-
-/* Change background color on hover */
-.submit:hover {
-    background-color: #45a049; /* Darker green */
-}
-
-
 </style>
 <script>
-    // JavaScript to toggle the visibility of the add data div
-    document.getElementById("toggleAddDataDiv").addEventListener("click", function () {
-        const addDataDiv = document.getElementById("addDataDiv");
-        if (addDataDiv.style.display === "none" || addDataDiv.style.display === "") {
-            addDataDiv.style.display = "block"; // Show the div
-        } else {
-            addDataDiv.style.display = "none"; // Hide the div
-        }
-    });
+// Get elements by ID
+const modalOverlay = document.getElementById("modalOverlay");
+const addProgramModal = document.getElementById("addProgramModal");
+const openAddProgramModal = document.getElementById("openAddProgramModal");
+const closeModal = document.getElementById("closeModal");
 
-    // Form submission handling (this is an example; you need to add backend handling)
-    document.getElementById("addProgramForm").addEventListener("submit", function (event) {
-        event.preventDefault(); // Prevent the default form submission behavior
+// Function to open the modal
+openAddProgramModal.addEventListener("click", function () {
+    modalOverlay.style.display = "block"; // Show overlay
+    addProgramModal.style.display = "block"; // Show modal
+});
 
-        // Collect form data
-        const formData = new FormData(this);
+// Function to close the modal
+closeModal.addEventListener("click", function () {
+    modalOverlay.style.display = "none"; // Hide overlay
+    addProgramModal.style.display = "none"; // Hide modal
+});
 
-        // Example: Use AJAX to send data to a server-side script for handling
-        fetch("add_program.php", {
-            method: "POST",
-            body: formData
-        })
-        .then(response => response.json())
-        .then(data => {
-            if (data.success) {
-                // Show a success message and clear the form
-                alert("Program added successfully!");
-                this.reset();
-            } else {
-                // Handle errors
-                alert("Error adding program: " + data.message);
-            }
-        })
-        .catch(error => {
-            console.error("Error:", error);
-        });
-    });
+// Also close the modal if clicking outside of it (on the overlay)
+modalOverlay.addEventListener("click", function () {
+    closeModal.click(); // Trigger close function
+});
+
 </script>
-<div id="addDataDiv" style="display: none;">
-    <form id="addProgramForm">
-        <!-- Use the form to add data to your "programs" table -->
-        <div class="form-group">
-            <label for="College">College:</label>
-            <input type="text" id="College" name="College" class="input" required>
-        </div>
-        <div class="form-group">
-            <label for="Courses">Courses:</label>
-            <input type="text" id="Courses" name="Courses" class="input" required>
-        </div>
-        <div class="form-group">
-            <label for="Nature_of_Degree">Nature of Degree:</label>
-            <input type="text" id="Nature_of_Degree" name="Nature_of_Degree" class="input" required>
-        </div>
-        <div class="form-group">
-            <label for="No_of_Sections">No. of Sections:</label>
-            <input type="number" id="No_of_Sections" name="No_of_Sections" class="input" required>
-        </div>
-        <div class="form-group">
-            <label for="No_of_Students_Per_Section">No. of Students Per Section:</label>
-            <input type="number" id="No_of_Students_Per_Section" name="No_of_Students_Per_Section" class="input" required>
-        </div>
-        <button type="submit" class="submit">Add Program</button>
-    </form>
-</div>
 
                         </div>
                     </div>
@@ -956,7 +930,39 @@ $rowNumber++; // Increment for the next row
                             background-color: #f4f4f4;
                         }
                     </style>
+<!-- Background overlay for the modal -->
+<div class="modal-overlay" id="modalOverlay"></div>
 
+<!-- The modal itself -->
+<div class="modal" id="addProgramModal">
+    <!-- Close button to close the modal -->
+    <span class="modal-close" id="closeModal">×</span>
+
+    <!-- Form inside the modal -->
+    <form id="addProgramForm" class="modal-form">
+        <div class="form-group">
+            <label for="College">College:</label>
+            <input type="text" id="College" name="College" class="input" required>
+        </div>
+        <div class="form-group">
+            <label for="Courses">Courses:</label>
+            <input type="text" id="Courses" name="Courses" class="input" required>
+        </div>
+        <div class="form-group">
+            <label for="Nature_of_Degree">Nature of Degree:</label>
+            <input type="text" id="Nature_of_Degree" name="Nature_of_Degree" class="input" required>
+        </div>
+        <div class="form-group">
+            <label for="No_of_Sections">No. of Sections:</label>
+            <input type="number" id="No_of_Sections" name="No_of_Sections" class="input" required>
+        </div>
+        <div class="form-group">
+            <label for="No_of_Students_Per_Section">No. of Students Per Section:</label>
+            <input type="number" id="No_of_Students_Per_Section" name="No_of_Students_Per_Section" class="input" required>
+        </div>
+        <button type="submit" class="submit">Add Program</button>
+    </form>
+</div>
                     <div id="toast" class="toast" role="alert" aria-live="assertive" aria-atomic="true">
                         <div class="toast-header">
                             <strong class="mr-auto">Success!</strong>
