@@ -3,6 +3,12 @@
 include ("admin_cover.php");
 
 
+// Define the user types to fetch
+$userTypes = ['Personnel', 'Faculty', 'OSS'];
+
+// Create a query to fetch users with specific userTypes
+$query = "SELECT * FROM users WHERE userType IN ('" . implode("','", $userTypes) . "')";
+$result = $conn->query($query);
 
 ?>
 
@@ -298,7 +304,7 @@ include ("admin_cover.php");
 
         #deleteConfirmationModal,
         #errorModal,
-        #selectstaffModal,
+        #selectRowModal,
         #sendSuccessModal {
             display: none;
         }
@@ -772,52 +778,42 @@ include ("admin_cover.php");
                             </thead>
                             <tbody id="stafflist">
       <tbody id="stafflist">
-    <?php
-    $counter = 1; // Initialize a counter for numbering the staff members
-
-    // Fetch all staff members from the database
-    $staffMembers = getAllStaff();
-    
-    if ($staffMembers->num_staffs > 0) {
-        while ($staff = $staffMembers->fetch_assoc()) {
+     <?php
+        // Loop through each result and populate the table
+        $counter = 1; 
+        while ($row = $result->fetch_assoc()) {
             echo "<tr>";
-            echo "<td>{$counter}</td>"; // Display the counter value
-            echo "<td>{$staff['last_name']}</td>"; // Last name
-            echo "<td>{$staff['name']}</td>"; // First name
-            echo "<td>{$staff['mname']}</td>"; // Middle name
-            echo "<td>{$staff['email']}</td>"; // Email address
-            echo "<td>{$staff['created_date']}</td>"; // Created date
-            echo "<td>{$staff['userType']}</td>"; // User type
-            echo "<td>{$staff['Department']}</td>"; // Department
-            echo "<td>{$staff['Designation']}</td>"; // Designation
-            echo "<td>{$staff['lstatus']}</td>"; // Status (e.g., active/inactive)
-
-            // Action buttons with event handlers
-            echo "<td>";
-            echo "<div class='button-container'>";
-            echo "<button type='button' class='button check-btn' data-tooltip='Approve' onclick='updateStatus({$staff['id']}, \"Approved\")'>";
-            echo "<i class='bx bxs-check-circle'></i>";
-            echo "</button>";
-            echo "<button type='button' class='button delete-btn' data-tooltip='Reject' onclick='updateStatus({$staff['id']}, \"Rejected\")'>";
-            echo "<i class='bx bxs-x-circle'></i>";
-            echo "</button>";
-            echo "<button type='button' class='button archive-btn' data-tooltip='Archive' onclick='archiveUser({$staff['id']}, \"Archive\")'>";
-            echo "<i class='bx bxs-box'></i>";
-            echo "</button>";
-            echo "</div>";
-            echo "</td>";
+            echo "<td>" . $counter . "</td>";
+            echo "<td>" . htmlspecialchars($row['last_name']) . "</td>";
+            echo "<td>" . htmlspecialchars($row['name']) . "</td>";
+            echo "<td>" . htmlspecialchars($row['mname']) . "</td>";
+            echo "<td>" . htmlspecialchars($row['email']) . "</td>";
+            echo "<td>" . htmlspecialchars($row['created_date']) . "</td>";
+            echo "<td>" . htmlspecialchars($row['userType']) . "</td>";
+            echo "<td>" . htmlspecialchars($row['Department']) . "</td>";
+            echo "<td>" . htmlspecialchars($row['Designation']) . "</td>";
+            echo "<td>" . htmlspecialchars($row['status']) . "</td>";
             
-            echo "</tr>"; // End of the staff
-
-            $counter++; // Increment the counter for the next staff member
+            // Example action buttons (e.g., Edit and Delete)
+              // Action buttons with event handlers
+              echo "<td>";
+              echo "<div class='button-container'>";
+              echo "<button type='button' class='button check-btn' data-tooltip='Approve' onclick='updateStatus({$row['id']}, \"Approved\")'>";
+              echo "<i class='bx bxs-check-circle'></i>";
+              echo "</button>";
+              echo "<button type='button' class='button delete-btn' data-tooltip='Reject' onclick='updateStatus({$row['id']}, \"Rejected\")'>";
+              echo "<i class='bx bxs-x-circle'></i>";
+              echo "</button>";
+              echo "<button type='button' class='button archive-btn' data-tooltip='Archive' onclick='archiveUser({$srow['id']}, \"Archive\")'>";
+              echo "<i class='bx bxs-box'></i>";
+              echo "</button>";
+              echo "</div>";
+              echo "</td>";
+            
+            echo "</tr>";
+            $counter++;
         }
-    } else {
-        // If no staff members found, display a message
-        echo "<tr>";
-        echo "<td colspan='11'>No staff members found</td>"; // The colspan should span all columns
-        echo "</tr>";
-    }
-    ?>
+        ?>
 </tbody>
 
                         </table>
@@ -1519,8 +1515,8 @@ include ("admin_cover.php");
                                         $distinct_colleges_query = "SELECT DISTINCT College FROM programs";
                                         $distinct_colleges_result = $conn->query($distinct_colleges_query);
 
-                                        while ($college_staff = $distinct_colleges_result->fetch_assoc()) {
-                                            $college_name = $college_staff['College'];
+                                        while ($college_row = $distinct_colleges_result->fetch_assoc()) {
+                                            $college_name = $college_row['College'];
                                             ?>
                                             <optgroup label="<?php echo $college_name; ?>">
                                                 <?php
@@ -1533,8 +1529,8 @@ include ("admin_cover.php");
                                                 $stmt->close();
 
                                                 // Display courses
-                                                while ($course_staff = $courses_for_college_result->fetch_assoc()) {
-                                                    $course_name = $course_staff['Courses'];
+                                                while ($course_row = $courses_for_college_result->fetch_assoc()) {
+                                                    $course_name = $course_row['Courses'];
                                                     ?>
                                                     <option value="<?php echo $course_name; ?>"><?php echo $course_name; ?>
                                                     </option>
@@ -1787,38 +1783,38 @@ include ("admin_cover.php");
                 $('.tab-content').hide();
                 $('#content' + selectedTabId.substr(3)).show();
             });
-            // Check if there is a selected staff stored in local storage
-            var selectedstaffIdApplicants = localStorage.getItem('selectedstaffIdApplicants');
-            if (selectedstaffIdApplicants) {
+            // Check if there is a selected row stored in local storage
+            var selectedRowIdApplicants = localStorage.getItem('selectedRowIdApplicants');
+            if (selectedRowIdApplicants) {
 
-                // Highlight the selected staff
-                $('tr[data-id="' + selectedstaffIdApplicants + '"]').addClass('selected');
+                // Highlight the selected row
+                $('tr[data-id="' + selectedRowIdApplicants + '"]').addClass('selected');
 
-                // Populate form fields with data corresponding to the selected staff
-                populateForm(selectedstaffIdApplicants);
+                // Populate form fields with data corresponding to the selected row
+                populateForm(selectedRowIdApplicants);
 
                 // Show the todo div
                 $('.todo').show();
             }
 
-            $('.editstaff').click(function (event) {
+            $('.editRow').click(function (event) {
                 // Check if the click target is not a button, checkbox, or its child elements
                 if (!$(event.target).is('button') && !$(event.target).is('i') && !$(event.target).is(':checkbox')) {
-                    // Get the 'data-id' attribute from the clicked staff
+                    // Get the 'data-id' attribute from the clicked row
                     var userId = $(this).data('id');
 
-                    // Highlight the clicked staff
-                    $('.editstaff').removeClass('selected');
+                    // Highlight the clicked row
+                    $('.editRow').removeClass('selected');
                     $(this).addClass('selected');
 
-                    // Populate form fields with data corresponding to the clicked staff
+                    // Populate form fields with data corresponding to the clicked row
                     populateForm(userId);
 
                     // Show the todo div
                     $('.todo').show();
 
-                    // Store the selected staff ID in local storage
-                    localStorage.setItem('selectedstaffIdApplicants', userId);
+                    // Store the selected row ID in local storage
+                    localStorage.setItem('selectedRowIdApplicants', userId);
                 }
             });
 
@@ -1826,11 +1822,11 @@ include ("admin_cover.php");
             $('.close-form').click(function () {
                 // Hide the todo div
                 $('.todo').hide();
-                // Remove the selected class from all table staffs
-                $('.editstaff').removeClass('selected');
+                // Remove the selected class from all table rows
+                $('.editRow').removeClass('selected');
 
-                // Clear the selected staff ID from local storage
-                localStorage.removeItem('selectedstaffIdApplicants');
+                // Clear the selected row ID from local storage
+                localStorage.removeItem('selectedRowIdApplicants');
             });
 
             function populateForm(userId) {
@@ -2025,16 +2021,16 @@ function updateStatus(id, status) {
 
 
         document.addEventListener("DOMContentLoaded", function () {
-            // Add click event listener to each staff
-            var staffs = document.querySelectorAll('.editstaff');
-            staffs.forEach(function (staff) {
-                staff.addEventListener('click', function () {
-                    // Remove 'selected' class from all staffs
-                    staffs.forEach(function (r) {
+            // Add click event listener to each row
+            var rows = document.querySelectorAll('.editRow');
+            rows.forEach(function (row) {
+                row.addEventListener('click', function () {
+                    // Remove 'selected' class from all rows
+                    rows.forEach(function (r) {
                         r.classList.remove('selected');
                     });
 
-                    // Add 'selected' class to the clicked staff
+                    // Add 'selected' class to the clicked row
                     this.classList.add('selected');
                 });
             });
@@ -2082,11 +2078,11 @@ function updateStatus(id, status) {
             // Close confirmation modal
             document.getElementById('confirmationModal').style.display = 'none';
 
-            // Get the selected staff IDs
-            var selectedstaffIds = [];
+            // Get the selected row IDs
+            var selectedRowIds = [];
             var checkboxes = document.querySelectorAll('.select-checkbox:checked');
             checkboxes.forEach(function (checkbox) {
-                selectedstaffIds.push(checkbox.parentNode.parentNode.dataset.id);
+                selectedRowIds.push(checkbox.parentNode.parentNode.dataset.id);
             });
 
             // AJAX call to send_selected_applicants.php
@@ -2110,7 +2106,7 @@ function updateStatus(id, status) {
             };
             xhr.open('POST', 'send_selected_applicants.php');
             xhr.setRequestHeader('Content-Type', 'application/json');
-            xhr.send(JSON.stringify({ selectedstaffIds: selectedstaffIds }));
+            xhr.send(JSON.stringify({ selectedRowIds: selectedRowIds }));
         });
         var cancelButtons = document.querySelectorAll('.cancel');
         cancelButtons.forEach(function (button) {
@@ -2145,7 +2141,7 @@ function updateStatus(id, status) {
     </script>
 
     <style>
-        /* Change the default background color for selected staffs */
+        /* Change the default background color for selected rows */
         .dataTables_wrapper .dataTables_paginate .paginate_button.current,
         .dataTables_wrapper .dataTables_paginate .paginate_button:hover,
         table.dataTable tbody tr.selected,
@@ -2171,15 +2167,15 @@ function updateStatus(id, status) {
             /* Color for sorted columns */
         }
 
-        /* Optional: Custom icons for sorting arstaffs */
+        /* Optional: Custom icons for sorting arrows */
         th.sorting_asc::after {
             content: '\2191';
-            /* Up arstaff for ascending */
+            /* Up arrow for ascending */
         }
 
         th.sorting_desc::after {
             content: '\2193';
-            /* Down arstaff for descending */
+            /* Down arrow for descending */
         }
 
         @media (max-width: 768px) {
