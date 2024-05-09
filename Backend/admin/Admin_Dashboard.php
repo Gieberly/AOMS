@@ -827,7 +827,15 @@ $pending_result = $conn->query($pending_query);
                         </div>
                     </div>
                     <style>
-                          .button.inc-btn i,
+   .button.inc-btn,
+    .button.delete-btn,
+    .button.check-btn {
+        background: none;
+        border: none;
+        padding: 0;
+        cursor: pointer;
+    }
+     .button.inc-btn i,
     .button.check-btn i,
     .button.delete-btn i {
         font-size: 13px;
