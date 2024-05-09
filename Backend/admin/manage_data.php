@@ -738,6 +738,8 @@ $result5 = $conn->query($query5);
         echo "<td>{$row['Courses']}</td>"; // Courses
         echo "<td>{$row['Nature_of_Degree']}</td>"; // Nature of Degree
         echo "<td>{$row['No_of_Sections']}</td>"; // Number of Sections
+        echo "<td>{$row['No_of_Students_Per_Section']}</td>"; // Students Per Section
+      
         echo "</tr>";
         
         $rowNumber++; // Increment for the next row
