@@ -799,7 +799,7 @@ $pending_result = $conn->query($pending_query);
                                         echo "<td>{$rowNumber}</td>"; // Display the row number
                                         echo "<td>{$row['last_name']}</td>";
                                         echo "<td>{$row['name']}</td>";
-                                        echo "<td>{$row['middlename']}</td>";
+                                        echo "<td>{$row['mname']}</td>";
                                         echo "<td>{$row['mname']}</td>";
                                         echo "<td>{$row['Department']}</td>";
                                         echo "<td>{$row['Designation']}</td>";
