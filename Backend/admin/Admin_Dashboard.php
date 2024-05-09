@@ -809,11 +809,11 @@ $pending_result = $conn->query($pending_query);
                                         // Action buttons for Approve/Reject with appropriate event handling
                                         echo "<td>
                                   <div class='button-container'>
-                                       <button type='button' class='button check-btn' data-tooltip='Approve' onclick='updateStatus({$row['id']}, \"Approved\")'>
+                                       <button type='button' class='button delete-btn' data-tooltip='Approve' onclick='updateStatus({$row['id']}, \"Approved\")'>
                                         <i class='bx bxs-check-circle'></i>
                                    </button>
                             <button type='button' class='button inc-btn' data-tooltip='Reject' onclick='updateStatus({$row['id']}, \"Rejected\")'>
-                            <i class='bx bx-x'></i>
+                            <i class='bx bxs-x-circle'></i>
                             </button>
                         </div>
                     </td>";
