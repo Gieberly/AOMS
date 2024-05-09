@@ -1596,7 +1596,7 @@ while ($row = $result->fetch_assoc()) {
                         <h3>List of archived Personnel</h3>
                     </div>
                     <div class="table-container">
-                        <table class="display" style="width: 100%;">
+                        <table class="" style="width: 100%;">
 
                             <!-- Thead Section -->
                             <tr>
@@ -1643,49 +1643,24 @@ while ($row = $result->fetch_assoc()) {
                         <h3>List of archived Personnel</h3>
                     </div>
                     <div class="table-container">
-                        <table class="display" style="width: 100%;">
+                        <table class="" style="width: 100%;">
 
                             <!-- Thead Section -->
-                            <tr>
-                <th>#</th>
-                <th>Last Name</th>
-                <th>First Name</th>
-                <th>Middle Name</th>
-                <th>Email</th>
-                <th>Department</th>
-                <th>Designation</th>
-                <th>User Type</th>
-                <th>Account Status</th>
-                <th>Actions</th>
-            </tr>
+<tr>
+    <th>#</th> <!-- Row numbering -->
+    <th>Ethnicity ID</th> <!-- Ethnicity ID -->
+    <th>Ethnicity Name</th> <!-- Ethnicity Name -->
+</tr>
         </thead>
         <!-- Table Body -->
         <tbody>
             <?php
             $rowNumber = 1;
-            while ($row = $result2->fetch_assoc()) {
+            while ($row4 = $result4->fetch_assoc()) {
                 echo "<tr>";
-                echo "<td>{$rowNumber}</td>";  // Row Number
-                echo "<td>{$row['last_name']}</td>";  // Last Name
-                echo "<td>{$row['name']}</td>";  // First Name
-                echo "<td>{$row['mname']}</td>";  // Middle Name
-                echo "<td>{$row['email']}</td>";  // Email
-                echo "<td>{$row['Department']}</td>";  // Department
-                echo "<td>{$row['Designation']}</td>";  // Designation
-                echo "<td>{$row['userType']}</td>";  // User Type
-                echo "<td>{$row['lstatus']}</td>";  // Account Status
-                echo "<td>
-                <div class='button-container'>
-  
-                <button type='button' class='button check-btn' data-tooltip='Retrieve' onclick='retrieveUser({$row['id']}, \"Retrieve\")'>
-                <i class='bx bxs-archive-out'></i>
-                </button>
-                <button type='button' class='button inc-btn' data-tooltip='delete' onclick='deletePersonnel({$row['id']}, \"delete\")'>
-                <i class='bx bxs-trash' ></i>
-                </button>
-     
-                </div>
-                </td>"; // 9
+                echo "<td>{$rowNumber}</td>"; // Display row number
+                echo "<td>{$row4['ethnicity_id']}</td>"; // Display Ethnicity ID
+                echo "<td>{$row4['ethnicity_name']}</td>"; // Display Ethnicity Name
                 echo "</tr>";
                 $rowNumber++;
             }
