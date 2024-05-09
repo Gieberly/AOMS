@@ -678,32 +678,7 @@ $result5 = $conn->query($query5);
             <button data-confirmed="false">Cancel</button>
         </div>
     </div>
-    <div id="addDataDiv" style="display: none;">
-    <form id="addProgramForm">
-        <!-- Use the form to add data to your "programs" table -->
-        <div class="form-group">
-            <label for="College">College:</label>
-            <input type="text" id="College" name="College" class="input" required>
-        </div>
-        <div class="form-group">
-            <label for="Courses">Courses:</label>
-            <input type="text" id="Courses" name="Courses" class="input" required>
-        </div>
-        <div class="form-group">
-            <label for="Nature_of_Degree">Nature of Degree:</label>
-            <input type="text" id="Nature_of_Degree" name="Nature_of_Degree" class="input" required>
-        </div>
-        <div class="form-group">
-            <label for="No_of_Sections">No. of Sections:</label>
-            <input type="number" id="No_of_Sections" name="No_of_Sections" class="input" required>
-        </div>
-        <div class="form-group">
-            <label for="No_of_Students_Per_Section">No. of Students Per Section:</label>
-            <input type="number" id="No_of_Students_Per_Section" name="No_of_Students_Per_Section" class="input" required>
-        </div>
-        <button type="submit" class="submit">Add Program</button>
-    </form>
-</div>
+
     <section id="content">
         <?php
 
@@ -717,85 +692,7 @@ $result5 = $conn->query($query5);
         }
         ?>
 
-<style>
-/* Background overlay for modal */
-.modal-overlay {
-    display: none; /* Hidden by default */
-    position: fixed; /* Fixed position for the overlay */
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    background: rgba(0, 0, 0, 0.5); /* Dark translucent background */
-    z-index: 999; /* High z-index to appear above other content */
-}
 
-/* Modal content */
-.modal {
-    display: none; /* Hidden by default */
-    position: fixed;
-    top: 50%; /* Center vertically */
-    left: 50%; /* Center horizontally */
-    transform: translate(-50%, -50%); /* Center using translation */
-    background: white;
-    border-radius: 10px;
-    padding: 20px;
-    z-index: 1000; /* Above the overlay */
-    max-width: 500px; /* Limit modal width */
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2); /* Add shadow for depth */
-}
-
-/* Close button for the modal */
-.modal-close {
-    position: absolute;
-    top: 10px;
-    right: 10px;
-    cursor: pointer;
-    font-size: 20px;
-    color: #aaa; /* Light gray for the close icon */
-    transition: color 0.3s;
-}
-
-.modal-close:hover {
-    color: #555; /* Darker gray on hover */
-}
-
-/* Form styling within the modal */
-.modal-form {
-    display: flex;
-    flex-direction: column;
-}
-
-.modal-form .form-group {
-    margin-bottom: 15px;
-}
-
-.modal-form .form-group label {
-    font-size: 16px;
-}
-
-.modal-form .input {
-    padding: 10px;
-    border: 1px solid #ccc;
-    border-radius: 5px;
-}
-
-.modal-form .submit {
-    background-color: #4CAF50;
-    color: white;
-    padding: 10px;
-    border: none;
-    border-radius: 5px;
-    cursor: pointer;
-    transition: background-color 0.3s;
-}
-
-.modal-form .submit:hover {
-    background-color: #45a049;
-}
-
-
-</style>
         <main>
             <div class="head-title">
                 <div class="left">
@@ -830,12 +727,9 @@ $result5 = $conn->query($query5);
                             <button type="button" id="sendButton" style="display: none;">
                                 <i class='bx bx-send'></i>
                             </button> -->
-<!-- Button to toggle the add data div -->
-<button type="button" id="toggleAddDataDiv">
-    <i class='bx bxs-add-to-queue'></i> Add 
-</button>
-
-
+                            <button type="button" id="toggleAddProgram">
+                                <i class='bx bx-select-multiple'></i> Add
+                            </button>
 
                         </div>
                     </div>
@@ -902,7 +796,23 @@ $rowNumber++; // Increment for the next row
 
                         </table>
                     </div>
+<script>
+document.getElementById("toggleAddProgram").addEventListener("click", function () {
+  document.getElementById("addProgramModal").style.display = "block";
+});
 
+document.querySelector(".close").addEventListener("click", function () {
+  document.getElementById("addProgramModal").style.display = "none";
+});
+
+window.addEventListener("click", function (event) {
+  if (event.target == document.getElementById("addProgramModal")) {
+    document.getElementById("addProgramModal").style.display = "none";
+  }
+});
+
+
+</script>
 
                     <style>
                         /* Scrollbar styling for content areas */
@@ -932,7 +842,73 @@ $rowNumber++; // Increment for the next row
                         #content2::-webkit-scrollbar-track {
                             background-color: #f4f4f4;
                         }
+
+
+ .modalB {
+  display: none;
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  overflow: auto; /* Enable scroll if needed */
+  background-color: rgba(0, 0, 0, 0.5); /* Black w/ opacity */
+}
+
+.modal-contentB {
+  background-color: white;
+  margin: 15% auto; /* 15% from top, centered */
+  padding: 20px;
+  border: 1px solid #888;
+  width: 50%; /* Could be more or less, depending on screen size */
+  border-radius: 10px;
+}
+
+.close {
+  color: #aaa;
+  float: right;
+  font-size: 28px;
+  font-weight: bold;
+}
+
+.close:hover,
+.close:focus {
+  color: black;
+  text-decoration: none;
+  cursor: pointer;
+}
                     </style>
+<!-- Modal for adding new program -->
+<div id="addProgramModal" class="modalB">
+  <div class="modal-contentB">
+    <span class="close">&times;</span>
+    <h2>Add New Program</h2>
+    <form id="addProgramForm" action="add_program.php" method="POST">
+      <div class="form-group">
+        <label for="college">College:</label>
+        <input type="text" id="college" name="college" required>
+      </div>
+      <div class="form-group">
+        <label for="courses">Courses:</label>
+        <input type="text" id="courses" name="courses" required>
+      </div>
+      <div class="form-group">
+        <label for="nature_of_degree">Nature of Degree:</label>
+        <input type="text" id="nature_of_degree" name="nature_of_degree" required>
+      </div>
+      <div class="form-group">
+        <label for="no_of_sections">Number of Sections:</label>
+        <input type="number" id="no_of_sections" name="no_of_sections" required>
+      </div>
+      <div class="form-group">
+        <label for="no_of_students_per_section">Students Per Section:</label>
+        <input type="number" id="no_of_students_per_section" name="no_of_students_per_section" required>
+      </div>
+      <button type="submit">Submit</button>
+    </form>
+  </div>
+</div>
+
 
                     <div id="toast" class="toast" role="alert" aria-live="assertive" aria-atomic="true">
                         <div class="toast-header">
