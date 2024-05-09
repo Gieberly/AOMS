@@ -1,5 +1,8 @@
 <?php
+session_start(); // Ensure sessions are enabled
+
 include("../config.php");
+
 // Retrieve form data
 $college = $_POST['college'];
 $courses = $_POST['courses'];
@@ -33,3 +36,4 @@ $conn->close();
 // Redirect to manage_data.php
 header("Location: manage_data.php");
 exit(); // Make sure to exit after redirecting
+?>
