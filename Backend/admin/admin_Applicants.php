@@ -149,6 +149,7 @@ $stmt->close();
         .button.check-btn i,
         .button.archive-btn i {
             font-size: 13px;
+            color: black;
         }
 
         .button.inc-btn:hover i {
