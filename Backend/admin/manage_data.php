@@ -732,14 +732,16 @@ $result5 = $conn->query($query5);
         <tbody>
             <?php
             $rowNumber = 1;
-            while ($row = $result->fetch_assoc()) {
-              
-                echo "<td>{$row['College']}</td>"; // College
-                echo "<td>{$row['Courses']}</td>"; // Courses
-                echo "<td>{$row['Nature_of_Degree']}</td>"; // Nature of Degree
-                echo "<td>{$row['No_of_Sections']}</td>"; // Number of Sections
-                $rowNumber++; // Increment for the next row
-            }
+            while ($row2 = $result->fetch_assoc()) {
+                echo "<tr>";
+                 echo "<td>{$row['College']}</td>"; // College
+        echo "<td>{$row['Courses']}</td>"; // Courses
+        echo "<td>{$row['Nature_of_Degree']}</td>"; // Nature of Degree
+        echo "<td>{$row['No_of_Sections']}</td>"; // Number of Sections
+        echo "</tr>";
+        
+        $rowNumber++; // Increment for the next row
+    }
             ?>
         </tbody>
                         </table>
