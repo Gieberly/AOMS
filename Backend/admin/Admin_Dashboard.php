@@ -808,15 +808,15 @@ $pending_result = $conn->query($pending_query);
                                     
                                         // Action buttons for Approve/Reject with appropriate event handling
                                         echo "<td>
-                                  <div class='button-container'>
+                                    <div class='button-container'>
                                        <button type='button' class='button check-btn' data-tooltip='Approve' onclick='updateStatus({$row['id']}, \"Approved\")'>
                                         <i class='bx bxs-check-circle'></i>
                                    </button>
-                            <button type='button' class='button delete-btn' id='button delete-btn  data-tooltip='Reject' onclick='updateStatus({$row['id']}, \"Rejected\")'>
-                            <i class='bx bxs-x-circle'></i>
-                            </button>
-                        </div>
-                    </td>";
+                                   <button type='button' class='button delete-btn'  data-tooltip='Reject' onclick='updateStatus({$row['id']}, \"Rejected\")'>
+                                        <i class='bx bxs-x-circle'></i>
+                                   </button>
+                                   </div>
+                                   </td>";
 
                                         echo "</tr>"; // End of the row
                                         $rowNumber++; // Increment the row counter
