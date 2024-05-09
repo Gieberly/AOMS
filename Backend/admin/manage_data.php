@@ -678,32 +678,7 @@ $result5 = $conn->query($query5);
             <button data-confirmed="false">Cancel</button>
         </div>
     </div>
-    <div id="addDataDiv" style="display: none;">
-    <form id="addProgramForm">
-        <!-- Use the form to add data to your "programs" table -->
-        <div class="form-group">
-            <label for="College">College:</label>
-            <input type="text" id="College" name="College" class="input" required>
-        </div>
-        <div class="form-group">
-            <label for="Courses">Courses:</label>
-            <input type="text" id="Courses" name="Courses" class="input" required>
-        </div>
-        <div class="form-group">
-            <label for="Nature_of_Degree">Nature of Degree:</label>
-            <input type="text" id="Nature_of_Degree" name="Nature_of_Degree" class="input" required>
-        </div>
-        <div class="form-group">
-            <label for="No_of_Sections">No. of Sections:</label>
-            <input type="number" id="No_of_Sections" name="No_of_Sections" class="input" required>
-        </div>
-        <div class="form-group">
-            <label for="No_of_Students_Per_Section">No. of Students Per Section:</label>
-            <input type="number" id="No_of_Students_Per_Section" name="No_of_Students_Per_Section" class="input" required>
-        </div>
-        <button type="submit" class="submit">Add Program</button>
-    </form>
-</div>
+   
     <section id="content">
         <?php
 
@@ -858,6 +833,32 @@ $result5 = $conn->query($query5);
         });
     });
 </script>
+<div id="addDataDiv" style="display: none;">
+    <form id="addProgramForm">
+        <!-- Use the form to add data to your "programs" table -->
+        <div class="form-group">
+            <label for="College">College:</label>
+            <input type="text" id="College" name="College" class="input" required>
+        </div>
+        <div class="form-group">
+            <label for="Courses">Courses:</label>
+            <input type="text" id="Courses" name="Courses" class="input" required>
+        </div>
+        <div class="form-group">
+            <label for="Nature_of_Degree">Nature of Degree:</label>
+            <input type="text" id="Nature_of_Degree" name="Nature_of_Degree" class="input" required>
+        </div>
+        <div class="form-group">
+            <label for="No_of_Sections">No. of Sections:</label>
+            <input type="number" id="No_of_Sections" name="No_of_Sections" class="input" required>
+        </div>
+        <div class="form-group">
+            <label for="No_of_Students_Per_Section">No. of Students Per Section:</label>
+            <input type="number" id="No_of_Students_Per_Section" name="No_of_Students_Per_Section" class="input" required>
+        </div>
+        <button type="submit" class="submit">Add Program</button>
+    </form>
+</div>
 
                         </div>
                     </div>
