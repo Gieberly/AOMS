@@ -134,7 +134,7 @@ $full_name = $name . ' ' . $mname . ' ' . $last_name;
         </li>
 
         <li class="">
-            <a href="data_admin.php" id="data-info-link" style="text-decoration:none">
+            <a href="admin_archive.php" id="data-info-link" style="text-decoration:none">
                 <i class='bx bxs-data'></i>
                 <span class="text">Archive</span>
             </a>
