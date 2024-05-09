@@ -761,7 +761,7 @@ $result5 = $conn->query($query5);
                     </style>
 
                     <div class="table-container">
-                        <table class="" style="width: 100%;">
+                        <table class="display" style="width: 100%;">
 
                             <!-- Thead Section -->
                             <thead id="thead">
@@ -779,7 +779,7 @@ $result5 = $conn->query($query5);
 <tbody id="tbody">
 <?php
 $rowNumber = 1; // To number each row
-while ($row5 = $result->fetch_assoc()) {
+while ($row = $result->fetch_assoc()) {
 echo "<tr>";
 echo "<td>{$rowNumber}</td>"; // Row number
 echo "<td>{$row['College']}</td>"; // College
