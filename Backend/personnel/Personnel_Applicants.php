@@ -1445,54 +1445,7 @@ $stmt->close();
                                         oninput="formatApplicantNumber(this);">
                                 </div>
                             </div>
-                            <script>
-                                // Function to format applicant number as per the given format
-                                function formatApplicantNumber(input) {
-                                    var formatted = input.value.replace(/[^0-9]/g, '');
-
-                                    // Check if the first group of digits (first four digits) is complete
-                                    if (formatted.length >= 4) {
-                                        if (formatted.charAt(4) !== '-') {
-                                            formatted = formatted.slice(0, 4) + '-' + formatted.slice(4);
-                                        }
-
-                                        // Check if the second group of digits (fifth digit) is complete
-                                        if (formatted.length >= 6) {
-                                            if (formatted.charAt(6) !== '-') {
-                                                formatted = formatted.slice(0, 6) + '-' + formatted.slice(6);
-                                            }
-
-                                            // Check if the third group of digits (next five digits) is complete
-                                            if (formatted.length > 12) {
-                                                formatted = formatted.slice(0, 12);
-                                            }
-                                        }
-                                    }
-
-                                    input.value = formatted;
-                                }
-
-                                var modalShown = false;
-
-                                // Function to display modal when input field is clicked
-                                document.getElementById("applicant_number").addEventListener("click", function () {
-                                    // If the modal has not been shown before, display it
-                                    if (!modalShown) {
-                                        // Display the modal
-                                        document.getElementById("applicantNoModal").style.display = "block";
-                                        modalShown = true; // Set modalShown to true to indicate the modal has been shown
-                                    }
-                                });
-
-                                // Close modal when "OK" button is clicked
-                                document.getElementById("modalCloseBtn").addEventListener("click", function () {
-                                    // Close the modal
-                                    document.getElementById("applicantNoModal").style.display = "none";
-
-                                    // Focus back on the input field
-                                    document.getElementById("applicant_number").focus();
-                                });
-                            </script>
+                           
                             <br>
                             <p class="personal_information">Contact Person(s) in Case of Emergency</p>
                             <div class="data-container2">
@@ -1538,12 +1491,12 @@ $stmt->close();
                                 </select>
                             </div>
 
-                    </div>
+                  
 
-                    <br>
-                    <p class="personal_information">Academic Classification</p>
+                     <br>
+                     <!-- #endregion -->   <p class="personal_information">Academic Classification</p>
 
-                    <div class="data-container3">
+                      <div class="data-container3">
 
                         <div class="form-group">
                             <!-- College -->
@@ -1611,11 +1564,11 @@ $stmt->close();
                                 <option value="Non-Board">Non-Board</option>
                             </select>
                         </div>
-                    </div>
+                      </div>
 
-                    <br>
-                    <p class="personal_information">Academic Background </p>
-                    <div class="data-container3">
+                       <br>
+                       <p class="personal_information">Academic Background </p>
+                      <div class="data-container3">
                         <!-- Academic Background -->
                         <div class="form-group">
                             <label class="small-label" for="high_school_name_address" style="white-space: nowrap;">LAST
@@ -1628,12 +1581,12 @@ $stmt->close();
                             <label class="small-label" for="lrn" style="white-space: nowrap;">LRN</label>
                             <input name="lrn" class="input" id="lrn" value="<?php echo $admissionData['lrn']; ?>">
                         </div>
-                    </div>
+                       </div>
 
-                    <br>
-                    <input type="hidden" name="id" value="<?php echo $admissionData['id']; ?>">
-                    <button type="button" class="submit" onclick="confirmSubmission2()">Submit</button>
-                    </form>
+                      <br>
+                      <input type="hidden" name="id" value="<?php echo $admissionData['id']; ?>">
+                       <button type="button" class="submit" onclick="confirmSubmission2()">Submit</button>
+                      </form>
 
 
                 </div>
@@ -1662,7 +1615,54 @@ $stmt->close();
             <button id="valCloseBtn" class="confirm">OK</button>
         </div>
     </div>
+    <script>
+                                // Function to format applicant number as per the given format
+                                function formatApplicantNumber(input) {
+                                    var formatted = input.value.replace(/[^0-9]/g, '');
 
+                                    // Check if the first group of digits (first four digits) is complete
+                                    if (formatted.length >= 4) {
+                                        if (formatted.charAt(4) !== '-') {
+                                            formatted = formatted.slice(0, 4) + '-' + formatted.slice(4);
+                                        }
+
+                                        // Check if the second group of digits (fifth digit) is complete
+                                        if (formatted.length >= 6) {
+                                            if (formatted.charAt(6) !== '-') {
+                                                formatted = formatted.slice(0, 6) + '-' + formatted.slice(6);
+                                            }
+
+                                            // Check if the third group of digits (next five digits) is complete
+                                            if (formatted.length > 12) {
+                                                formatted = formatted.slice(0, 12);
+                                            }
+                                        }
+                                    }
+
+                                    input.value = formatted;
+                                }
+
+                                var modalShown = false;
+
+                                // Function to display modal when input field is clicked
+                                document.getElementById("applicant_number").addEventListener("click", function () {
+                                    // If the modal has not been shown before, display it
+                                    if (!modalShown) {
+                                        // Display the modal
+                                        document.getElementById("applicantNoModal").style.display = "block";
+                                        modalShown = true; // Set modalShown to true to indicate the modal has been shown
+                                    }
+                                });
+
+                                // Close modal when "OK" button is clicked
+                                document.getElementById("modalCloseBtn").addEventListener("click", function () {
+                                    // Close the modal
+                                    document.getElementById("applicantNoModal").style.display = "none";
+
+                                    // Focus back on the input field
+                                    document.getElementById("applicant_number").focus();
+                                });
+                            </script>
 
     <script>
 // Initialize the DataTable
