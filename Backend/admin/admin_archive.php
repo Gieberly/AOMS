@@ -12,6 +12,9 @@ $query2 = "SELECT * FROM users_archive";
 $result2 = $conn->query($query2);
 
 
+$rowNumber = 1;
+
+
 ?>
 
 <head>
@@ -893,14 +896,7 @@ $result2 = $conn->query($query2);
 
                             <!-- Thead Section -->
                             <tr>
-                <th>Last Name</th>
-                <th>First Name</th>
-                <th>Middle Name</th>
-                <th>Email</th>
-                <th>Department</th>
-                <th>Designation</th>
-                <th>User Type</th>
-                <th>Account Status</th>
+     
                 <th>Actions</th>
             </tr>
         </thead>
@@ -910,13 +906,7 @@ $result2 = $conn->query($query2);
             $rowNumber = 1;
             while ($row = $result2->fetch_assoc()) {
                 echo "<tr>";
-                echo "<td>{$row['last_name']}</td>";  // Last Name
-                echo "<td>{$row['name']}</td>";  // First Name
-                echo "<td>{$row['mname']}</td>";  // Middle Name
-                echo "<td>{$row['email']}</td>";  // Email
-                echo "<td>{$row['Department']}</td>";  // Department
-                echo "<td>{$row['Designation']}</td>";  // Designation
-                echo "<td>{$row['userType']}</td>";  // User Type
+       
                 echo "<td>{$row['lstatus']}</td>";  // Account Status
                 echo "<td>
                 <div class='button-container'>
@@ -931,6 +921,7 @@ $result2 = $conn->query($query2);
                 </div>
                 </td>"; // 9
                 echo "</tr>";
+                $rowNumber++;
             }
             ?>
         </tbody>
