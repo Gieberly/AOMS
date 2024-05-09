@@ -784,8 +784,8 @@ $rowNumber = 1;
                                     echo "<td>" . $row['Last_Name'] . "</td>"; // 3
                                     echo "<td>" . $row['Name'] . "</td>"; // 4
                                     echo "<td>" . $row['Middle_Name'] . "</td>"; // 5
-                                    echo "<td>" . ($row['appointment_date'] ? date('F d, Y') : '') . "</td>"; // 6
-                                    echo "<td>" . ($row['appointment_time'] ? date('g:i A') : '') . "</td>"; // 7
+                                    echo "<td>" . $row['email'] . "</td>"; // 5
+                           
                                     echo "<td  data-field='appointment_status'>{$row['appointment_status']}</td>"; // 8
                                     echo "<td>
               <div class='button-container'>
@@ -884,7 +884,7 @@ $rowNumber = 1;
 
                 </div>
 
-                <div class="todo" style="display: none;">
+                <div class="" style="display: none;">
                     <i class="bx bx-x close-form" style="float: right;font-size: 24px;"></i>
 
                     <input type="radio" id="tab1" name="tabGroup1" class="tab" checked>
