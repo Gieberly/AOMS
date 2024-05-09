@@ -717,7 +717,7 @@ $result5 = $conn->query($query5);
                         <h3>Academic Year Schedule</h3>
                     </div>
                     <div class="table-container">
-                        <table class="" style="width: 100%;">
+                        <table class="display" style="width: 100%;">
 
                             <!-- Thead Section -->
                             <tr>
