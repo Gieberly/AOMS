@@ -2261,9 +2261,8 @@ function archiveUser(id) {
 // Initialize the DataTable
 $(document).ready(function() {
     $('#studentTable').DataTable({
-        searching: false,
-        paging: false,
-        info: false,
+      
+       
         order: [[0, 'asc']],
         columnDefs: [
             {
