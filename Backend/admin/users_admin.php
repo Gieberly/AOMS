@@ -1630,7 +1630,9 @@ include ("admin_cover.php");
 
 
     <script>
-
+      new DataTable('#studentTable', {
+            order: [[3, 'desc']]
+        });
 
         // Function to display success message
         function showSuccessMessage(message) {
@@ -1711,9 +1713,7 @@ include ("admin_cover.php");
                 $('.confirmation-dialog-overlay').hide();
             });
         }
-        new DataTable('#studentTable', {
-            order: [[3, 'desc']]
-        });
+  
 
         function confirmSubmission() {
             document.getElementById("confirmationDialoga").style.display = "block";
