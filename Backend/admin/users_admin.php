@@ -66,7 +66,7 @@ include ("admin_cover.php");
             position: relative;
         }
 
-        .button.inc-btn,
+        .button.delete-btn,
         .button.check-btn,
         .button.archive-btn {
             background: none;
@@ -75,14 +75,14 @@ include ("admin_cover.php");
             cursor: pointer;
         }
 
-        .button.inc-btn i,
+        .button.delete-btn i,
         .button.check-btn i,
         .button.archive-btn i {
             font-size: 13px;
             color: black;
         }
 
-        .button.inc-btn:hover i {
+        .button.delete-btn:hover i {
             color: orange;
         }
 
