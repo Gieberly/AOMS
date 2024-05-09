@@ -1724,12 +1724,7 @@ $pending_result = $conn->query($pending_query);
         new DataTable('#dashboard', { 
     order: [[3, 'desc']]
 });
-new DataTable('#programs', { 
-    order: [[3, 'desc']]
-});
-new DataTable('#Archive', { 
-    order: [[3, 'desc']]
-});
+
 function showToast(message, type) {
     // Display the toast message
     $('#toast-body').text(message);
