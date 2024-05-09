@@ -1,34 +1,32 @@
 <?php
 include("../config.php");
-include("../includes/functions.php");
 
-if(isset($_POST['id']) && isset($_POST['name'])) {
+if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $id = $_POST['id'];
-    $valueName = $_POST['name'];
-    
-    // Prepare the SQL query to update the value in the database
-    $sql = "UPDATE users SET lstatus = ? WHERE id = ?";
-    
-    // Prepare the statement
-    $stmt = mysqli_prepare($conn, $sql);
-    
-    // Bind the parameters
-    mysqli_stmt_bind_param($stmt, "si", $valueName, $id);
-    
-    // Execute the statement
-    if (mysqli_stmt_execute($stmt)) {
-        // Update successful
-        echo json_encode(['status' => 'success', 'message' => 'Value updated successfully']);
+    $status = $_POST['lstatus'];
+
+    // Update the appointment_status in the database
+    $updateQuery = "UPDATE users SET lstatus = ? WHERE id = ?";
+    $stmt = $conn->prepare($updateQuery);
+    $stmt->bind_param("si", $status, $id);
+
+    $response = array(); // Create an array to store the response
+
+    if ($stmt->execute()) {
+        $response['success'] = true; 
+        $response['message'] = "Status updated successfully";
     } else {
-        // Update failed
-        echo json_encode(['status' => 'error', 'message' => 'Failed to update value: ' . mysqli_error($conn)]);
+        $response['success'] = false;
+        $response['message'] = "Error updating status";
     }
-    
-    // Close the statement
-    mysqli_stmt_close($stmt);
+
+    $stmt->close();
+    $conn->close();
+
+    // Send the response as JSON
+    header('Content-Type: application/json');
+    echo json_encode($response);
 } else {
-    // Invalid request
-    echo json_encode(['status' => 'error', 'message' => 'Invalid request']);
+    echo "Invalid request";
 }
 ?>
-
