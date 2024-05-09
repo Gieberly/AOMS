@@ -1581,7 +1581,7 @@ $result2 = $conn->query($query2);
             <div class="table-data">
                 <div class="order">
                     <div class="head">
-                        <h3>List of archived Applicants</h3>
+                        <h3>List of archived Personnel</h3>
                     </div>
                     <div class="table-container">
                         <table id="" style="width: 100%;">
