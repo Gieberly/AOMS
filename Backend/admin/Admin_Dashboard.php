@@ -371,8 +371,8 @@ $pending_result = $conn->query($pending_query);
     <div class="confirmation-dialog">
         <p></p>
         <div class="confirmation-buttons">
-            <button data-confirmed="true">Confirm</button>
-            <button data-confirmed="false">Cancel</button>
+            <button class="confirm" data-confirmed="true">Confirm</button>
+            <button class="cancel" data-confirmed="false">Cancel</button>
         </div>
     </div>
 
@@ -1059,6 +1059,33 @@ $pending_result = $conn->query($pending_query);
         height: 100%;
         background-color: rgba(0, 0, 0, 0.5);
         z-index: 999;
+    }
+    .cancel {
+        padding: 10px 15px;
+        margin: 5px;
+        border: none;
+        border-radius: 5px;
+        cursor: pointer;
+        font-size: 14px;
+        text-align: center;
+        display: inline-block;
+        background-color: #ff5757;
+        color: white;
+        /* Float the "Cancel" button to the right */
+    }
+
+    .confirm {
+        padding: 10px 15px;
+        margin: 5px;
+        border: none;
+        border-radius: 5px;
+        cursor: pointer;
+        font-size: 14px;
+        text-align: center;
+        display: inline-block;
+        background-color: #4CAF50;
+        color: white;
+        /* Float the "Cancel" button to the right */
     }
     </style>
     <script>
