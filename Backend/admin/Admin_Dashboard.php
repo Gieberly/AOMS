@@ -1539,7 +1539,7 @@ $pending_result = $conn->query($pending_query);
                         </div>
                         <div class="table-responsive">
                             <!-- Table for displaying student data -->
-                            <table class="display responsive wrap " width="100%">
+                            <table id="dashboard" class="display responsive wrap " width="100%">
                                 <!-- table header -->
                                 <h4>Archive Logs</h4>
                                 <thead>
