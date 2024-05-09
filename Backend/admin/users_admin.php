@@ -68,7 +68,7 @@ include ("admin_cover.php");
 
         .button.inc-btn,
         .button.check-btn,
-        .button.archive-btn { 
+        .button.archive-btn {
             background: none;
             border: none;
             padding: 0;
@@ -89,6 +89,7 @@ include ("admin_cover.php");
         .button.check-btn:hover i {
             color: green;
         }
+
         .button.archive-btn:hover i {
             color: blue;
         }
@@ -692,7 +693,7 @@ include ("admin_cover.php");
                 </div>
                 <div class="button-container">
 
-                  
+
                 </div>
             </div>
 
@@ -745,68 +746,77 @@ include ("admin_cover.php");
                         }
                     </style>
 
-<div id="table-container">
-                                <!--staff-->
-                                <table id="personnel" class="display responsive wrap " width="100%">
-                                    <thead>
+                    <div id="table-container">
+                        <!--staff-->
+                        <table id="personnel" class="display responsive wrap " width="100%">
+                            <thead>
+                                <tr>
+                                    <th>#</th>
+                                    <th>Last Name</th>
+                                    <th>First Name</th>
+                                    <th>Middle Name</th>
+                                    <th>Email</th>
+                                    <th>Created Date</th>
+                                    <th>User Type</th>
+                                    <th>Department</th>
+                                    <th>Designation</th>
+                                    <th>Status</th>
+                                    <th>Action</th>
+
+                                </tr>
+                            </thead>
+                            <tbody id="stafflist">
+                                <?php
+                                // Counter for numbering the staff members
+                                $counter = 1;
+
+                                // Display all staff members in the table
+                                $staffMembers = getAllStaff();
+                                if ($staffMembers->num_rows > 0) {
+                                    while ($staff = $staffMembers->fetch_assoc()) {
+                                        ?>
                                         <tr>
-                                            <th>#</th>
-                                            <th>Last Name</th>
-                                            <th>First Name</th>
-                                            <th>Middle Name</th>
-                                            <th>Email</th>
-                                            <th>Created Date</th>
-                                            <th>User Type</th>
-                                            <th>Department</th>
-                                            <th>Designation</th>
-                                            <th>Status</th>
-                                            <th>Action</th>
+                                            <td><?= $counter++; ?></td>
+                                            <td><?= $staff['last_name']; ?></td>
+                                            <td><?= $staff['name']; ?></td>
+                                            <td><?= $staff['mname']; ?></td>
+                                            <td><?= $staff['email']; ?></td>
+                                            <td><?= $staff['created_date']; ?></td>
+                                            <td><?= $staff['userType']; ?></td>
+                                            <td><?= $staff['Department']; ?></td>
+                                            <td><?= $staff['Designation']; ?></td>
+                                            <td><?= $staff['lstatus']; ?></td>
+                                            <td>
+                                                <div class='button-container'>
 
+                                                    <button type='button' class='button check-btn' data-tooltip='Retrieve'
+                                                        onclick='undoUser({$row[' id']}, \"Retrieve\")'>
+                                                        <i class='bx bxs-archive-out'></i>
+                                                    </button>
+                                                    <button type='button' class='button inc-btn' data-tooltip='delete'
+                                                        onclick='deleteUser({$row[' id']}, \"delete\")'>
+                                                        <i class='bx bxs-trash'></i>
+                                                    </button>
+
+                                                </div>
+                                            </td>
                                         </tr>
-                                    </thead>
-                                    <tbody id="stafflist">
                                         <?php
-                                        // Counter for numbering the staff members
-                                        $counter = 1;
+                                    }
+                                } else {
+                                    // Display a message if no staff members found
+                                    ?>
+                                    <tr>
+                                        <td colspan="10">No staff members found</td>
+                                    </tr>
+                                    <?php
+                                }
+                                ?>
+                            </tbody>
 
-                                        // Display all staff members in the table
-                                        $staffMembers = getAllStaff();
-                                        if ($staffMembers->num_rows > 0) {
-                                            while ($staff = $staffMembers->fetch_assoc()) {
-                                        ?>
-                                                <tr>
-                                                    <td><?= $counter++; ?></td>
-                                                    <td><?= $staff['last_name']; ?></td>
-                                                    <td><?= $staff['name']; ?></td>
-                                                    <td><?= $staff['mname']; ?></td>
-                                                    <td><?= $staff['email']; ?></td>
-                                                    <td><?= $staff['created_date']; ?></td>
-                                                    <td><?= $staff['userType']; ?></td>
-                                                    <td><?= $staff['Department']; ?></td>
-                                                    <td><?= $staff['Designation']; ?></td>
-                                                    <td><?= $staff['lstatus']; ?></td>
-                                                    <td>
-                                                        <button type="button" value="<?= $staff['id']; ?>" class="viewStaffBtn btn btn-info btn-sm">View</button>
-                                                        <button type="button" value="<?= $staff['id']; ?>" class="editStaffBtn btn btn-success btn-sm">Edit</button>
-                                                        <button type="button" value="<?= $staff['id']; ?>" class="deleteStaffBtn btn btn-danger btn-sm">Delete</button>
-                                                    </td>
-                                                </tr>
-                                            <?php
-                                            }
-                                        } else {
-                                            // Display a message if no staff members found
-                                            ?>
-                                            <tr>
-                                                <td colspan="10">No staff members found</td>
-                                            </tr>
-                                        <?php
-                                        }
-                                        ?>
-                                    </tbody>
+                        </table>
 
-                                </table>
-
-                            </div>
+                    </div>
 
 
                     <style>
@@ -1479,102 +1489,105 @@ include ("admin_cover.php");
                                 </select>
                             </div>
 
-                    
 
-                    <br>
-                    <p class="personal_information">Academic Classification</p>
 
-                    <div class="data-container3">
-
-                        <div class="form-group">
-                            <!-- College -->
-                            <label class="small-label" for="college">College</label>
-                            <select name="college" class="input" id="college">
-                                <?php foreach ($colleges as $college) { ?>
-                                    <option value="<?php echo $college; ?>"><?php echo $college; ?></option>
-                                <?php } ?>
-                            </select>
                             <br>
-                            <!-- Degree -->
-                            <label class="small-label" for="degree_applied">Degree</label>
-                            <select name="degree_applied" class="input" id="degree_applied">
-                                <?php
-                                // Fetch distinct colleges from programs table
-                                $distinct_colleges_query = "SELECT DISTINCT College FROM programs";
-                                $distinct_colleges_result = $conn->query($distinct_colleges_query);
+                            <p class="personal_information">Academic Classification</p>
 
-                                while ($college_row = $distinct_colleges_result->fetch_assoc()) {
-                                    $college_name = $college_row['College'];
-                                    ?>
-                                    <optgroup label="<?php echo $college_name; ?>">
+                            <div class="data-container3">
+
+                                <div class="form-group">
+                                    <!-- College -->
+                                    <label class="small-label" for="college">College</label>
+                                    <select name="college" class="input" id="college">
+                                        <?php foreach ($colleges as $college) { ?>
+                                            <option value="<?php echo $college; ?>"><?php echo $college; ?></option>
+                                        <?php } ?>
+                                    </select>
+                                    <br>
+                                    <!-- Degree -->
+                                    <label class="small-label" for="degree_applied">Degree</label>
+                                    <select name="degree_applied" class="input" id="degree_applied">
                                         <?php
-                                        // Fetch courses associated with this college
-                                        $courses_for_college_query = "SELECT Courses FROM programs WHERE College = ?";
-                                        $stmt = $conn->prepare($courses_for_college_query);
-                                        $stmt->bind_param("s", $college_name);
-                                        $stmt->execute();
-                                        $courses_for_college_result = $stmt->get_result();
-                                        $stmt->close();
+                                        // Fetch distinct colleges from programs table
+                                        $distinct_colleges_query = "SELECT DISTINCT College FROM programs";
+                                        $distinct_colleges_result = $conn->query($distinct_colleges_query);
 
-                                        // Display courses
-                                        while ($course_row = $courses_for_college_result->fetch_assoc()) {
-                                            $course_name = $course_row['Courses'];
+                                        while ($college_row = $distinct_colleges_result->fetch_assoc()) {
+                                            $college_name = $college_row['College'];
                                             ?>
-                                            <option value="<?php echo $course_name; ?>"><?php echo $course_name; ?>
-                                            </option>
+                                            <optgroup label="<?php echo $college_name; ?>">
+                                                <?php
+                                                // Fetch courses associated with this college
+                                                $courses_for_college_query = "SELECT Courses FROM programs WHERE College = ?";
+                                                $stmt = $conn->prepare($courses_for_college_query);
+                                                $stmt->bind_param("s", $college_name);
+                                                $stmt->execute();
+                                                $courses_for_college_result = $stmt->get_result();
+                                                $stmt->close();
+
+                                                // Display courses
+                                                while ($course_row = $courses_for_college_result->fetch_assoc()) {
+                                                    $course_name = $course_row['Courses'];
+                                                    ?>
+                                                    <option value="<?php echo $course_name; ?>"><?php echo $course_name; ?>
+                                                    </option>
+                                                    <?php
+                                                }
+                                                ?>
+                                            </optgroup>
                                             <?php
                                         }
                                         ?>
-                                    </optgroup>
-                                    <?php
-                                }
-                                ?>
-                            </select>
+                                    </select>
 
 
-                        </div>
+                                </div>
 
-                        <div class="form-group">
-                            <!-- Academic Classification -->
-                            <label class="small-label" for="academic_classification">Classification</label>
-                            <select name="academic_classification" class="input" id="academic_classification">
-                                <?php foreach ($classifications as $classification) { ?>
-                                    <option value="<?php echo $classification; ?>"><?php echo $classification; ?>
-                                    </option>
-                                <?php } ?>
-                            </select>
+                                <div class="form-group">
+                                    <!-- Academic Classification -->
+                                    <label class="small-label" for="academic_classification">Classification</label>
+                                    <select name="academic_classification" class="input" id="academic_classification">
+                                        <?php foreach ($classifications as $classification) { ?>
+                                            <option value="<?php echo $classification; ?>"><?php echo $classification; ?>
+                                            </option>
+                                        <?php } ?>
+                                    </select>
+                                    <br>
+                                    <!-- Nature -->
+                                    <label class="small-label" for="nature_of_degree"
+                                        style="white-space: nowrap;">Nature of
+                                        degree</label>
+                                    <select name="nature_of_degree" class="input" id="nature_of_degree">
+                                        <option value="Board">Board</option>
+                                        <option value="Non-Board">Non-Board</option>
+                                    </select>
+                                </div>
+                            </div>
+
                             <br>
-                            <!-- Nature -->
-                            <label class="small-label" for="nature_of_degree" style="white-space: nowrap;">Nature of
-                                degree</label>
-                            <select name="nature_of_degree" class="input" id="nature_of_degree">
-                                <option value="Board">Board</option>
-                                <option value="Non-Board">Non-Board</option>
-                            </select>
-                        </div>
-                    </div>
+                            <p class="personal_information">Academic Background </p>
+                            <div class="data-container3">
+                                <!-- Academic Background -->
+                                <div class="form-group">
+                                    <label class="small-label" for="high_school_name_address"
+                                        style="white-space: nowrap;">LAST
+                                        SCHOOL ATTENDED</label>
+                                    <input name="high_school_name_address" class="input" id="high_school_name_address"
+                                        value="<?php echo $admissionData['high_school_name_address']; ?>"
+                                        oninput="this.value = this.value.replace(/[^0-9]/g, '');">
+                                </div>
+                                <div class="form-group">
+                                    <label class="small-label" for="lrn" style="white-space: nowrap;">LRN</label>
+                                    <input name="lrn" class="input" id="lrn"
+                                        value="<?php echo $admissionData['lrn']; ?>">
+                                </div>
+                            </div>
 
-                    <br>
-                    <p class="personal_information">Academic Background </p>
-                    <div class="data-container3">
-                        <!-- Academic Background -->
-                        <div class="form-group">
-                            <label class="small-label" for="high_school_name_address" style="white-space: nowrap;">LAST
-                                SCHOOL ATTENDED</label>
-                            <input name="high_school_name_address" class="input" id="high_school_name_address"
-                                value="<?php echo $admissionData['high_school_name_address']; ?>"
-                                oninput="this.value = this.value.replace(/[^0-9]/g, '');">
-                        </div>
-                        <div class="form-group">
-                            <label class="small-label" for="lrn" style="white-space: nowrap;">LRN</label>
-                            <input name="lrn" class="input" id="lrn" value="<?php echo $admissionData['lrn']; ?>">
-                        </div>
-                    </div>
-
-                    <br>
-                    <input type="hidden" name="id" value="<?php echo $admissionData['id']; ?>">
-                    <button type="button" class="submit" onclick="confirmSubmission2()">Submit</button>
-                    </form>
+                            <br>
+                            <input type="hidden" name="id" value="<?php echo $admissionData['id']; ?>">
+                            <button type="button" class="submit" onclick="confirmSubmission2()">Submit</button>
+                        </form>
 
                     </div>
                 </div>
@@ -1586,9 +1599,9 @@ include ("admin_cover.php");
     </section>
 
     <!-- Success message div -->
-<div class="success-message" id="archive" style="display: none;">
-  <p id="archive-message"></p>
-</div>
+    <div class="success-message" id="archive" style="display: none;">
+        <p id="archive-message"></p>
+    </div>
     <div id="toast" class="toast" role="alert" aria-live="assertive" aria-atomic="true">
         <div class="toast-header">
         </div>
@@ -1612,89 +1625,89 @@ include ("admin_cover.php");
 
     <script>
 
-         
-// Function to display success message
-function showSuccessMessage(message) {
-  var archiveMessage = document.getElementById('archive-message');
-  archiveMessage.innerHTML = message;
-  var archiveDiv = document.getElementById('archive');
-  archiveDiv.style.display = 'block';
-  // Hide the success message after 3 seconds
-  setTimeout(function() {
-    archiveDiv.style.display = 'none';
-    // Reload the page after the message disappears
-    location.reload();
-  }, 2000);
-}
 
-function undoUser(id) {
-    // Show confirmation dialog
-    $('.confirmation-dialog').show();
-    $('.confirmation-dialog-overlay').show();
-    $('.confirmation-dialog p').text('Are you sure you want to retrieve this data?');
+        // Function to display success message
+        function showSuccessMessage(message) {
+            var archiveMessage = document.getElementById('archive-message');
+            archiveMessage.innerHTML = message;
+            var archiveDiv = document.getElementById('archive');
+            archiveDiv.style.display = 'block';
+            // Hide the success message after 3 seconds
+            setTimeout(function () {
+                archiveDiv.style.display = 'none';
+                // Reload the page after the message disappears
+                location.reload();
+            }, 2000);
+        }
 
-    // Handle button clicks in the confirmation dialog
-    $('.confirmation-buttons button').click(function() {
-        var userConfirmed = $(this).data('confirmed');
-        if (userConfirmed) {
-            // User confirmed, send AJAX request to delete data
-            $.ajax({
-                url: "undo_App_Archive.php",
-                type: "POST",
-                data: { delete_ids: [id] },
-                success: function(response) {
-                    // Show response message in success message div
-                    showSuccessMessage(response);
-                    // Reload or update the table as needed
-                },
-                error: function(xhr, status, error) {
-                    console.error(xhr.responseText); // Log error message
-                    // Handle error as needed
+        function undoUser(id) {
+            // Show confirmation dialog
+            $('.confirmation-dialog').show();
+            $('.confirmation-dialog-overlay').show();
+            $('.confirmation-dialog p').text('Are you sure you want to retrieve this data?');
+
+            // Handle button clicks in the confirmation dialog
+            $('.confirmation-buttons button').click(function () {
+                var userConfirmed = $(this).data('confirmed');
+                if (userConfirmed) {
+                    // User confirmed, send AJAX request to delete data
+                    $.ajax({
+                        url: "undo_App_Archive.php",
+                        type: "POST",
+                        data: { delete_ids: [id] },
+                        success: function (response) {
+                            // Show response message in success message div
+                            showSuccessMessage(response);
+                            // Reload or update the table as needed
+                        },
+                        error: function (xhr, status, error) {
+                            console.error(xhr.responseText); // Log error message
+                            // Handle error as needed
+                        }
+                    });
                 }
+
+                // Hide the confirmation dialog and overlay
+                $('.confirmation-dialog').hide();
+                $('.confirmation-dialog-overlay').hide();
             });
         }
 
-        // Hide the confirmation dialog and overlay
-        $('.confirmation-dialog').hide();
-        $('.confirmation-dialog-overlay').hide();
-    });
-}
+        function deleteUser(id) {
+            // Show confirmation dialog
+            $('.confirmation-dialog').show();
+            $('.confirmation-dialog-overlay').show();
+            $('.confirmation-dialog p').text('Are you sure you want to permanently delete this data?');
 
-function deleteUser(id) {
-    // Show confirmation dialog
-    $('.confirmation-dialog').show();
-    $('.confirmation-dialog-overlay').show();
-    $('.confirmation-dialog p').text('Are you sure you want to permanently delete this data?');
-
-    // Handle button clicks in the confirmation dialog
-    $('.confirmation-buttons button').click(function() {
-        var userConfirmed = $(this).data('confirmed');
-        if (userConfirmed) {
-            // User confirmed, send AJAX request to delete data
-            $.ajax({
-                url: "delete_applicants.php",
-                type: "POST",
-                data: { delete_ids: [id] },
-                success: function(response) {
-                    // Show response message in success message div
-                    showSuccessMessage(response);
-                    // Reload or update the table as needed
-                },
-                error: function(xhr, status, error) {
-                    console.error(xhr.responseText); // Log error message
-                    // Handle error as needed
+            // Handle button clicks in the confirmation dialog
+            $('.confirmation-buttons button').click(function () {
+                var userConfirmed = $(this).data('confirmed');
+                if (userConfirmed) {
+                    // User confirmed, send AJAX request to delete data
+                    $.ajax({
+                        url: "delete_applicants.php",
+                        type: "POST",
+                        data: { delete_ids: [id] },
+                        success: function (response) {
+                            // Show response message in success message div
+                            showSuccessMessage(response);
+                            // Reload or update the table as needed
+                        },
+                        error: function (xhr, status, error) {
+                            console.error(xhr.responseText); // Log error message
+                            // Handle error as needed
+                        }
+                    });
                 }
+
+                // Hide the confirmation dialog and overlay
+                $('.confirmation-dialog').hide();
+                $('.confirmation-dialog-overlay').hide();
             });
         }
-
-        // Hide the confirmation dialog and overlay
-        $('.confirmation-dialog').hide();
-        $('.confirmation-dialog-overlay').hide();
-    });
-}
-new DataTable('#studentTable', {
-    order: [[3, 'desc']]
-});
+        new DataTable('#studentTable', {
+            order: [[3, 'desc']]
+        });
 
         function confirmSubmission() {
             document.getElementById("confirmationDialoga").style.display = "block";
