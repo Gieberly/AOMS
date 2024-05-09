@@ -1602,35 +1602,25 @@ $result2 = $conn->query($query2);
         </thead>
         <!-- Table Body -->
         <tbody>
-            <?php
-            $rowNumber = 1;
-            while ($row = $result2->fetch_assoc()) {
-                echo "<tr>";
-                echo "<td>{$rowNumber}</td>";  // Row Number
-                echo "<td>{$row['last_name']}</td>";  // Last Name
-                echo "<td>{$row['name']}</td>";  // First Name
-                echo "<td>{$row['mname']}</td>";  // Middle Name
-                echo "<td>{$row['email']}</td>";  // Email
-                echo "<td>{$row['Department']}</td>";  // Department
-                echo "<td>{$row['Designation']}</td>";  // Designation
-                echo "<td>{$row['userType']}</td>";  // User Type
-                echo "<td>{$row['lstatus']}</td>";  // Account Status
-                echo "<td>
-                <div class='button-container'>
-  
-                <button type='button' class='button check-btn' data-tooltip='Retrieve' onclick='undoUser({$row['id']}, \"Retrieve\")'>
-                <i class='bx bxs-archive-out'></i>
-                </button>
-                <button type='button' class='button inc-btn' data-tooltip='delete' onclick='deleteUser({$row['id']}, \"delete\")'>
-                <i class='bx bxs-trash' ></i>
-                </button>
-     
-                </div>
-                </td>"; // 9
-                echo "</tr>";
-                $rowNumber++;
-            }
-            ?>
+        <?php
+    $rowNumber = 1;
+    while ($row = $result2->fetch_assoc()) {
+        echo "<tr>";
+        echo "<td>{$rowNumber}</td>";  // Row Number
+        echo "<td>{$row['last_name']}</td>";  // Last Name
+        echo "<td>{$row['name']}</td>";  // First Name
+        echo "<td>{$row['mname']}</td>";  // Middle Name
+        echo "<td>{$row['email']}</td>";  // Email
+        echo "<td>{$row['Department']}</td>";  // Department
+        echo "<td>{$row['Designation']}</td>";  // Designation
+        echo "<td>{$row['userType']}</td>";  // User Type
+        echo "<td>{$row['lstatus']}</td>";  // Account Status
+        echo "<td>...</td>";  // Actions
+        echo "</tr>";
+        $rowNumber++;
+    }
+    ?>
+
         </tbody>
                         </table>
                     </div>
