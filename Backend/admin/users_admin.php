@@ -700,7 +700,7 @@ include ("admin_cover.php");
             <div class="table-data">
                 <div class="order">
                     <div class="head">
-                        <h3>List of Personnels</h3>
+                        <h3>List of Personnel</h3>
                         <!-- Add this input field for date filtering -->
 
                         <div class="headfornaturetosort">
@@ -766,53 +766,54 @@ include ("admin_cover.php");
                                 </tr>
                             </thead>
                             <tbody id="stafflist">
-                                <?php
-                                // Counter for numbering the staff members
-                                $counter = 1;
+      <tbody id="stafflist">
+    <?php
+    $counter = 1; // Initialize a counter for numbering the staff members
 
-                                // Display all staff members in the table
-                                $staffMembers = getAllStaff();
-                                if ($staffMembers->num_rows > 0) {
-                                    while ($staff = $staffMembers->fetch_assoc()) {
-                                        ?>
-                                        <tr>
-                                            <td><?= $counter++; ?></td>
-                                            <td><?= $staff['last_name']; ?></td>
-                                            <td><?= $staff['name']; ?></td>
-                                            <td><?= $staff['mname']; ?></td>
-                                            <td><?= $staff['email']; ?></td>
-                                            <td><?= $staff['created_date']; ?></td>
-                                            <td><?= $staff['userType']; ?></td>
-                                            <td><?= $staff['Department']; ?></td>
-                                            <td><?= $staff['Designation']; ?></td>
-                                            <td><?= $staff['lstatus']; ?></td>
-                                            <td>
-                                                <div class='button-container'>
+    // Fetch all staff members from the database
+    $staffMembers = getAllStaff();
+    
+    if ($staffMembers->num_rows > 0) {
+        while ($staff = $staffMembers->fetch_assoc()) {
+            echo "<tr>";
+            echo "<td>{$counter}</td>"; // Display the counter value
+            echo "<td>{$staff['last_name']}</td>"; // Last name
+            echo "<td>{$staff['name']}</td>"; // First name
+            echo "<td>{$staff['mname']}</td>"; // Middle name
+            echo "<td>{$staff['email']}</td>"; // Email address
+            echo "<td>{$staff['created_date']}</td>"; // Created date
+            echo "<td>{$staff['userType']}</td>"; // User type
+            echo "<td>{$staff['Department']}</td>"; // Department
+            echo "<td>{$staff['Designation']}</td>"; // Designation
+            echo "<td>{$staff['lstatus']}</td>"; // Status (e.g., active/inactive)
 
-                                                    <button type='button' class='button check-btn' data-tooltip='Retrieve'
-                                                        onclick='undoUser({$row[' id']}, \"Retrieve\")'>
-                                                        <i class='bx bxs-archive-out'></i>
-                                                    </button>
-                                                    <button type='button' class='button inc-btn' data-tooltip='delete'
-                                                        onclick='deleteUser({$row[' id']}, \"delete\")'>
-                                                        <i class='bx bxs-trash'></i>
-                                                    </button>
+            // Action buttons with event handlers
+            echo "<td>";
+            echo "<div class='button-container'>";
+            echo "<button type='button' class='button check-btn' data-tooltip='Approve' onclick='updateStatus({$staff['id']}, \"Approved\")'>";
+            echo "<i class='bx bxs-check-circle'></i>";
+            echo "</button>";
+            echo "<button type='button' class='button delete-btn' data-tooltip='Reject' onclick='updateStatus({$staff['id']}, \"Rejected\")'>";
+            echo "<i class='bx bxs-x-circle'></i>";
+            echo "</button>";
+            echo "<button type='button' class='button archive-btn' data-tooltip='Archive' onclick='archiveUser({$staff['id']}, \"Archive\")'>";
+            echo "<i class='bx bxs-box'></i>";
+            echo "</button>";
+            echo "</div>";
+            echo "</td>";
+            
+            echo "</tr>"; // End of the row
 
-                                                </div>
-                                            </td>
-                                        </tr>
-                                        <?php
-                                    }
-                                } else {
-                                    // Display a message if no staff members found
-                                    ?>
-                                    <tr>
-                                        <td colspan="10">No staff members found</td>
-                                    </tr>
-                                    <?php
-                                }
-                                ?>
-                            </tbody>
+            $counter++; // Increment the counter for the next staff member
+        }
+    } else {
+        // If no staff members found, display a message
+        echo "<tr>";
+        echo "<td colspan='11'>No staff members found</td>"; // The colspan should span all columns
+        echo "</tr>";
+    }
+    ?>
+</tbody>
 
                         </table>
 
@@ -1973,47 +1974,73 @@ include ("admin_cover.php");
         });
 
 
-        function updateStatus(id, status) {
-            // Show the confirmation dialog
-            $('.confirmation-dialog').show();
-            $('.confirmation-dialog-overlay').show();
+    
+function showToast(message, type) {
+    // Display the toast message
+    $('#toast-body').text(message);
+    $('#toast').removeClass().addClass('toast').addClass(type).addClass('show');
 
-            // Set the message in the dialog
-            $('.confirmation-dialog p').text('Are you sure you want to set the status to ' + status + '?');
+    // Hide the toast and reload the page after a few seconds
+    setTimeout(function () {
+        $('#toast').removeClass('show');
+        if (type === 'success') {
+            // Reload the page only for success messages
+            location.reload();
+        }
+    }, 3000);
+}
+        document.addEventListener('DOMContentLoaded', function () {
+            var successMessage = document.getElementById('successMessage');
 
-            // Handle button clicks in the confirmation dialog
-            $('.confirmation-buttons button').click(function () {
-                var userConfirmed = $(this).data('confirmed');
-                if (userConfirmed) {
-                    // User confirmed, send the AJAX request to update the status
-                    $.ajax({
-                        type: 'POST',
-                        url: 'Personnel_UpdateStatus.php',
-                        data: {
-                            id: id,
-                            status: status
-                        },
-                        dataType: 'json', // Expect JSON response
-                        success: function (response) {
-                            if (response.success) {
-                                // Update the status in the table cell
-                                $('[data-id="' + id + '"] [data-field="appointment_status"]').text(status);
-                                showToast(response.message, 'success');
-                            } else {
-                                showToast(response.message, 'error');
-                            }
-                        },
-                        error: function (error) {
-                            console.error('Error updating status:', error);
-                        }
-                    });
+            if (successMessage) {
+                successMessage.style.display = 'block';
+
+                setTimeout(function () {
+                    successMessage.style.display = 'none';
+                }, 3000);
+            }
+        });
+function updateStatus(id, status) {
+    // Show the confirmation dialog
+    $('.confirmation-dialog').show();
+    $('.confirmation-dialog-overlay').show();
+
+    // Set the message in the dialog
+    $('.confirmation-dialog p').text('Are you sure you want to set the status to ' + status + '?');
+
+    // Handle button clicks in the confirmation dialog
+    $('.confirmation-buttons button').off('click').on('click', function () {
+        var userConfirmed = $(this).data('confirmed');
+        if (userConfirmed) {
+            // User confirmed, send the AJAX request to update the status
+            $.ajax({
+                type: 'POST',
+                url: 'update_status.php',
+                data: {
+                    id: id,
+                    lstatus: status // Corrected to use 'lstatus' as key
+                },
+                dataType: 'json', // Expect JSON response
+                success: function (response) {
+                    if (response.success) {
+                        // Show success message with toast and reload after 3 seconds
+                        showToast(response.message, 'success');
+                    } else {
+                        showToast(response.message, 'error');
+                    }
+                },
+                error: function (error) {
+                    console.error('Error updating status:', error);
+                    showToast('An error occurred while updating the status', 'error');
                 }
-
-                // Hide the confirmation dialog and overlay
-                $('.confirmation-dialog').hide();
-                $('.confirmation-dialog-overlay').hide();
             });
         }
+
+        // Hide the confirmation dialog and overlay
+        $('.confirmation-dialog').hide();
+        $('.confirmation-dialog-overlay').hide();
+    });
+}
 
 
 
