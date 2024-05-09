@@ -1721,66 +1721,70 @@ $pending_result = $conn->query($pending_query);
     }
     </style>
     <script>
+        
+        function showToast(message, type) {
+            // Display a toast message
+            $('#toast-body').text(message);
+            $('#toast').removeClass().addClass('toast').addClass(type).addClass('show');
+
+            // Hide the toast after a few seconds
+            setTimeout(function () {
+                $('#toast').removeClass('show');
+            }, 3000);
+        }
+        document.addEventListener('DOMContentLoaded', function () {
+            var successMessage = document.getElementById('successMessage');
+
+            if (successMessage) {
+                successMessage.style.display = 'block';
+
+                setTimeout(function () {
+                    successMessage.style.display = 'none';
+                }, 3000);
+            }
+        });
      
-// Function to show a toast message
-function showToast(message, type) {
-    $('#toast-body').text(message);
-    $('#toast').removeClass().addClass('toast').addClass(type); // Add the toast type (success or error)
-    $('#toast').fadeIn().delay(3000).fadeOut(); // Show for 3 seconds and then hide
-}
+     function updateStatus(id, status) {
+            // Show the confirmation dialog
+            $('.confirmation-dialog').show();
+            $('.confirmation-dialog-overlay').show();
 
-// Function to update the user's status
-function updateStatus(id, status) {
-    // Show the confirmation dialog
-    $('.confirmation-dialog').show();
-    $('.confirmation-dialog-overlay').show();
+            // Set the message in the dialog
+            $('.confirmation-dialog p').text('Are you sure you want to set the status to ' + status + '?');
 
-    // Set the message in the dialog
-    $('.confirmation-dialog p').text('Are you sure you want to set the status to ' + status + '?');
-
-    // Handle confirmation dialog button clicks
-    $('.confirmation-buttons button').click(function () {
-        var userConfirmed = $(this).data('confirmed');
-        if (userConfirmed) {
-            // User confirmed the action
-            $.ajax({
-                type: 'POST',
-                url: 'update_status.php', // PHP script to update status
-                data: {
-                    id: id,
-                    lstatus: status // Using the correct field name
-                },
-                dataType: 'json', // Expecting a JSON response
-                success: function (response) {
-                    if (response.success) {
-                        // Show success message
-                        showToast(response.message, 'success');
-
-                        // Update the status in the displayed table cell
-                        $('[data-id="' + id + '"] [data-field="account_status"]').text(status);
-
-                        // Reload the page after 3 seconds
-                        setTimeout(function () {
-                            window.location.reload();
-                        }, 3000);
-                    } else {
-                        // Show error message if there's an issue
-                        showToast(response.message, 'error');
-                    }
-                },
-                error: function (error) {
-                    console.error('Error updating status:', error);
-                    showToast('Error updating status', 'error');
+            // Handle button clicks in the confirmation dialog
+            $('.confirmation-buttons button').click(function () {
+                var userConfirmed = $(this).data('confirmed');
+                if (userConfirmed) {
+                    // User confirmed, send the AJAX request to update the status
+                    $.ajax({
+                        type: 'POST',
+                        url: 'update_status.php',
+                        data: {
+                            id: id,
+                            status: status
+                        },
+                        dataType: 'json', // Expect JSON response
+                        success: function (response) {
+                            if (response.success) {
+                                // Update the status in the table cell
+                                $('[data-id="' + id + '"] [data-field="appointment_status"]').text(status);
+                                showToast(response.message, 'success');
+                            } else {
+                                showToast(response.message, 'error');
+                            }
+                        },
+                        error: function (error) {
+                            console.error('Error updating status:', error);
+                        }
+                    });
                 }
+
+                // Hide the confirmation dialog and overlay
+                $('.confirmation-dialog').hide();
+                $('.confirmation-dialog-overlay').hide();
             });
         }
-
-        // Hide the confirmation dialog and overlay
-        $('.confirmation-dialog').hide();
-        $('.confirmation-dialog-overlay').hide();
-    });
-}
-
 
         document.addEventListener('DOMContentLoaded', function () {
             var ctxPersonnel = document.getElementById('PersonnelChart').getContext('2d');
