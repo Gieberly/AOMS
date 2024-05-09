@@ -1615,8 +1615,8 @@ $counter++; // Increment the counter for the next staff member
         </div>
     </div>
 
-
-    <script>
+ 
+    <script> 
 
 new DataTable('#users', {
             order: [[3, 'desc']]
