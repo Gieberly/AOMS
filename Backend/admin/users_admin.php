@@ -700,7 +700,7 @@ include ("admin_cover.php");
             <div class="table-data">
                 <div class="order">
                     <div class="head">
-                        <h3>List of archived Applicants</h3>
+                        <h3>List of Personnels</h3>
                         <!-- Add this input field for date filtering -->
 
                         <div class="headfornaturetosort">
