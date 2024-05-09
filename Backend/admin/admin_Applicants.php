@@ -94,7 +94,7 @@ $stmt->close();
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.1.3/jszip.min.js"></script>
     <script src="https://cdn.datatables.net/buttons/2.4.2/js/buttons.colVis.min.js"></script>
 
-    <title>BSU OUR Admission Unit Personnel</title>
+    <title>BSU ADMIN Admission Unit Personnel</title>
 
 </head>
 
