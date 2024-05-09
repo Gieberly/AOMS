@@ -813,7 +813,7 @@ $pending_result = $conn->query($pending_query);
                                         <i class='bx bxs-check-circle'></i>
                                    </button>
                             <button type='button' class='button inc-btn' data-tooltip='Reject' onclick='updateStatus({$row['id']}, \"Rejected\")'>
-                                <i class='bx bxs-no-entry'></i>
+                            <i class='bx bx-x'></i>
                             </button>
                         </div>
                     </td>";
