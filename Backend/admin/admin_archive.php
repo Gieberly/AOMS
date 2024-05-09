@@ -1623,7 +1623,7 @@ function showSuccessMessage(message) {
   }, 2000);
 }
 
-function archiveUser(id) {
+function undoUser(id) {
     // Show confirmation dialog
     $('.confirmation-dialog').show();
     $('.confirmation-dialog-overlay').show();
@@ -1635,7 +1635,7 @@ function archiveUser(id) {
         if (userConfirmed) {
             // User confirmed, send AJAX request to delete data
             $.ajax({
-                url: "admission_archive.php",
+                url: "undo_App_Archive.php",
                 type: "POST",
                 data: { delete_ids: [id] },
                 success: function(response) {
