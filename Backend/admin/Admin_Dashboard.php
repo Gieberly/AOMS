@@ -1721,69 +1721,49 @@ $pending_result = $conn->query($pending_query);
     }
     </style>
     <script>
-          function showToast(message, type) {
-            // Display a toast message
-            $('#toast-body').text(message);
-            $('#toast').removeClass().addClass('toast').addClass(type).addClass('show');
+     
+     function updateStatus(id, status) {
+            // Show the confirmation dialog
+            $('.confirmation-dialog').show();
+            $('.confirmation-dialog-overlay').show();
 
-            // Hide the toast after a few seconds
-            setTimeout(function () {
-                $('#toast').removeClass('show');
-            }, 3000);
-        }
-        document.addEventListener('DOMContentLoaded', function () {
-            var successMessage = document.getElementById('successMessage');
+            // Set the message in the dialog
+            $('.confirmation-dialog p').text('Are you sure you want to set the status to ' + status + '?');
 
-            if (successMessage) {
-                successMessage.style.display = 'block';
-
-                setTimeout(function () {
-                    successMessage.style.display = 'none';
-                }, 3000);
-            }
-        });
-         function updateStatus(id, status) {
-        // Show the confirmation dialog
-        $('.confirmation-dialog').show();
-        $('.confirmation-dialog-overlay').show();
-
-        // Set the message in the dialog
-        $('.confirmation-dialog p').text('Are you sure you want to set the status to ' + status + '?');
-
-        // Handle button clicks in the confirmation dialog
-        $('.confirmation-buttons button').click(function() {
-            var userConfirmed = $(this).data('confirmed');
-            if (userConfirmed) {
-                // User confirmed, send the AJAX request to update the status
-                $.ajax({
-                    type: 'POST',
-                    url: 'update_status.php',
-                    data: {
-                        id: id,
-                        status: status
-                    },
-                    dataType: 'json', // Expect JSON response
-                    success: function(response) {
-                        if (response.success) {
-                            // Update the status in the table cell
-                            $('[data-id="' + id + '"] [data-field="appointment_status"]').text(
-                                status);
-                            showToast(response.message, 'success');
-                        } else {
-                            showToast(response.message, 'error');
+            // Handle button clicks in the confirmation dialog
+            $('.confirmation-buttons button').click(function () {
+                var userConfirmed = $(this).data('confirmed');
+                if (userConfirmed) {
+                    // User confirmed, send the AJAX request to update the status
+                    $.ajax({
+                        type: 'POST',
+                        url: 'update_status.php',
+                        data: {
+                            id: id,
+                            status: status
+                        },
+                        dataType: 'json', // Expect JSON response
+                        success: function (response) {
+                            if (response.success) {
+                                // Update the status in the table cell
+                                $('[data-id="' + id + '"] [data-field="appointment_status"]').text(status);
+                                showToast(response.message, 'success');
+                            } else {
+                                showToast(response.message, 'error');
+                            }
+                        },
+                        error: function (error) {
+                            console.error('Error updating status:', error);
                         }
-                    },
-                    error: function(error) {
-                        console.error('Error updating status:', error);
-                    }
-                });
-            }
+                    });
+                }
 
-            // Hide the confirmation dialog and overlay
-            $('.confirmation-dialog').hide();
-            $('.confirmation-dialog-overlay').hide();
-        });
-    }
+                // Hide the confirmation dialog and overlay
+                $('.confirmation-dialog').hide();
+                $('.confirmation-dialog-overlay').hide();
+            });
+        }
+
         document.addEventListener('DOMContentLoaded', function () {
             var ctxPersonnel = document.getElementById('PersonnelChart').getContext('2d');
             var userCounts = <?php echo json_encode($userCounts); ?>;
