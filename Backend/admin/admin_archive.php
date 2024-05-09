@@ -765,9 +765,7 @@ $rowNumber = 1;
                                     <th>First Name</th>
                                     <th>Middle Name</th>
                                     <th>email</th>
-                                  
                                     <th>Action</th>
-                                    
                                 </tr>
                             </thead>
 
@@ -776,13 +774,13 @@ $rowNumber = 1;
                             <?php
                     $rowNumber = 1; // To number each row
                     while ($row = $result->fetch_assoc()) {
-                                    echo "<tr class='editRow' data-id='" . $row['id'] . "' data-date='" . $row['application_date'] . "'>";
+                                    echo "<tr class='editRow'>";
                                     echo "<td>{$rowNumber}</td>";  // Display the row number
                                     echo "<td>" . $row['applicant_number'] . "</td>"; // 2
                                     echo "<td>" . $row['Last_Name'] . "</td>"; // 3
                                     echo "<td>" . $row['Name'] . "</td>"; // 4
                                     echo "<td>" . $row['Middle_Name'] . "</td>"; // 5
-                                    echo "<td>" . $row['email'] . "</td>"; // 5
+                                    echo "<td>" . $row['email'] . "</td>"; // 6
                            
                                     echo "<td>
               <div class='button-container'>
@@ -795,7 +793,7 @@ $rowNumber = 1;
               </button>
    
               </div>
-              </td>"; // 9
+            </td>"; //7 
                                     echo "</tr>";
                                     $rowNumber++; // Increment the counter for the next row
                                 }
