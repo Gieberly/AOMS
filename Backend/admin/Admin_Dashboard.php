@@ -367,6 +367,16 @@ $pending_result = $conn->query($pending_query);
                 </div>
                 <div>
                     <!--Modal-->
+  <div class="confirmation-dialog-overlay"></div>
+    <div class="confirmation-dialog">
+        <p></p>
+        <div class="confirmation-buttons">
+            <button data-confirmed="true">Confirm</button>
+            <button data-confirmed="false">Cancel</button>
+        </div>
+    </div>
+
+
                     <div class="modal fade" id="admissionAddModal" tabindex="-1" role="dialog"
                         aria-labelledby="exampleModalLabel" aria-hidden="true">
                         <div class="modal-dialog">
