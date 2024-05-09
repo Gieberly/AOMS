@@ -897,29 +897,30 @@ document.addEventListener("DOMContentLoaded", function () {
 
     <h2>Add New Program</h2>
     <form id="addProgramForm" action="add_program.php" method="POST">
-      <div class="form-group">
-        <br>
-        <label for="college">College:</label>
-        <input class="input" type="text" id="college" name="college" required>
-      </div>
-      <div class="form-group">
-        <label for="courses">Courses:</label>
-        <input class="input" type="text" id="courses" name="courses" required>
-      </div>
-      <div class="form-group">
-        <label for="nature_of_degree">Nature of Degree:</label>
-        <input class="input" type="text" id="nature_of_degree" name="nature_of_degree" required>
-      </div>
-      <div class="form-group">
-        <label for="no_of_sections">Number of Sections:</label>
-        <input class="input" type="number" id="no_of_sections" name="no_of_sections" required>
-      </div>
-      <div class="form-group">
-        <label for="no_of_students_per_section">Students Per Section:</label>
-        <input class="input" type="number" id="no_of_students_per_section" name="no_of_students_per_section" required>
-      </div>
-      <button type="submit">Submit</button>
-    </form>
+  <div class="form-group">
+    <label for="college">College:</label>
+    <input class="input" type="text" id="college" name="college" required>
+  </div>
+  <div class="form-group">
+    <label for="courses">Courses:</label>
+    <input class="input" type="text" id="courses" name="courses" required>
+  </div>
+  <div class="form-group">
+    <label for="nature_of_degree">Nature of Degree:</label>
+    <input class="input" type="text" id="nature_of_degree" name="nature_of_degree" required>
+  </div>
+  <div class="form-group">
+    <label for="no_of_sections">Number of Sections:</label>
+    <input class="input" type="number" id="no_of_sections" name="no_of_sections" required>
+  </div>
+  <div class="form-group">
+    <label for="no_of_students_per_section">Students Per Section:</label>
+    <input class="input" type="number" id="no_of_students_per_section" name="no_of_students_per_section" required>
+  </div>
+  <input type="hidden" id="number_of_available_slots" name="number_of_available_slots"> <!-- Hidden input -->
+  <button type="submit">Submit</button>
+</form>
+
   </div>
 </div>
 
@@ -1668,6 +1669,15 @@ document.addEventListener("DOMContentLoaded", function () {
                 <div class="order">
                     <div class="head">
                         <h3>Applicant Classifications and Requirements</h3>
+
+                        
+                        <div class="headfornaturetosort">
+                    
+                            <button type="button" id="toggleAddClassification">
+                                <i class='bx bx-select-multiple'></i> Add
+                            </button>
+
+                        </div>
                     </div>
                     <div class="table-container">
                     <table class="" style="width: 100%;">
