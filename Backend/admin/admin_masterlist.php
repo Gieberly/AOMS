@@ -1,5 +1,5 @@
 <?php
-include ("Personnel_Cover.php");
+include ("admin_cover.php");
 
 // Store the search query in a session variable if it's set
 if (isset($_GET['search'])) {
