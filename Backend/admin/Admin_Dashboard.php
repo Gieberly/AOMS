@@ -797,13 +797,13 @@ $pending_result = $conn->query($pending_query);
                                     while ($row = $pending_result->fetch_assoc()) {
                                         echo "<tr>";
                                         echo "<td>{$rowNumber}</td>"; // Display the row number
-                                        echo "<td>{$row['lastname']}</td>";
-                                        echo "<td>{$row['firstname']}</td>";
+                                        echo "<td>{$row['last_name']}</td>";
+                                        echo "<td>{$row['name']}</td>";
                                         echo "<td>{$row['middlename']}</td>";
-                                        echo "<td>{$row['email']}</td>";
-                                        echo "<td>{$row['department']}</td>";
-                                        echo "<td>{$row['designation']}</td>";
-                                        echo "<td>{$row['usertype']}</td>";
+                                        echo "<td>{$row['mname']}</td>";
+                                        echo "<td>{$row['Department']}</td>";
+                                        echo "<td>{$row['Designation']}</td>";
+                                        echo "<td>{$row['userType']}</td>";
                                         echo "<td>{$row['lstatus']}</td>"; // Display account status
                                     
                                         // Action buttons for Approve/Reject with appropriate event handling
