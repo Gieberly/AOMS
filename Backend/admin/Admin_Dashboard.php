@@ -1721,7 +1721,7 @@ $pending_result = $conn->query($pending_query);
     }
     </style>
     <script>
-        new DataTable('#dashboard', {
+        new DataTable('#dashboard', { 
     order: [[3, 'desc']]
 });
 function showToast(message, type) {
