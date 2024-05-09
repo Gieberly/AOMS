@@ -899,12 +899,6 @@ $rowNumber = 1;
                 <th>#</th>
                 <th>Last Name</th>
                 <th>First Name</th>
-                <th>Middle Name</th>
-                <th>Email</th>
-                <th>Department</th>
-                <th>Designation</th>
-                <th>User Type</th>
-                <th>Account Status</th>
               
             </tr>
         </thead>
@@ -917,13 +911,7 @@ $rowNumber = 1;
                 echo "<td>{$rowNumber}</td>";  // Row Number
                 echo "<td>{$row['last_name']}</td>";  // Last Name
                 echo "<td>{$row['name']}</td>";  // First Name
-                echo "<td>{$row['mname']}</td>";  // Middle Name
-                echo "<td>{$row['email']}</td>";  // Email
-                echo "<td>{$row['Department']}</td>";  // Department
-                echo "<td>{$row['Designation']}</td>";  // Designation
-                echo "<td>{$row['userType']}</td>";  // User Type
-                echo "<td>{$row['lstatus']}</td>";  // Account Status
-               
+             
                 echo "</tr>";
                 $rowNumber++;
             }
