@@ -765,53 +765,33 @@ $result5 = $conn->query($query5);
 
                             <!-- Thead Section -->
                             <thead id="thead">
-                                <tr>
-                                    <th>#</th>
-      <th>Classification</th>
-      <th>Description</th>
-      <th>Requirement1</th>
-      <th>Requirement2</th>
-      <th>Requirement3</th>
-      <th>Requirement4</th>
-      <th>Requirement5</th>
-      <th>Requirement6</th>
-      <th>Requirement7</th>
-      <th>Criteria1</th>
-      <th>Criteria2</th>
-      <th>Criteria3</th>
-      <th>Criteria4</th>
-      <th>Nature of Degree</th>
-                                  
-                                </tr>
-                            </thead>
+    <tr>
+        <th>#</th>
+        <th>College</th>
+    <th>Courses</th>
+    <th>Nature of Degree</th>
+    <th>Sections</th> <!-- Number of sections -->
+    <th>Students Per Section</th> 
+    </tr>
+</thead>
 
-                            <!-- Tbody Section -->
-                            <tbody id="tbody">
-                            <?php
+<!-- Tbody Section -->
+<tbody id="tbody">
+<?php
 $rowNumber = 1; // To number each row
-while ($row5 = $result5->fetch_assoc()) {
-    echo "<tr>";
-    echo "<td>{$rowNumber}</td>"; // Row number
-    echo "<td>{$row5['Classification']}</td>"; // Display Classification
-    echo "<td>{$row5['Description']}</td>"; // Display Description
-    echo "<td>{$row5['Requirement1']}</td>"; // Display Requirement1
-    echo "<td>{$row5['Requirement2']}</td>"; // Display Requirement2
-    echo "<td>{$row5['Requirement3']}</td>"; // Display Requirement3
-    echo "<td>{$row5['Requirement4']}</td>"; // Display Requirement4
-    echo "<td>{$row5['Requirement5']}</td>"; // Display Requirement5
-    echo "<td>{$row5['Requirement6']}</td>"; // Display Requirement6
-    echo "<td>{$row5['Requirement7']}</td>"; // Display Requirement7
-    echo "<td>{$row5['Criteria1']}</td>"; // Display Criteria1
-    echo "<td>{$row5['Criteria2']}</td>"; // Display Criteria2
-    echo "<td>{$row5['Criteria3']}</td>"; // Display Criteria3
-    echo "<td>{$row5['Criteria4']}</td>"; // Display Criteria4
-    echo "<td>{$row5['NatureOfDegree']}</td>"; // Display Nature of Degree
-   
-    echo "</tr>";
-    $rowNumber++; // Increment for the next row
+while ($row5 = $result->fetch_assoc()) {
+echo "<tr>";
+echo "<td>{$rowNumber}</td>"; // Row number
+echo "<td>{$row['College']}</td>"; // College
+echo "<td>{$row['Courses']}</td>"; // Courses
+echo "<td>{$row['Nature_of_Degree']}</td>"; // Nature of Degree
+echo "<td>{$row['No_of_Sections']}</td>"; // Number of Sections
+echo "<td>{$row['No_of_Students_Per_Section']}</td>"; // Students Per Section
+echo "</tr>";
+$rowNumber++; // Increment for the next row
 }
-                                ?>
-                            </tbody>
+    ?>
+</tbody>
 
                         </table>
                     </div>
@@ -1599,11 +1579,21 @@ while ($row5 = $result5->fetch_assoc()) {
 <thead id="thead">
     <tr>
         <th>#</th>
-        <th>College</th>
-    <th>Courses</th>
-    <th>Nature of Degree</th>
-    <th>Sections</th> <!-- Number of sections -->
-    <th>Students Per Section</th> 
+<th>Classification</th>
+<th>Description</th>
+<th>Requirement1</th>
+<th>Requirement2</th>
+<th>Requirement3</th>
+<th>Requirement4</th>
+<th>Requirement5</th>
+<th>Requirement6</th>
+<th>Requirement7</th>
+<th>Criteria1</th>
+<th>Criteria2</th>
+<th>Criteria3</th>
+<th>Criteria4</th>
+<th>Nature of Degree</th>
+      
     </tr>
 </thead>
 
@@ -1611,14 +1601,24 @@ while ($row5 = $result5->fetch_assoc()) {
 <tbody id="tbody">
 <?php
 $rowNumber = 1; // To number each row
-while ($row5 = $result->fetch_assoc()) {
+while ($row5 = $result5->fetch_assoc()) {
 echo "<tr>";
 echo "<td>{$rowNumber}</td>"; // Row number
-echo "<td>{$row['College']}</td>"; // College
-echo "<td>{$row['Courses']}</td>"; // Courses
-echo "<td>{$row['Nature_of_Degree']}</td>"; // Nature of Degree
-echo "<td>{$row['No_of_Sections']}</td>"; // Number of Sections
-echo "<td>{$row['No_of_Students_Per_Section']}</td>"; // Students Per Section
+echo "<td>{$row5['Classification']}</td>"; // Display Classification
+echo "<td>{$row5['Description']}</td>"; // Display Description
+echo "<td>{$row5['Requirement1']}</td>"; // Display Requirement1
+echo "<td>{$row5['Requirement2']}</td>"; // Display Requirement2
+echo "<td>{$row5['Requirement3']}</td>"; // Display Requirement3
+echo "<td>{$row5['Requirement4']}</td>"; // Display Requirement4
+echo "<td>{$row5['Requirement5']}</td>"; // Display Requirement5
+echo "<td>{$row5['Requirement6']}</td>"; // Display Requirement6
+echo "<td>{$row5['Requirement7']}</td>"; // Display Requirement7
+echo "<td>{$row5['Criteria1']}</td>"; // Display Criteria1
+echo "<td>{$row5['Criteria2']}</td>"; // Display Criteria2
+echo "<td>{$row5['Criteria3']}</td>"; // Display Criteria3
+echo "<td>{$row5['Criteria4']}</td>"; // Display Criteria4
+echo "<td>{$row5['NatureOfDegree']}</td>"; // Display Nature of Degree
+
 echo "</tr>";
 $rowNumber++; // Increment for the next row
 }
