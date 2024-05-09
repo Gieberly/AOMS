@@ -767,7 +767,9 @@ $rowNumber = 1;
                                     <th>email</th>
                                   
                                     <th>Action</th>
-                                 
+                                    <th style="display: none;" id="selectColumn">
+                                        <input type="checkbox" id="selectAllCheckbox">
+                                    </th>
                                 </tr>
                             </thead>
 
@@ -782,7 +784,7 @@ $rowNumber = 1;
                                     echo "<td>" . $row['Last_Name'] . "</td>"; // 3
                                     echo "<td>" . $row['Name'] . "</td>"; // 4
                                     echo "<td>" . $row['Middle_Name'] . "</td>"; // 5
-                                    echo "<td>" . ($row['appointment_date'] ? date('F d, Y') : '') . "</td>"; // 6
+                                    echo "<td>" . $row['email'] . "</td>"; // 6
                                     echo "<td>" . ($row['appointment_time'] ? date('g:i A') : '') . "</td>"; // 7
                                     echo "<td  data-field='appointment_status'>{$row['appointment_status']}</td>"; // 8
                                     echo "<td>
@@ -797,6 +799,7 @@ $rowNumber = 1;
    
               </div>
               </td>"; // 9
+                                    echo "<td id='checkbox-{$row['id']}'><input type='checkbox' style='display: none;' class='select-checkbox'></td>"; // 10
                                     echo "</tr>";
                                     $rowNumber++; // Increment the counter for the next row
                                 }
