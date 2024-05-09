@@ -887,23 +887,23 @@ window.addEventListener("click", function (event) {
     <form id="addProgramForm" action="add_program.php" method="POST">
       <div class="form-group">
         <label for="college">College:</label>
-        <input type="text" id="college" name="college" required>
+        <input class="input" type="text" id="college" name="college" required>
       </div>
       <div class="form-group">
         <label for="courses">Courses:</label>
-        <input type="text" id="courses" name="courses" required>
+        <input class="input" type="text" id="courses" name="courses" required>
       </div>
       <div class="form-group">
         <label for="nature_of_degree">Nature of Degree:</label>
-        <input type="text" id="nature_of_degree" name="nature_of_degree" required>
+        <input class="input" type="text" id="nature_of_degree" name="nature_of_degree" required>
       </div>
       <div class="form-group">
         <label for="no_of_sections">Number of Sections:</label>
-        <input type="number" id="no_of_sections" name="no_of_sections" required>
+        <input class="input" type="number" id="no_of_sections" name="no_of_sections" required>
       </div>
       <div class="form-group">
         <label for="no_of_students_per_section">Students Per Section:</label>
-        <input type="number" id="no_of_students_per_section" name="no_of_students_per_section" required>
+        <input class="input" type="number" id="no_of_students_per_section" name="no_of_students_per_section" required>
       </div>
       <button type="submit">Submit</button>
     </form>
