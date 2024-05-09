@@ -862,7 +862,7 @@ $stmt->close();
               <button type='button' class='button inc-btn' data-tooltip='Incomplete' onclick='updateStatus({$row['id']}, \"Incomplete\")'>
                <i class='bx bxs-no-entry'></i>
               </button>
-              <button type='button' class='button archive-btn' data-tooltip='Archive' onclick='archive({$row['id']}, \"Archive\")'>
+              <button type='button' class='button archive-btn' data-tooltip='Archive' onclick='archiveUser({$row['id']}, \"Archive\")'>
               <i class='bx bxs-box'></i>
              </button>
               </div>
@@ -1675,6 +1675,54 @@ $stmt->close();
 
 
     <script>
+
+         
+// Function to display success message
+function showSuccessMessage(message) {
+  var archiveMessage = document.getElementById('archive-message');
+  archiveMessage.innerHTML = message;
+  var archiveDiv = document.getElementById('archive');
+  archiveDiv.style.display = 'block';
+  // Hide the success message after 3 seconds
+  setTimeout(function() {
+    archiveDiv.style.display = 'none';
+    // Reload the page after the message disappears
+    location.reload();
+  }, 2000);
+}
+
+function archiveUser(id) {
+    // Show confirmation dialog
+    $('.confirmation-dialog').show();
+    $('.confirmation-dialog-overlay').show();
+    $('.confirmation-dialog p').text('Are you sure you want to archive this data?');
+
+    // Handle button clicks in the confirmation dialog
+    $('.confirmation-buttons button').click(function() {
+        var userConfirmed = $(this).data('confirmed');
+        if (userConfirmed) {
+            // User confirmed, send AJAX request to delete data
+            $.ajax({
+                url: "admission_archive.php",
+                type: "POST",
+                data: { delete_ids: [id] },
+                success: function(response) {
+                    // Show response message in success message div
+                    showSuccessMessage(response);
+                    // Reload or update the table as needed
+                },
+                error: function(xhr, status, error) {
+                    console.error(xhr.responseText); // Log error message
+                    // Handle error as needed
+                }
+            });
+        }
+
+        // Hide the confirmation dialog and overlay
+        $('.confirmation-dialog').hide();
+        $('.confirmation-dialog-overlay').hide();
+    });
+}
 // Initialize the DataTable
 $(document).ready(function() {
     $('#studentTable').DataTable({
