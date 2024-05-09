@@ -697,17 +697,14 @@ $rowNumber = 1;
                 </div>
                 <div class="button-container">
 
-                    <a href="excel_export_appointments.php" class="btn-download">
-                        <i class='bx bxs-file-export'></i>
-                        <span class="text">Excel Export</span>
-                    </a>
+                  
                 </div>
             </div>
 
             <div class="table-data">
                 <div class="order">
                     <div class="head">
-                        <h3>List of Applicants</h3>
+                        <h3>List of archived Applicants</h3>
                         <!-- Add this input field for date filtering -->
 
                         <div class="headfornaturetosort">
@@ -879,7 +876,7 @@ $rowNumber = 1;
 
                 </div>
 
-                <div class="todo" style="display: none;">
+                <div class="" style="display: none;">
                     <i class="bx bx-x close-form" style="float: right;font-size: 24px;"></i>
 
                     <input type="radio" id="tab1" name="tabGroup1" class="tab" checked>
