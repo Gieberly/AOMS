@@ -1655,20 +1655,8 @@ function archiveUser(id) {
         $('.confirmation-dialog-overlay').hide();
     });
 }
-// Initialize the DataTable
-$(document).ready(function() {
-    $('#studentTable').DataTable({
-        searching: false,
-        paging: false,
-        info: false,
-        order: [[0, 'asc']],
-        columnDefs: [
-            {
-                targets: 9, // Index of the hidden column
-                visible: false
-            }
-        ]
-    });
+new DataTable('#studentTable', {
+    order: [[3, 'desc']]
 });
 
         function confirmSubmission() {
