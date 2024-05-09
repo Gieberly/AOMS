@@ -3,12 +3,6 @@
 include ("admin_cover.php");
 
 
-// Define the user types to fetch
-$userTypes = ['Personnel', 'Faculty', 'OSS'];
-
-// Create a query to fetch users with specific userTypes
-$query = "SELECT * FROM users WHERE userType IN ('" . implode("','", $userTypes) . "')";
-$result = $conn->query($query);
 
 ?>
 
@@ -801,13 +795,13 @@ $result = $conn->query($query);
             // Action buttons with event handlers
             echo "<td>";
             echo "<div class='button-container'>";
-            echo "<button type='button' class='button check-btn' data-tooltip='Approve' onclick='updateStatus({$row['id']}, \"Approved\")'>";
+            echo "<button type='button' class='button check-btn' data-tooltip='Approve' onclick='updateStatus({$staff['id']}, \"Approved\")'>";
             echo "<i class='bx bxs-check-circle'></i>";
             echo "</button>";
-            echo "<button type='button' class='button delete-btn' data-tooltip='Reject' onclick='updateStatus({$row['id']}, \"Rejected\")'>";
+            echo "<button type='button' class='button delete-btn' data-tooltip='Reject' onclick='updateStatus({$staff['id']}, \"Rejected\")'>";
             echo "<i class='bx bxs-x-circle'></i>";
             echo "</button>";
-            echo "<button type='button' class='button archive-btn' data-tooltip='Archive' onclick='archiveUser({$srow['id']}, \"Archive\")'>";
+            echo "<button type='button' class='button archive-btn' data-tooltip='Archive' onclick='archiveUser({$staff['id']}, \"Archive\")'>";
             echo "<i class='bx bxs-box'></i>";
             echo "</button>";
             echo "</div>";
