@@ -722,32 +722,629 @@ $result = $conn->query($query);
                         </div>
                     </div>
                     <style>
-                        .table-container {
-                            max-height: 400px;
-                            overflow-y: auto;
-                            max-width: 100%;
-                            /* Set maximum width to adjust to the end of the screen */
-                            margin: 0 auto;
-                            /* Center the table horizontally */
-                        }
+        .data-container1 {
+            display: grid;
+            grid-template-columns: 20% 23% 23% 23%;
+            gap: 2%;
+        }
 
-                        #thead {
-                            position: sticky;
-                            top: 0;
-                            z-index: 1;
-                            background-color: white;
-                        }
+        .data-container2 {
+            display: grid;
+            grid-template-columns: 44% 19% 33%;
+            gap: 2%;
+        }
 
-                        /* Table scrollbar */
-                        .table-container::-webkit-scrollbar {
-                            width: 10px;
-                        }
+        .data-container3 {
+            display: grid;
+            grid-template-columns: 65% 33%;
+            gap: 2%;
+        }
 
-                        .table-container::-webkit-scrollbar-thumb {
-                            background-color: #4CAF50;
-                            border-radius: 5px;
-                        }
-                    </style>
+        .data-container4 {
+            display: grid;
+            grid-template-columns: 100%;
+            gap: 10px;
+        }
+
+        .data-container5 {
+            display: grid;
+            grid-template-columns: 45%;
+            gap: 10px;
+        }
+
+        .button-container {
+            position: relative;
+        }
+
+        .button.delete-btn,
+        .button.check-btn,
+        .button.archive-btn {
+            background: none;
+            border: none;
+            padding: 0;
+            cursor: pointer;
+        }
+
+        .button.delete-btn i,
+        .button.check-btn i,
+        .button.archive-btn i {
+            font-size: 13px;
+            color: black;
+        }
+
+        .button.delete-btn:hover i {
+            color: orange;
+        }
+
+        .button.check-btn:hover i {
+            color: green;
+        }
+
+        .button.archive-btn:hover i {
+            color: blue;
+        }
+
+        .button-container .button::after {
+            content: attr(data-tooltip);
+            position: absolute;
+            bottom: calc(100% + 5px);
+            /* Position the tooltip above the button with some spacing */
+            left: 50%;
+            transform: translateX(-50%);
+            background-color: #333;
+            color: white;
+            padding: 5px;
+            border-radius: 3px;
+            font-size: 12px;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+            /* Use ease transition for smooth appearance */
+            z-index: 999;
+            pointer-events: none;
+        }
+
+        .button-container .button:hover::after {
+            opacity: 1;
+        }
+
+
+        #sendButton {
+            background-color: transparent;
+            border: none;
+            cursor: pointer;
+            padding: 0;
+        }
+
+        #sendButton i {
+            font-size: 14px;
+            color: black;
+        }
+
+        #sendButton:hover i {
+            color: green;
+            transform: scale(1.2);
+        }
+
+        .sendmodal {
+            display: none;
+            position: fixed;
+            z-index: 1000;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            overflow: auto;
+
+        }
+
+        .sendmodal-content {
+            position: fixed;
+            top: 15%;
+            right: 10%;
+            background-color: #4CAF50;
+            color: white;
+            padding: 10px;
+            border-radius: 4px;
+            z-index: 9;
+            animation: slideInUp 0.3s ease-in-out, fadeOut 2s ease-in-out 0.3s forwards;
+        }
+
+        .modala {
+            display: none;
+            position: fixed;
+            z-index: 1;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            overflow: auto;
+            background-color: rgba(0, 0, 0, 0.5);
+        }
+
+        .modal-contenta {
+            background-color: #fefefe;
+            margin: 15% auto;
+            padding: 20px;
+            border: 1px solid #888;
+            border-radius: 5px;
+            width: 20%;
+            font-size: 18px;
+        }
+
+
+        #toast {
+            position: fixed;
+            top: 10%;
+            right: 10%;
+            width: 300px;
+            background-color: #4CAF50;
+            color: #fff;
+            border-radius: 5px;
+            padding: 10px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            opacity: 0;
+            transition: opacity 0.5s ease-in-out;
+        }
+
+        #toast.show {
+            opacity: 1;
+        }
+
+        @keyframes slideInUp {
+            from {
+                transform: translateY(100%);
+            }
+
+            to {
+                transform: translateY(0);
+            }
+        }
+
+        .modal,
+
+        .confirmation-dialoga {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.5);
+            z-index: 999;
+        }
+
+        /* Modal Content/Box */
+        .modal-content,
+        .dialoga-content {
+            background-color: #fefefe;
+            margin: 15% auto;
+            /* 15% from the top and centered */
+            padding: 20px;
+            border: 1px solid #888;
+            width: 30%;
+            /* Could be more or less, depending on screen size */
+            border-radius: 10px;
+        }
+
+        .exit {
+            color: #aaa;
+            float: right;
+            font-size: 28px;
+            font-weight: bold;
+        }
+
+        .exit:hover,
+        .exit:focus {
+            color: black;
+            text-decoration: none;
+            cursor: pointer;
+        }
+
+
+        .cancel {
+            padding: 10px 15px;
+            margin: 5px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 14px;
+            text-align: center;
+            display: inline-block;
+            background-color: #ff5757;
+            color: white;
+            /* Float the "Cancel" button to the right */
+        }
+
+        .confirm {
+            padding: 10px 15px;
+            margin: 5px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 14px;
+            text-align: center;
+            display: inline-block;
+            background-color: #4CAF50;
+            color: white;
+            /* Float the "Cancel" button to the right */
+        }
+
+        .confirm:hover,
+        .cancel:hover {
+            opacity: 0.8;
+        }
+
+        .confirmation-message {
+            background-color: #f44336;
+            color: white;
+            padding: 15px;
+            border-radius: 5px;
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            z-index: 1000;
+        }
+
+        #deleteConfirmationModal,
+        #errorModal,
+        #selectRowModal,
+        #sendSuccessModal {
+            display: none;
+        }
+
+        .field-group {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: space-between;
+        }
+
+        .field-group>* {
+            flex-basis: calc(25% - 10px);
+            margin-bottom: 10px;
+        }
+
+        .success-message {
+            position: fixed;
+            top: 15%;
+            right: 10%;
+            background-color: #4CAF50;
+            color: white;
+            padding: 10px;
+            border-radius: 4px;
+            z-index: 999;
+            animation: slideInUp 0.3s ease-in-out;
+            display: none;
+        }
+
+        @keyframes slideInUp {
+            from {
+                transform: translateY(100%);
+            }
+
+            to {
+                transform: translateY(0);
+            }
+        }
+
+        #calendarFilterForm button {
+            background: none;
+            border: none;
+            cursor: pointer;
+            padding: 0;
+            font-size: 0;
+            color: #000;
+        }
+
+        #calendarFilterForm button i {
+            font-size: 18px;
+        }
+
+        #calendarFilterForm input[type="date"] {
+            padding: 5px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            margin-right: 10px;
+        }
+
+        #toast {
+            position: fixed;
+            top: 10%;
+            right: 10%;
+            width: 300px;
+            background-color: #4CAF50;
+            color: #fff;
+            border-radius: 5px;
+            padding: 10px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            opacity: 0;
+            transition: opacity 0.5s ease-in-out;
+        }
+
+        #toast.show {
+            opacity: 1;
+        }
+
+        @keyframes slideInUp {
+            from {
+                transform: translateY(100%);
+            }
+
+            to {
+                transform: translateY(0);
+            }
+        }
+
+        .close-form {
+            transition: background-color 0.3s, transform 0.3s;
+            border-radius: 50%;
+        }
+
+        .close-form:hover {
+            background-color: rgba(255, 0, 0, 0.2);
+        }
+
+        .form-container1 {
+            display: grid;
+            grid-template-columns: 50% 23% 23%;
+            gap: 2%;
+        }
+
+        .form-container2 {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 2%;
+        }
+
+        .form-container7 {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 2%;
+        }
+
+        .form-container7 .form-group {
+            display: grid;
+            grid-template-columns: 1fr;
+            align-items: start;
+            /* Align items to the start of the grid cell */
+        }
+
+        .form-container7 .form-group .small-label {
+            margin-bottom: 10px;
+            white-space: normal;
+            text-align: left;
+            word-wrap: break-word;
+        }
+
+        .form-container7 .form-group input {
+            width: 100%;
+            /* Take up full width of the grid cell */
+        }
+
+
+
+        .form-container8 {
+            display: grid;
+            grid-template-columns: 20% 10% 20% 10% 20% 10%;
+
+            gap: 2%;
+        }
+
+        .form-container8 .form-group {
+            display: flex;
+            flex-direction: column;
+            text-align: left;
+        }
+
+        .form-container9 {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            /* evenly distribute columns */
+            gap: 2%;
+        }
+
+        .form-container9 .form-group {
+            display: flex;
+            flex-direction: column;
+
+        }
+
+        .form-container9 .form-group .small-label {
+            margin-bottom: 10px;
+            max-height: 3em;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: normal;
+            text-align: left;
+        }
+
+        .form-container8 .form-group .small-label {
+            margin-bottom: 10px;
+            max-height: 3em;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: normal;
+            text-align: left;
+        }
+
+        .form-container3 {
+            display: grid;
+            grid-template-columns: 18% 18% 18% 18% 18%;
+            gap: 2%;
+        }
+
+        .form-container4 {
+            display: grid;
+            grid-template-columns: 100%;
+            gap: 10px;
+        }
+
+        input[readonly] {
+            background-color: #f2f2f2;
+            /* Light gray background color */
+        }
+
+        .form-container5 {
+            display: grid;
+            grid-template-columns: 70% 20%;
+            gap: 10px;
+        }
+
+        .form-container6 {
+            display: grid;
+            grid-template-columns: 35% 15%;
+            gap: 10px;
+        }
+
+        .form-group {
+            margin-bottom: 15px;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .small-label {
+            display: block;
+            font-size: .9vw;
+            margin-bottom: 5px;
+        }
+
+        .input {
+            width: 100%;
+            padding: 8px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            box-sizing: border-box;
+            font-size: .8vw;
+        }
+
+        .submit {
+            background-color: #4CAF50;
+            color: white;
+            padding: 2% 4%;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 1vw;
+        }
+
+        .submit:hover {
+            opacity: 0.8;
+        }
+
+        .personal_information {
+            font-size: 1vw;
+            font-weight: bold;
+            margin-bottom: 10px;
+        }
+
+        #updateProfileForm {
+            max-width: 800px;
+            margin: 0 auto;
+        }
+
+
+
+        @media screen and (max-width: 881px) {
+            .form-group {
+                width: 100%;
+            }
+        }
+
+        #update_success {
+            position: fixed;
+            top: 75px;
+            /* Adjust the distance from the top */
+            right: 20px;
+            /* Adjust the distance from the right */
+            padding: 10px 20px;
+            background-color: green;
+            color: white;
+            border-radius: 5px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
+            z-index: 9999;
+            opacity: 0;
+            animation: slideUp 0.5s ease forwards, fadeOut 0.5s 2.5s forwards;
+        }
+
+        @keyframes slideUp {
+            0% {
+                opacity: 0;
+                transform: translateY(100%);
+            }
+
+            100% {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .auto-expand {
+            min-height: 50px;
+            /* Set a minimum height for the textarea */
+        }
+
+        #toggleSubjects {
+            background-color: green;
+            border-radius: 5px;
+            padding: 10px 20px;
+            color: white;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+            width: auto;
+            /* Set width to auto */
+            float: right;
+            /* Float it to the right */
+        }
+
+        #toggleSubjects:hover {
+            background-color: darkgreen;
+        }
+
+        .other_subject {
+            display: none;
+        }
+
+        /* Add this CSS to your existing styles */
+        .confirmation-dialog {
+            display: none;
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            padding: 20px;
+            background-color: #fff;
+            border: 1px solid #ccc;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+            z-index: 1000;
+            border-radius: 5px;
+        }
+
+        .confirmation-dialog p {
+            margin-bottom: 15px;
+        }
+
+
+        .confirmation-dialog-overlay {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.5);
+            z-index: 999;
+        }
+
+        #applicantPicture {
+            width: 100%;
+            /* Adjust width as a percentage of the container */
+            max-width: 192px;
+            min-width: 20px;
+            height: auto;
+            border-radius: 2%;
+            float: right;
+        }
+    </style>
 
                     <div class="table-container">
                         <table id="studentTable" class="display responsive nowrap" style="width: 100%;">
@@ -1941,47 +2538,120 @@ $(document).ready(function() {
         });
 
 
-        function updateStatus(id, status) {
-            // Show the confirmation dialog
-            $('.confirmation-dialog').show();
-            $('.confirmation-dialog-overlay').show();
+          
+// Function to display success message
+function showSuccessMessage(message) {
+  var archiveMessage = document.getElementById('archive-message');
+  archiveMessage.innerHTML = message;
+  var archiveDiv = document.getElementById('archive');
+  archiveDiv.style.display = 'block';
+  // Hide the success message after 3 seconds
+  setTimeout(function() {
+    archiveDiv.style.display = 'none';
+    // Reload the page after the message disappears
+    location.reload();
+  }, 2000);
+}
 
-            // Set the message in the dialog
-            $('.confirmation-dialog p').text('Are you sure you want to set the status to ' + status + '?');
+function archiveUser(id) {
+    // Show confirmation dialog
+    $('.confirmation-dialog').show();
+    $('.confirmation-dialog-overlay').show();
+    $('.confirmation-dialog p').text('Are you sure you want to archive this data?');
 
-            // Handle button clicks in the confirmation dialog
-            $('.confirmation-buttons button').click(function () {
-                var userConfirmed = $(this).data('confirmed');
-                if (userConfirmed) {
-                    // User confirmed, send the AJAX request to update the status
-                    $.ajax({
-                        type: 'POST',
-                        url: 'Personnel_UpdateStatus.php',
-                        data: {
-                            id: id,
-                            status: status
-                        },
-                        dataType: 'json', // Expect JSON response
-                        success: function (response) {
-                            if (response.success) {
-                                // Update the status in the table cell
-                                $('[data-id="' + id + '"] [data-field="appointment_status"]').text(status);
-                                showToast(response.message, 'success');
-                            } else {
-                                showToast(response.message, 'error');
-                            }
-                        },
-                        error: function (error) {
-                            console.error('Error updating status:', error);
-                        }
-                    });
+    // Handle button clicks in the confirmation dialog
+    $('.confirmation-buttons button').click(function() {
+        var userConfirmed = $(this).data('confirmed');
+        if (userConfirmed) {
+            // User confirmed, send AJAX request to delete data
+            $.ajax({
+                url: "user_archive.php",
+                type: "POST",
+                data: { delete_ids: [id] },
+                success: function(response) {
+                    // Show response message in success message div
+                    showSuccessMessage(response);
+                    // Reload or update the table as needed
+                },
+                error: function(xhr, status, error) {
+                    console.error(xhr.responseText); // Log error message
+                    // Handle error as needed
                 }
-
-                // Hide the confirmation dialog and overlay
-                $('.confirmation-dialog').hide();
-                $('.confirmation-dialog-overlay').hide();
             });
         }
+
+        // Hide the confirmation dialog and overlay
+        $('.confirmation-dialog').hide();
+        $('.confirmation-dialog-overlay').hide();
+    });
+}
+    
+function showToast(message, type) {
+    // Display the toast message
+    $('#toast-body').text(message);
+    $('#toast').removeClass().addClass('toast').addClass(type).addClass('show');
+
+    // Hide the toast and reload the page after a few seconds
+    setTimeout(function () {
+        $('#toast').removeClass('show');
+        if (type === 'success') {
+            // Reload the page only for success messages
+            location.reload();
+        }
+    }, 3000);
+}
+        document.addEventListener('DOMContentLoaded', function () {
+            var successMessage = document.getElementById('successMessage');
+
+            if (successMessage) {
+                successMessage.style.display = 'block';
+
+                setTimeout(function () {
+                    successMessage.style.display = 'none';
+                }, 3000);
+            }
+        });
+function updateStatus(id, status) {
+    // Show the confirmation dialog
+    $('.confirmation-dialog').show();
+    $('.confirmation-dialog-overlay').show();
+
+    // Set the message in the dialog
+    $('.confirmation-dialog p').text('Are you sure you want to set the status to ' + status + '?');
+
+    // Handle button clicks in the confirmation dialog
+    $('.confirmation-buttons button').off('click').on('click', function () {
+        var userConfirmed = $(this).data('confirmed');
+        if (userConfirmed) {
+            // User confirmed, send the AJAX request to update the status
+            $.ajax({
+                type: 'POST',
+                url: 'update_status.php',
+                data: {
+                    id: id,
+                    lstatus: status // Corrected to use 'lstatus' as key
+                },
+                dataType: 'json', // Expect JSON response
+                success: function (response) {
+                    if (response.success) {
+                        // Show success message with toast and reload after 3 seconds
+                        showToast(response.message, 'success');
+                    } else {
+                        showToast(response.message, 'error');
+                    }
+                },
+                error: function (error) {
+                    console.error('Error updating status:', error);
+                    showToast('An error occurred while updating the status', 'error');
+                }
+            });
+        }
+
+        // Hide the confirmation dialog and overlay
+        $('.confirmation-dialog').hide();
+        $('.confirmation-dialog-overlay').hide();
+    });
+}
 
 
 
