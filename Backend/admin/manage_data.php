@@ -678,7 +678,32 @@ $result5 = $conn->query($query5);
             <button data-confirmed="false">Cancel</button>
         </div>
     </div>
-
+    <div id="addDataDiv" style="display: none;">
+    <form id="addProgramForm">
+        <!-- Use the form to add data to your "programs" table -->
+        <div class="form-group">
+            <label for="College">College:</label>
+            <input type="text" id="College" name="College" class="input" required>
+        </div>
+        <div class="form-group">
+            <label for="Courses">Courses:</label>
+            <input type="text" id="Courses" name="Courses" class="input" required>
+        </div>
+        <div class="form-group">
+            <label for="Nature_of_Degree">Nature of Degree:</label>
+            <input type="text" id="Nature_of_Degree" name="Nature_of_Degree" class="input" required>
+        </div>
+        <div class="form-group">
+            <label for="No_of_Sections">No. of Sections:</label>
+            <input type="number" id="No_of_Sections" name="No_of_Sections" class="input" required>
+        </div>
+        <div class="form-group">
+            <label for="No_of_Students_Per_Section">No. of Students Per Section:</label>
+            <input type="number" id="No_of_Students_Per_Section" name="No_of_Students_Per_Section" class="input" required>
+        </div>
+        <button type="submit" class="submit">Add Program</button>
+    </form>
+</div>
     <section id="content">
         <?php
 
@@ -692,47 +717,8 @@ $result5 = $conn->query($query5);
         }
         ?>
 
-
-        <main>
-            <div class="head-title">
-                <div class="left">
-                    <h1>Applicants</h1>
-                    <ul class="breadcrumb">
-                        <li><a href="#">Applicants</a></li>
-                        <li><i class='bx bx-chevron-right'></i></li>
-                        <li>
-                        <li><a class="active" href="Admin_Dashboard.php">Home</a></li>
-                        </li>
-                    </ul>
-                </div>
-                <div class="button-container">
-
-                  
-                </div>
-            </div>
-
-            <div class="table-data">
-                <div class="order">
-                    <div class="head">
-                        <h3>List of Classification</h3>
-                        <!-- Add this input field for date filtering -->
-
-                        <div class="headfornaturetosort">
-                            <!-- <form method="GET" action="" id="calendarFilterForm">
-                                <label for="appointment_date"></label>
-                                <input type="date" name="appointment_date" id="appointment_date">
-                                <button type="submit"><i class='bx bx-filter'></i></button>
-                            </form>
-              
-                            <button type="button" id="sendButton" style="display: none;">
-                                <i class='bx bx-send'></i>
-                            </button> -->
-<!-- Button to toggle the add data div -->
-<button type="button" id="openAddProgramModal">
-    <i class='bx bxs-add-to-queue'></i> Add
-</button>
 <style>
-    /* Background overlay for modal */
+/* Background overlay for modal */
 .modal-overlay {
     display: none; /* Hidden by default */
     position: fixed; /* Fixed position for the overlay */
@@ -807,32 +793,49 @@ $result5 = $conn->query($query5);
 .modal-form .submit:hover {
     background-color: #45a049;
 }
+
+
 </style>
-<script>
-// Get elements by ID
-const modalOverlay = document.getElementById("modalOverlay");
-const addProgramModal = document.getElementById("addProgramModal");
-const openAddProgramModal = document.getElementById("openAddProgramModal");
-const closeModal = document.getElementById("closeModal");
+        <main>
+            <div class="head-title">
+                <div class="left">
+                    <h1>Applicants</h1>
+                    <ul class="breadcrumb">
+                        <li><a href="#">Applicants</a></li>
+                        <li><i class='bx bx-chevron-right'></i></li>
+                        <li>
+                        <li><a class="active" href="Admin_Dashboard.php">Home</a></li>
+                        </li>
+                    </ul>
+                </div>
+                <div class="button-container">
 
-// Function to open the modal
-openAddProgramModal.addEventListener("click", function () {
-    modalOverlay.style.display = "block"; // Show overlay
-    addProgramModal.style.display = "block"; // Show modal
-});
+                  
+                </div>
+            </div>
 
-// Function to close the modal
-closeModal.addEventListener("click", function () {
-    modalOverlay.style.display = "none"; // Hide overlay
-    addProgramModal.style.display = "none"; // Hide modal
-});
+            <div class="table-data">
+                <div class="order">
+                    <div class="head">
+                        <h3>List of Classification</h3>
+                        <!-- Add this input field for date filtering -->
 
-// Also close the modal if clicking outside of it (on the overlay)
-modalOverlay.addEventListener("click", function () {
-    closeModal.click(); // Trigger close function
-});
+                        <div class="headfornaturetosort">
+                            <!-- <form method="GET" action="" id="calendarFilterForm">
+                                <label for="appointment_date"></label>
+                                <input type="date" name="appointment_date" id="appointment_date">
+                                <button type="submit"><i class='bx bx-filter'></i></button>
+                            </form>
+              
+                            <button type="button" id="sendButton" style="display: none;">
+                                <i class='bx bx-send'></i>
+                            </button> -->
+<!-- Button to toggle the add data div -->
+<button type="button" id="toggleAddDataDiv">
+    <i class='bx bxs-add-to-queue'></i> Add 
+</button>
 
-</script>
+
 
                         </div>
                     </div>
@@ -930,39 +933,7 @@ $rowNumber++; // Increment for the next row
                             background-color: #f4f4f4;
                         }
                     </style>
-<!-- Background overlay for the modal -->
-<div class="modal-overlay" id="modalOverlay"></div>
 
-<!-- The modal itself -->
-<div class="modal" id="addProgramModal">
-    <!-- Close button to close the modal -->
-    <span class="modal-close" id="closeModal">×</span>
-
-    <!-- Form inside the modal -->
-    <form id="addProgramForm" class="modal-form">
-        <div class="form-group">
-            <label for="College">College:</label>
-            <input type="text" id="College" name="College" class="input" required>
-        </div>
-        <div class="form-group">
-            <label for="Courses">Courses:</label>
-            <input type="text" id="Courses" name="Courses" class="input" required>
-        </div>
-        <div class="form-group">
-            <label for="Nature_of_Degree">Nature of Degree:</label>
-            <input type="text" id="Nature_of_Degree" name="Nature_of_Degree" class="input" required>
-        </div>
-        <div class="form-group">
-            <label for="No_of_Sections">No. of Sections:</label>
-            <input type="number" id="No_of_Sections" name="No_of_Sections" class="input" required>
-        </div>
-        <div class="form-group">
-            <label for="No_of_Students_Per_Section">No. of Students Per Section:</label>
-            <input type="number" id="No_of_Students_Per_Section" name="No_of_Students_Per_Section" class="input" required>
-        </div>
-        <button type="submit" class="submit">Add Program</button>
-    </form>
-</div>
                     <div id="toast" class="toast" role="alert" aria-live="assertive" aria-atomic="true">
                         <div class="toast-header">
                             <strong class="mr-auto">Success!</strong>
