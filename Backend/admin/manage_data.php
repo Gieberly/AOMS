@@ -678,7 +678,32 @@ $result5 = $conn->query($query5);
             <button data-confirmed="false">Cancel</button>
         </div>
     </div>
-
+    <div id="addDataDiv" style="display: none;">
+    <form id="addProgramForm">
+        <!-- Use the form to add data to your "programs" table -->
+        <div class="form-group">
+            <label for="College">College:</label>
+            <input type="text" id="College" name="College" class="input" required>
+        </div>
+        <div class="form-group">
+            <label for="Courses">Courses:</label>
+            <input type="text" id="Courses" name="Courses" class="input" required>
+        </div>
+        <div class="form-group">
+            <label for="Nature_of_Degree">Nature of Degree:</label>
+            <input type="text" id="Nature_of_Degree" name="Nature_of_Degree" class="input" required>
+        </div>
+        <div class="form-group">
+            <label for="No_of_Sections">No. of Sections:</label>
+            <input type="number" id="No_of_Sections" name="No_of_Sections" class="input" required>
+        </div>
+        <div class="form-group">
+            <label for="No_of_Students_Per_Section">No. of Students Per Section:</label>
+            <input type="number" id="No_of_Students_Per_Section" name="No_of_Students_Per_Section" class="input" required>
+        </div>
+        <button type="submit" class="submit">Add Program</button>
+    </form>
+</div>
     <section id="content">
         <?php
 
@@ -723,13 +748,55 @@ $result5 = $conn->query($query5);
                                 <input type="date" name="appointment_date" id="appointment_date">
                                 <button type="submit"><i class='bx bx-filter'></i></button>
                             </form>
-                            <button type="button" id="toggleSelection">
-                                <i class='bx bx-select-multiple'></i> Toggle Selection
-                            </button>
-
+              
                             <button type="button" id="sendButton" style="display: none;">
                                 <i class='bx bx-send'></i>
                             </button> -->
+<!-- Button to toggle the add data div -->
+<button type="button" id="toggleAddDataDiv">
+    <i class='bx bxs-add-to-queue'></i> Add 
+</button>
+
+<script>
+    // JavaScript to toggle the visibility of the add data div
+    document.getElementById("toggleAddDataDiv").addEventListener("click", function () {
+        const addDataDiv = document.getElementById("addDataDiv");
+        if (addDataDiv.style.display === "none" || addDataDiv.style.display === "") {
+            addDataDiv.style.display = "block"; // Show the div
+        } else {
+            addDataDiv.style.display = "none"; // Hide the div
+        }
+    });
+
+    // Form submission handling (this is an example; you need to add backend handling)
+    document.getElementById("addProgramForm").addEventListener("submit", function (event) {
+        event.preventDefault(); // Prevent the default form submission behavior
+
+        // Collect form data
+        const formData = new FormData(this);
+
+        // Example: Use AJAX to send data to a server-side script for handling
+        fetch("add_program.php", {
+            method: "POST",
+            body: formData
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                // Show a success message and clear the form
+                alert("Program added successfully!");
+                this.reset();
+            } else {
+                // Handle errors
+                alert("Error adding program: " + data.message);
+            }
+        })
+        .catch(error => {
+            console.error("Error:", error);
+        });
+    });
+</script>
+
                         </div>
                     </div>
                     <style>
