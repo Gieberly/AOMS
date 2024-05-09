@@ -892,7 +892,7 @@ $rowNumber = 1;
                         <h3>List of archived Applicants</h3>
                     </div>
                     <div class="table-container">
-                        <table id="users" style="width: 100%;">
+                        <table class="display" style="width: 100%;">
 
                             <!-- Thead Section -->
                             <tr>
@@ -1078,9 +1078,6 @@ $rowNumber = 1;
         }
 
         new DataTable('table.display');
-        new DataTable('#users', {
-    order: [[3, 'desc']]
-});
 
         function confirmSubmission() {
             document.getElementById("confirmationDialoga").style.display = "block";
