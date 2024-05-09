@@ -892,19 +892,20 @@ $rowNumber = 1;
                         <h3>List of archived Applicants</h3>
                     </div>
                     <div class="table-container">
-                        <table class="display" style="width: 100%;">
+                        <table id="users" style="width: 100%;">
 
                             <!-- Thead Section -->
                             <tr>
-                            <th>#</th>
-                                    <th>Last Name</th>
-                                    <th>Middlle Name</th>
-                                    <th>First Name</th>
-                                    <th>Department</th>
-                                    <th>email</th>
-
-                                    <th>Action</th>
-
+                <th>#</th>
+                <th>Last Name</th>
+                <th>First Name</th>
+                <th>Middle Name</th>
+                <th>Email</th>
+                <th>Department</th>
+                <th>Designation</th>
+                <th>User Type</th>
+                <th>Account Status</th>
+                <th>Actions</th>
             </tr>
         </thead>
         <!-- Table Body -->
@@ -913,26 +914,21 @@ $rowNumber = 1;
             $rowNumber = 1;
             while ($row = $result2->fetch_assoc()) {
                 echo "<tr>";
-                echo "<td>{$rowNumber}</td>";  // Display the row number
-                echo "<td>" . $row['last_name'] . "</td>"; // 2
-                echo "<td>" . $row['name'] . "</td>"; // 3
-                echo "<td>" . $row['mname'] . "</td>"; // 4
-                echo "<td>" . $row['Department'] . "</td>"; // 5
-                echo "<td>" . $row['email'] . "</td>"; // 6
+                echo "<td>{$rowNumber}</td>";  // Row Number
+                echo "<td>{$row['last_name']}</td>";  // Last Name
+                echo "<td>{$row['name']}</td>";  // First Name
+                echo "<td>{$row['mname']}</td>";  // Middle Name
+                echo "<td>{$row['email']}</td>";  // Email
+                echo "<td>{$row['Department']}</td>";  // Department
+                echo "<td>{$row['Designation']}</td>";  // Designation
+                echo "<td>{$row['userType']}</td>";  // User Type
+                echo "<td>{$row['lstatus']}</td>";  // Account Status
                 echo "<td>
-<div class='button-container'>
-
-<button type='button' class='button check-btn' data-tooltip='Retrieve' onclick='undoUser({$row['id']}, \"Retrieve\")'>
-<i class='bx bxs-archive-out'></i>
-</button>
-<button type='button' class='button inc-btn' data-tooltip='delete' onclick='deleteUser({$row['id']}, \"delete\")'>
-<i class='bx bxs-trash' ></i>
-</button>
-
-</div>
-</td>"; // 9
+                    <button onclick='retrieveUser({$row['id']})'>Retrieve</button>
+                    <button onclick='deleteUser({$row['id']})'>Delete</button>
+                </td>";
                 echo "</tr>";
-                $rowNumber++; // Increment the counter for the next row
+                $rowNumber++;
             }
             ?>
         </tbody>
@@ -1082,6 +1078,9 @@ $rowNumber = 1;
         }
 
         new DataTable('table.display');
+        new DataTable('#users', {
+    order: [[3, 'desc']]
+});
 
         function confirmSubmission() {
             document.getElementById("confirmationDialoga").style.display = "block";
