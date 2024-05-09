@@ -789,7 +789,7 @@ $rowNumber = 1;
               <button type='button' class='button check-btn' data-tooltip='Retrieve' onclick='undoUser({$row['id']}, \"Retrieve\")'>
               <i class='bx bxs-archive-out'></i>
               </button>
-              <button type='button' class='button inc-btn' data-tooltip='delete' onclick='delete({$row['id']}, \"delete\")'>
+              <button type='button' class='button inc-btn' data-tooltip='delete' onclick='deleteUser({$row['id']}, \"delete\")'>
               <i class='bx bxs-trash' ></i>
               </button>
    
@@ -1636,6 +1636,39 @@ function undoUser(id) {
             // User confirmed, send AJAX request to delete data
             $.ajax({
                 url: "undo_App_Archive.php",
+                type: "POST",
+                data: { delete_ids: [id] },
+                success: function(response) {
+                    // Show response message in success message div
+                    showSuccessMessage(response);
+                    // Reload or update the table as needed
+                },
+                error: function(xhr, status, error) {
+                    console.error(xhr.responseText); // Log error message
+                    // Handle error as needed
+                }
+            });
+        }
+
+        // Hide the confirmation dialog and overlay
+        $('.confirmation-dialog').hide();
+        $('.confirmation-dialog-overlay').hide();
+    });
+}
+
+function deleteUser(id) {
+    // Show confirmation dialog
+    $('.confirmation-dialog').show();
+    $('.confirmation-dialog-overlay').show();
+    $('.confirmation-dialog p').text('Are you sure you want to retrieve this data?');
+
+    // Handle button clicks in the confirmation dialog
+    $('.confirmation-buttons button').click(function() {
+        var userConfirmed = $(this).data('confirmed');
+        if (userConfirmed) {
+            // User confirmed, send AJAX request to delete data
+            $.ajax({
+                url: "delete_applicants.php",
                 type: "POST",
                 data: { delete_ids: [id] },
                 success: function(response) {
