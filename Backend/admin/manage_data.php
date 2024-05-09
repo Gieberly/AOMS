@@ -714,46 +714,6 @@ $result5 = $conn->query($query5);
             <div class="table-data">
                 <div class="order">
                     <div class="head">
-                        <h3>Academic Year Schedule</h3>
-                    </div>
-                    <div class="table-container">
-                        <table class="display" style="width: 100%;">
-
-                            <!-- Thead Section -->
-                            <tr>
-                            <th>College</th>
-    <th>Courses</th>
-    <th>Nature of Degree</th>
-    <th>Sections</th> <!-- Number of sections -->
-    <th>Students Per Section</th>
-</tr>
-        </thead>
-        <!-- Table Body -->
-        <tbody>
-            <?php
-            $rowNumber = 1;
-            while ($row = $result->fetch_assoc()) {
-                echo "<tr>";
-                 echo "<td>{$row['College']}</td>"; // College
-        echo "<td>{$row['Courses']}</td>"; // Courses
-        echo "<td>{$row['Nature_of_Degree']}</td>"; // Nature of Degree
-        echo "<td>{$row['No_of_Sections']}</td>"; // Number of Sections
-        echo "<td>{$row['No_of_Students_Per_Section']}</td>"; // Students Per Section
-      
-        echo "</tr>";
-        
-        $rowNumber++; // Increment for the next row
-    }
-            ?>
-        </tbody>
-                        </table>
-                    </div>
-                </div>
-            </div>
-
-            <div class="table-data">
-                <div class="order">
-                    <div class="head">
                         <h3>List of Classification</h3>
                         <!-- Add this input field for date filtering -->
 
@@ -1624,6 +1584,48 @@ while ($row5 = $result5->fetch_assoc()) {
                     <button type="button" class="submit" onclick="confirmSubmission2()">Submit</button>
                     </form>
 
+                    </div>
+                </div>
+            </div>
+            <div class="table-data">
+                <div class="order">
+                    <div class="head">
+                        <h3>Applicant Classifications and Requirements</h3>
+                    </div>
+                    <div class="table-container">
+                    <table class="" style="width: 100%;">
+
+<!-- Thead Section -->
+<thead id="thead">
+    <tr>
+        <th>#</th>
+        <th>College</th>
+    <th>Courses</th>
+    <th>Nature of Degree</th>
+    <th>Sections</th> <!-- Number of sections -->
+    <th>Students Per Section</th> 
+    </tr>
+</thead>
+
+<!-- Tbody Section -->
+<tbody id="tbody">
+<?php
+$rowNumber = 1; // To number each row
+while ($row5 = $result->fetch_assoc()) {
+echo "<tr>";
+echo "<td>{$rowNumber}</td>"; // Row number
+echo "<td>{$row['College']}</td>"; // College
+echo "<td>{$row['Courses']}</td>"; // Courses
+echo "<td>{$row['Nature_of_Degree']}</td>"; // Nature of Degree
+echo "<td>{$row['No_of_Sections']}</td>"; // Number of Sections
+echo "<td>{$row['No_of_Students_Per_Section']}</td>"; // Students Per Section
+echo "</tr>";
+$rowNumber++; // Increment for the next row
+}
+    ?>
+</tbody>
+
+</table>
                     </div>
                 </div>
             </div>
