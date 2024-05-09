@@ -788,7 +788,7 @@ $result = $conn->query($query);
         echo "<td>{$staff['Designation']}</td>";
         echo "<td>{$staff['lstatus']}</td>";
         
-        // Action buttons
+        // Action buttonscc
         echo "<td>";
         echo "<div class='button-container'>";
         echo "<button type='button' class='button check-btn' data-tooltip='Approve' onclick='updateStatus({$staff['id']}, \"Approved\")'>";
