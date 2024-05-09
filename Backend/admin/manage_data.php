@@ -853,6 +853,7 @@ window.addEventListener("click", function (event) {
   height: 100%;
   overflow: auto; /* Enable scroll if needed */
   background-color: rgba(0, 0, 0, 0.5); /* Black w/ opacity */
+  z-index: 99999;
 }
 
 .modal-contentB {
