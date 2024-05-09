@@ -786,8 +786,8 @@ $rowNumber = 1;
                                     echo "<td>
               <div class='button-container'>
 
-              <button type='button' class='button check-btn' data-tooltip='undo' onclick='undoUser({$row['id']}, \"undo\")'>
-              <i class='bx bx-undo'></i>
+              <button type='button' class='button check-btn' data-tooltip='Retrieve' onclick='undoUser({$row['id']}, \"Retrieve\")'>
+              <i class='bx bxs-archive-out'></i>
               </button>
               <button type='button' class='button inc-btn' data-tooltip='delete' onclick='delete({$row['id']}, \"delete\")'>
               <i class='bx bxs-trash' ></i>
@@ -1627,7 +1627,7 @@ function undoUser(id) {
     // Show confirmation dialog
     $('.confirmation-dialog').show();
     $('.confirmation-dialog-overlay').show();
-    $('.confirmation-dialog p').text('Are you sure you want to archive this data?');
+    $('.confirmation-dialog p').text('Are you sure you want to retrieve this data?');
 
     // Handle button clicks in the confirmation dialog
     $('.confirmation-buttons button').click(function() {
