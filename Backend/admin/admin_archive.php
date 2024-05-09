@@ -767,9 +767,7 @@ $rowNumber = 1;
                                     <th>email</th>
                                   
                                     <th>Action</th>
-                                    <th style="display: none;" id="selectColumn">
-                                        <input type="checkbox" id="selectAllCheckbox">
-                                    </th>
+                                 
                                 </tr>
                             </thead>
 
@@ -799,7 +797,6 @@ $rowNumber = 1;
    
               </div>
               </td>"; // 9
-                                    echo "<td id='checkbox-{$row['id']}'><input type='checkbox' style='display: none;' class='select-checkbox'></td>"; // 10
                                     echo "</tr>";
                                     $rowNumber++; // Increment the counter for the next row
                                 }
