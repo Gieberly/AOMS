@@ -753,7 +753,7 @@ $result = $conn->query($query);
                     </style>
 
                     <div class="table-container">
-                    <table id="studentTable" class="display responsive nowrap" style="width: 100%;">
+                    <table id="users" class="display responsive nowrap" style="width: 100%;">
 
 <thead>
     <tr>
@@ -1618,7 +1618,9 @@ $counter++; // Increment the counter for the next staff member
 
     <script>
 
-         
+new DataTable('#users', {
+            order: [[3, 'desc']]
+        });
 // Function to display success message
 function showSuccessMessage(message) {
   var archiveMessage = document.getElementById('archive-message');
@@ -1665,21 +1667,7 @@ function archiveUser(id) {
         $('.confirmation-dialog-overlay').hide();
     });
 }
-// Initialize the DataTable
-$(document).ready(function() {
-    $('#studentTable').DataTable({
-        searching: false,
-        paging: false,
-        info: false,
-        order: [[0, 'asc']],
-        columnDefs: [
-            {
-                targets: 9, // Index of the hidden column
-                visible: false
-            }
-        ]
-    });
-});
+
 
         function confirmSubmission() {
             document.getElementById("confirmationDialoga").style.display = "block";
