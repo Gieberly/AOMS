@@ -767,9 +767,7 @@ $rowNumber = 1;
                                     <th>email</th>
                                   
                                     <th>Action</th>
-                                    <th style="display: none;" id="selectColumn">
-                                        <input type="checkbox" id="selectAllCheckbox">
-                                    </th>
+                                  
                                 </tr>
                             </thead>
 
