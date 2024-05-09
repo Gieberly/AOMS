@@ -694,10 +694,7 @@ $result = $conn->query($query);
                 </div>
                 <div class="button-container">
 
-                    <a href="excel_export_appointments.php" class="btn-download">
-                        <i class='bx bxs-file-export'></i>
-                        <span class="text">Excel Export</span>
-                    </a>
+             
                 </div>
             </div>
 
