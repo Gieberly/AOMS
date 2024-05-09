@@ -62,7 +62,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         $_SESSION['update_success'] = true;
 
         // Redirect to desired page
-        header("Location: Personnel_Applicants.php?search=" . urlencode($_GET['search']));
+        header("Location: admin_Applicants.php?search=" . urlencode($_GET['search']));
         exit();
     }
 }

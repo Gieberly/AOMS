@@ -32,7 +32,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         session_start();
         $_SESSION['update_success'] = true;
 
-        header("Location: Personnel_Applicants.php?search=" . urlencode($_GET['search']));
+        header("Location: admin_Applicants.php?search=" . urlencode($_GET['search']));
         exit();
     }
 }
