@@ -1596,7 +1596,7 @@ while ($row = $result->fetch_assoc()) {
                         <h3>List of archived Personnel</h3>
                     </div>
                     <div class="table-container">
-                        <table class="" style="width: 100%;">
+                        <table class="display" style="width: 100%;">
 
                             <!-- Thead Section -->
                             <tr>
