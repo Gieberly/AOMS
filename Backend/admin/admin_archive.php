@@ -776,27 +776,32 @@ $result = $conn->query($query);
                             <?php
                     $rowNumber = 1; // To number each row
                     while ($row = $result->fetch_assoc()) {
-                        echo "<tr>";
-                        echo "<td>{$rowNumber}</td>";
-                        echo "<td>{$row['application_number']}</td>";
-                        echo "<td>{$row['last_name']}</td>";
-                        echo "<td>{$row['first_name']}</td>";
-                        echo "<td>{$row['middle_name']}</td>";
-                        echo "<td>{$row['email']}</td>";
-                        echo "<td>
-                            <div class='button-container'>
-                                <button type='button' class='button check-btn' data-tooltip='Undo' onclick='undoUser({$row['id']})'>
-                                    <i class='bx bx-undo'></i>
-                                </button>
-                                <button type='button' class='button delete-btn' data-tooltip='Delete' onclick='deleteUser({$row['id']})'>
-                                    <i class='bx bxs-trash'></i>
-                                </button>
-                            </div>
-                        </td>";
-                        echo "</tr>";
-                        $rowNumber++;
-                    }
-                    ?>
+                                    echo "<tr class='editRow' data-id='" . $row['id'] . "' data-date='" . $row['application_date'] . "'>";
+                                    echo "<td>" . $counter . "</td>"; // 1
+                                    echo "<td>" . $row['applicant_number'] . "</td>"; // 2
+                                    echo "<td>" . $row['Last_Name'] . "</td>"; // 3
+                                    echo "<td>" . $row['Name'] . "</td>"; // 4
+                                    echo "<td>" . $row['Middle_Name'] . "</td>"; // 5
+                                    echo "<td>" . ($row['appointment_date'] ? date('F d, Y') : '') . "</td>"; // 6
+                                    echo "<td>" . ($row['appointment_time'] ? date('g:i A') : '') . "</td>"; // 7
+                                    echo "<td  data-field='appointment_status'>{$row['appointment_status']}</td>"; // 8
+                                    echo "<td>
+              <div class='button-container'>
+
+              <button type='button' class='button check-btn' data-tooltip='undo' onclick='undoUser({$row['id']}, \"undo\")'>
+              <i class='bx bx-undo'></i>
+              </button>
+              <button type='button' class='button inc-btn' data-tooltip='delete' onclick='delete({$row['id']}, \"delete\")'>
+              <i class='bx bxs-trash' ></i>
+              </button>
+   
+              </div>
+              </td>"; // 9
+                                    echo "<td id='checkbox-{$row['id']}'><input type='checkbox' style='display: none;' class='select-checkbox'></td>"; // 10
+                                    echo "</tr>";
+                                    $counter++; // Increment the counter for the next row
+                                }
+                                ?>
                             </tbody>
 
                         </table>
