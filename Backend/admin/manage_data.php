@@ -690,6 +690,15 @@ $result5 = $conn->query($query5);
             // Unset the session variable to avoid displaying the message again on page refresh
             unset($_SESSION['update_success']);
         }
+
+        // Check if the success message session variable is set
+if (isset($_SESSION['program_added_successfully']) && $_SESSION['program_added_successfully']) {
+    // Display success message with animation or transition
+    echo '<div class="success-message" id="successMessage">New program added successfully!</div>';
+
+    // Unset the session variable to avoid displaying the message again on page refresh
+    unset($_SESSION['program_added_successfully']);
+}
         ?>
 
 

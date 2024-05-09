@@ -1,11 +1,14 @@
 <?php
-include("../config.php");
+session_start(); // Ensure sessions are enabled
+
+require 'config.php';
+
 // Retrieve form data
 $college = $_POST['college'];
 $courses = $_POST['courses'];
 $nature_of_degree = $_POST['nature_of_degree'];
-$no_of_sections = (int)$_POST['no_of_sections']; // Ensure it's an integer
-$no_of_students_per_section = (int)$_POST['no_of_students_per_section']; // Ensure it's an integer
+$no_of_sections = (int)$_POST['no_of_sections'];
+$no_of_students_per_section = (int)$_POST['no_of_students_per_section'];
 
 // SQL query to insert a new program
 $sql = "INSERT INTO programs (college, courses, nature_of_degree, no_of_sections, no_of_students_per_section) 
@@ -17,16 +20,19 @@ if ($stmt === false) {
     die("Error preparing the statement: " . $conn->error);
 }
 
-// Bind parameters to the query
 $stmt->bind_param("sssii", $college, $courses, $nature_of_degree, $no_of_sections, $no_of_students_per_section);
 
-// Execute the query and check if it was successful
 if ($stmt->execute()) {
-    echo "New program added successfully!";
+    // Set a session variable to indicate success
+    $_SESSION['program_added_successfully'] = true;
 } else {
+    $_SESSION['program_added_successfully'] = false;
     echo "Error: " . $stmt->error;
 }
 
 $stmt->close();
 $conn->close();
-?>
+
+// Redirect to manage_data.php
+header("Location: manage_data.php");
+exit(); // Make sure to exit after redirecting
