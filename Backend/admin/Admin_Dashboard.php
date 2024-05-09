@@ -1721,6 +1721,27 @@ $pending_result = $conn->query($pending_query);
     }
     </style>
     <script>
+          function showToast(message, type) {
+            // Display a toast message
+            $('#toast-body').text(message);
+            $('#toast').removeClass().addClass('toast').addClass(type).addClass('show');
+
+            // Hide the toast after a few seconds
+            setTimeout(function () {
+                $('#toast').removeClass('show');
+            }, 3000);
+        }
+        document.addEventListener('DOMContentLoaded', function () {
+            var successMessage = document.getElementById('successMessage');
+
+            if (successMessage) {
+                successMessage.style.display = 'block';
+
+                setTimeout(function () {
+                    successMessage.style.display = 'none';
+                }, 3000);
+            }
+        });
          function updateStatus(id, status) {
         // Show the confirmation dialog
         $('.confirmation-dialog').show();
