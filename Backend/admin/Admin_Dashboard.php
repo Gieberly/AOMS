@@ -1721,16 +1721,20 @@ $pending_result = $conn->query($pending_query);
     }
     </style>
     <script>
-        function showToast(message, type) {
-            // Display a toast message
-            $('#toast-body').text(message);
-            $('#toast').removeClass().addClass('toast').addClass(type).addClass('show');
+function showToast(message, type) {
+    // Display the toast message
+    $('#toast-body').text(message);
+    $('#toast').removeClass().addClass('toast').addClass(type).addClass('show');
 
-            // Hide the toast after a few seconds
-            setTimeout(function () {
-                $('#toast').removeClass('show');
-            }, 3000);
+    // Hide the toast and reload the page after a few seconds
+    setTimeout(function () {
+        $('#toast').removeClass('show');
+        if (type === 'success') {
+            // Reload the page only for success messages
+            location.reload();
         }
+    }, 3000);
+}
         document.addEventListener('DOMContentLoaded', function () {
             var successMessage = document.getElementById('successMessage');
 
