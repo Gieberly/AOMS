@@ -3,7 +3,7 @@ include ("../config.php");
 
 if(isset($_GET['file_id']))
 {
-    $faculty_id = mysqli_real_escape_string($conn, $_GET['file_id']);
+    $file_id = mysqli_real_escape_string($conn, $_GET['file_id']);
 
     $query = "SELECT * FROM users WHERE id='$file_id'";
     $query_run = mysqli_query($conn, $query);
@@ -57,4 +57,5 @@ if(isset($_POST['delete_file']))
         return;
     }
 }
+
 ?>

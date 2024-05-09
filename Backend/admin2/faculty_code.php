@@ -87,7 +87,9 @@ if(isset($_POST['add_faculty'])) {
             return;
         }
     
-        $query = "UPDATE users SET last_name='$lname',name='$fname',mname='$mname', email='$email', lstatus='$status', userType='$office', Designation='$designation', Department='$dept'
+        $query = "UPDATE users SET last_name='$lname',name='$fname',mname='$mname', 
+        email='$email', lstatus='$status', userType='$office', 
+        Designation='$designation', Department='$dept'
                     WHERE id='$faculty_id'";
         $query_run = mysqli_query($conn, $query);
     

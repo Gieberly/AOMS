@@ -1,15 +1,13 @@
 <?php
+
 include("../config.php");
-include("../includes/functions.php");
+include "../includes/functions.php";
+include "../includes/fetch_data.php";
+include "../template/header_admin.php";
+include "../template/sidebar-admin.php";
+
 ?>
-
-<?php include ('../template/header_admin.php')?>
-
 <body>
-<?php include ('sidebar-admin.php')?>
-    <!-- CONTENT -->
-    <section id="content">
-        <?php include("../template/navBar_admin.php")?>
         <!-- MAIN -->
         <main>
           <!-- Personnel List  -->
@@ -267,7 +265,6 @@ include("../includes/functions.php");
         <!-- MAIN -->
 
 </section>
-<?php include ('profile.php')?>
 <?php include ('script.php')?>
 <script>
 
@@ -433,7 +430,9 @@ if(confirm('Are you sure you want to delete this data?'))
         //dataTable
 //dataTable
 $('#OSS').DataTable( {
-        responsive: 'true'
+    paging: true,
+    scrollCollapse: true,
+    scrollY: '50vh'
    });
 
 

@@ -1,31 +1,17 @@
 <?php
-include("admin_cover.php");
+include("../config.php");
 include "../includes/functions.php";
 include "../includes/fetch_data.php";
+include "../template/header_admin.php";
+include "../template/sidebar-admin.php";
 
+if (!isset($_SESSION['user_id']) || $_SESSION['user_type'] !== 'Admin') {
+    header("Location: ../loginpage.php");
+    exit();
+}
 ?>
 
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>BSU OUR Admission Unit Personnel</title>
-    <!--Boxicons-->
-    <link href='https://unpkg.com/boxicons@2.0.9/css/boxicons.min.css' rel='stylesheet'>
-    <!--DataTables-->
-    <link rel="stylesheet" href="https://cdn.datatables.net/2.0.3/css/dataTables.dataTables.css">
-    <link rel="stylesheet" href="https://cdn.datatables.net/responsive/3.0.1/css/responsive.dataTables.css">
-    <!--Bootstrap-->
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.6.2/dist/css/bootstrap.min.css">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">  
-    <!--Custom CSS-->
-    <link rel="icon" href="..\assets_admin\images\BSU Logo1.png" type="image/x-icon">
-    <link rel="stylesheet" href="..\assets_admin\css\admin.css" />   
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.9.4/Chart.js"></script>
-</head>
 <body>
-    
-<section id="content">
-
     <!-- MAIN -->
         <main>
             <div id="data-result-content">
@@ -37,8 +23,12 @@ include "../includes/fetch_data.php";
                             <li><i class='bx bx-chevron-right'></i></li>
                             <li><a class="active" href="#" style="text-decoration:none">Programs</a></li>
                         </ul>
-                                
                     </div>
+                    <div class="btn-group mr-2">
+                                    <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#add_Course" style="border-radius: 20px;">
+                                        <i class='bx bx-folder-plus'></i> Add Progam
+                                    </button>
+                                </div>
                 </div>
                  <!--Modal-->
                  <div class="modal fade" id="add_Course" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
@@ -59,7 +49,7 @@ include "../includes/fetch_data.php";
                                         <input type="text" class="form-control" id="college" name="college" placeholder="Enter College Name">
                                     </div>
                                     <div class="form-group ">
-                                        <label for="desc">Program Name</label>
+                                        <label for="course">Program Name</label>
                                         <input type="text" class="form-control" id="course" name="course" placeholder="Example: Bachelor of Science in Information technology">
                                     </div>
                                     <div class="form-group">
@@ -71,11 +61,11 @@ include "../includes/fetch_data.php";
                                         </select>
                                     </div>
                                     <div class="form-group ">
-                                        <label for="">Enter Number of Students</label>
+                                        <label for="students">Enter Number of Students</label>
                                         <input type="text" class="form-control" id="students" name="students" placeholder="Enter number of Students">
                                     </div>
                                     <div class="form-group ">
-                                        <label for="">Enter Number of Sections</label>
+                                        <label for="sections">Enter Number of Sections</label>
                                         <input type="text" class="form-control" id="sections" name="sections" placeholder="Enter number of Sections">
                                     </div>
                                 </div>
@@ -107,15 +97,15 @@ include "../includes/fetch_data.php";
                                 <input type="hidden" name="program_id" id="program_id" >
 
                                 <div class="mb-3">
-                                    <label for="">College name</label>
+                                    <label for="colleges">College name</label>
                                     <input type="text" name="colleges" id="colleges" class="form-control" />
                                 </div>
                                 <div class="mb-3">
-                                    <label for="">Program Name</label>
+                                    <label for="courses">Program Name</label>
                                     <input type="text" name="courses" id="courses" class="form-control" />
                                 </div>
                                 <div class="form-group">
-                                    <label for="nature">Select Program Nature</label>
+                                    <label for="program_nature">Select Program Nature</label>
                                         <select class="custom-select" name="program_nature" id="program_nature"> <!-- Add name attribute -->
                                             <option selected>Choose...</option>
                                             <option value="Board">Board</option>
@@ -123,11 +113,11 @@ include "../includes/fetch_data.php";
                                         </select>
                                 </div>
                                 <div class="mb-3">
-                                    <label for="">Number of Sections</label>
+                                    <label for="number_sections">Number of Sections</label>
                                     <input type="text" name="number_sections" id="number_sections" class="form-control" />
                                 </div>
                                 <div class="mb-3">
-                                    <label for="">Number of Students Per Section</label>
+                                    <label for="number_students">Number of Students Per Section</label>
                                     <input type="text" name="number_students" id="number_students" class="form-control" />
                                 </div>
                             </div>
@@ -159,46 +149,46 @@ include "../includes/fetch_data.php";
                             <input type="hidden" name="program_id" id="program_id" >
 
                                 <div class="mb-3">
-                                    <label for="">College name</label>
+                                    <label for="college">College name</label>
                                     <input type="text" name="college" id="view_college" class="form-control" />
                                 </div>
                                 <div class="mb-3">
-                                    <label for="">Progam Name</label>
+                                    <label for="view_course">Progam Name</label>
                                     <input type="text" name="course" id="view_course" class="form-control" />
                                 </div>
                                 <div class="mb-3">
-                                    <label for="">Nature of Degree</label>
+                                    <label for="view_nature">Nature of Degree</label>
                                     <input type="text" name="nature" id="view_nature" class="form-control" />
                                 </div>
                                 <div class="mb-3">
-                                    <label for="">Available Slots</label>
+                                    <label for="view_slots">Available Slots</label>
                                     <input type="text" name="slots" id="view_slots" class="form-control" />
                                 </div><div class="mb-3">
-                                    <label for="">Remaining Slots</label>
+                                    <label for="view_remaining_slots">Remaining Slots</label>
                                     <input type="text" name="remaining_slots" id="view_remaining_slots" class="form-control" />
                                 </div>
                                 <div class="mb-3">
-                                    <label for="">Number of Admitted</label>
+                                    <label for="view_admitted">Number of Admitted</label>
                                     <input type="text" name="admitted" id="view_admitted" class="form-control" />
                                 </div>
                                 <div class="mb-3">
-                                    <label for="">Number of Admitted But Not Qualified</label>
+                                    <label for="view_not_qualified">Number of Admitted But Not Qualified</label>
                                     <input type="text" name="not_qualified" id="view_not_qualified" class="form-control" />
                                 </div>
                                 <div class="mb-3">
-                                    <label for="">Possible Qualifier</label>
+                                    <label for="view_possible">Possible Qualifier</label>
                                     <input type="text" name="possible" id="view_possible" class="form-control" />
                                 </div>
                                 <div class="mb-3">
-                                    <label for="">Not Admitted and Not Qualified</label>
+                                    <label for="view_not_admitted">Not Admitted and Not Qualified</label>
                                     <input type="text" name="not_admitted" id="view_not_admitted" class="form-control" />
                                 </div>
                                 <div class="mb-3">
-                                    <label for="">Total of Not Admitted</label>
+                                    <label for="view_not_admitted_total">Total of Not Admitted</label>
                                     <input type="text" name="not_admitted_total" id="view_not_admitted_total" class="form-control" />
                                 </div>
                                 <div class="mb-3">
-                                    <label for="">Total Applicants</label>
+                                    <label for="view_total">Total Applicants</label>
                                     <input type="text" name="total" id="view_total" class="form-control" />
                                 </div>
                         </div>
@@ -212,19 +202,6 @@ include "../includes/fetch_data.php";
                 <div id="data-list">
                     <div class="table-data">
                         <div class="order">
-                            <div class="head">
-                                <div class="btn-group mr-2">
-                                    <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#add_Course" style="border-radius: 20px;">
-                                        <i class='bx bx-folder-plus'></i> Add Progam
-                                    </button>
-                                </div>
-                                <!--div class="btn-group mr-2" role="group">
-                                    <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#add_Course" style="border-radius: 20px;">
-                                        <i class='bx bx-folder-plus'></i> Add Course
-                                    </button>
-                                </div-->
-                            </div>
-
                         <!--ADDEDD TABS AND CONTENTS-->
                                 <div class="tab-pane fade show active" id="dataListView">
                                     <div id="table-container">                                        
@@ -237,6 +214,16 @@ include "../includes/fetch_data.php";
                                                 <th>No. of Sections</th>
                                                 <th>No. of students per section</th>
                                                 <th>No. of Available Slots</th>
+                                                <th>No. of Applicants as of Date</th>
+                                                <th>Remaining Slots</th>
+                                                <th>Slots After Screening</th>
+                                                <th>Qualified</th>
+                                                <th>Not Qualified</th>
+                                                <th>Total College Evaluation</th>
+                                                <th>PQ_NB </th>
+                                                <th>Not_Admitted_Not_Qualified </th>
+                                                <th>Not_Admitted_Total </th>
+                                                <th>Overall Total</th>
                                                 <th>Actions</th>
 
                                             </tr>
@@ -251,15 +238,23 @@ include "../includes/fetch_data.php";
                                         {
                                             foreach($programMembers as $program){
                                                 ?>
- <tr>
-                                                <td><?php echo $counter++; ?></td>
+                                                <tr>
+                                                <td><?= $counter++; ?></td>
                                                 <td><?=  $program['College']; ?></td>
                                                 <td><?=  $program['Courses']; ?></td>
                                                 <td><?=  $program['No_of_Sections']; ?></td>
                                                 <td><?=  $program['No_of_Students_Per_Section']; ?></td>
-                                                <td><?= $program['No_of_Sections'] * $program['No_of_Students_Per_Section']; ?></td>
-
-                                                
+                                                <td><?=  $program['Number_of_Available_Slots']; ?></td>
+                                                <td><?=  $program['Number_of_Applicants_As_of_Date']; ?></td>
+                                                <td><?=  $program['Remaining_Slots']; ?></td>
+                                                <td><?=  $program['SLOTS_After_Screening']; ?></td>
+                                                <td><?=  $program['Admitted_Qualified']; ?></td>
+                                                <td><?=  $program['Admitted_Not_Qualified']; ?></td>
+                                                <td><?=  $program['Admitted_Total']; ?></td>
+                                                    <td><?=  $program ['PQ_NB']; ?></td>
+                                                    <td><?=  $program ['Not_Admitted_Not_Qualified']; ?></td>
+                                                    <td><?=  $program ['Not_Admitted_Total']; ?></td>
+                                                    <td><?=  $program ['Overall_Total']; ?></td>
                                                     <td>
                                                         <button type="button" value="<?=$program['ProgramID'];?>" class="viewProgramBtn btn btn-info btn-sm">View</button>
                                                         <button type="button" value="<?=$program['ProgramID'];?>" class="editProgramBtn btn btn-success btn-sm">Edit</button>
@@ -451,11 +446,14 @@ if(confirm('Are you sure you want to delete this data?'))
 });
 //dataTable
 $('#program').DataTable({
-    responsive: true,
-    lengthMenu: [ 
-        [10, 25, 50, -1], 
-        [10, 25, 50, "All"] 
-    ]
+    layout: {
+        top1Start: {
+            buttons:['colvis','copyHtml5', 'excelHtml5', 'csvHtml5', 'pdfHtml5']
+        }
+    },     
+    paging: true,
+    scrollCollapse: true,
+    scrollY: '50vh'
 });
 
 </script>

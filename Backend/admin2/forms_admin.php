@@ -1,16 +1,16 @@
 <?php
 include("../config.php");
-include("../includes/functions.php");
+include "../includes/functions.php";
+include "../includes/fetch_data.php";
+include "../template/header_admin.php";
+include "../template/sidebar-admin.php";
 
+if (!isset($_SESSION['user_id']) || $_SESSION['user_type'] !== 'Admin') {
+    header("Location: ../loginpage.php");
+    exit();
+}
 ?>
-
-<?php include ('../template/header_admin.php')?>
-
 <body>
-<?php include ('sidebar-admin.php')?>
-    <!-- CONTENT -->
-    <section id="content">
-        <?php include("../template/navBar_admin.php")?>
         <!-- MAIN -->
         <main> 
         <!--Colleges List-->
@@ -47,7 +47,7 @@ include("../includes/functions.php");
                            <form id="uploadForm">
                                 <div class="modal-body">
                                     <div class="form-group">
-                                        <label for="">File Classification</label>
+                                        <label for="classification">File Classification</label>
                                         <select class="custom-select" name="classification" id="classification">
                                             <option selected>Choose...</option>
                                             <option value="Notice of Admission">Notice of Admission</option>
@@ -55,7 +55,7 @@ include("../includes/functions.php");
                                         </select>
                                     </div>
                                     <div class="form-group">
-                                        <label for="acad">Academic Year</label>
+                                        <label>Academic Year</label>
                                         <div class="row">
                                             <div class="col">
                                                 <input type="text" class="form-control" id="start_year" name="start_year" placeholder="YYYY">
@@ -67,7 +67,7 @@ include("../includes/functions.php");
                                         </div>
                                     </div>
                                     <div class="form-group">
-                                        <label for="">Semester</label>
+                                        <label for="sem">Semester</label>
                                         <select class="custom-select" name="sem" id="sem">
                                             <option selected>Choose...</option>
                                             <option value="1st Semester">1st Semester</option>
@@ -75,7 +75,7 @@ include("../includes/functions.php");
                                         </select>
                                     </div>
                                     <div class="mb-3">
-                                            <label for="">File Name</label>
+                                            <label for="name">File Name</label>
                                             <input type="text" name="name" id="name" class="form-control" />
                                         </div>
                                         <div class="custom-file mt-3">
@@ -162,7 +162,6 @@ include("../includes/functions.php");
         <!-- MAIN -->
 
 </section>
-<?php include ('profile.php')?>
 <?php include ('script.php')?>
 <script>
 $(document).ready(function() {
@@ -200,7 +199,7 @@ $(document).ready(function() {
 $(document).on('click', '.deleteFileBtn', function (e) {
 e.preventDefault();
 
-if(confirm('Are you sure you want to delete this data?'))
+if(confirm('This will permanently delete the file. Are you sure you want to delete this data?'))
 {
     var file_id = $(this).val();
     $.ajax({

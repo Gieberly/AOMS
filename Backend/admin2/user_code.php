@@ -26,15 +26,22 @@ if(isset($_POST['update_staff']))
         return;
     }
 
-    $query = "UPDATE users SET last_name='$lname',name='$fname',mname='$mname', email='$email', lstatus='$status', userType='$office', Designation='$designation', Department='$dept'
-                WHERE id='$staff_id'";
+    $query = "UPDATE users SET last_name='$lname',
+    name='$fname',
+    mname='$mname',
+    email='$email',
+    lstatus='$status',
+    userType='$office',
+    Designation='$designation',
+    Department='$dept'
+    WHERE id='$staff_id'";
     $query_run = mysqli_query($conn, $query);
 
     if($query_run)
     {
         $res = [
             'status' => 200,
-            'message' => 'Student Updated Successfully'
+            'message' => 'User Updated Successfully'
         ];
         echo json_encode($res);
         return;
@@ -43,7 +50,7 @@ if(isset($_POST['update_staff']))
     {
         $res = [
             'status' => 500,
-            'message' => 'Student Not Updated'
+            'message' => 'User Not Updated'
         ];
         echo json_encode($res);
         return;

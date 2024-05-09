@@ -1,15 +1,16 @@
 <?php
-include("../config.php");
-include("../includes/functions.php");
-include ('../template/header_admin.php');
 
+include("../config.php");
+include "../includes/functions.php";
+include "../includes/fetch_data.php";
+include "../template/header_admin.php";
+include "../template/sidebar-admin.php";
+if (!isset($_SESSION['user_id']) || $_SESSION['user_type'] !== 'Admin') {
+    header("Location: ../loginpage.php");
+    exit();
+}
 ?>
-<body>
-<?php include ('sidebar-admin.php')?>
-    <!-- CONTENT -->
-    <section id="content">
-        <?php include("../template/navBar_admin.php")?>
-        <!-- MAIN -->
+<body>        <!-- MAIN -->
         <main>
             <div id="schedule-result-content">
                 <div class="head-title">
@@ -21,14 +22,6 @@ include ('../template/header_admin.php');
                             <li><a class="active" href="#" style="text-decoration:none">Appointment Schedule</a></li>
                         </ul>
                     </div>
-
-                    <div class="button-container">
-                <a href="../our/AppointmentDate.php" class="btn btn-primary">
-                        <i class='bx bxs-calendar calendar-icon'></i>
-                        <span class="text">Set Appointment Dates</span>
-                    </a>
-
-                </div>
                 </div>
 
                 <!--COntents Here-->
@@ -98,7 +91,6 @@ include ('../template/header_admin.php');
          </main>
         <!-- MAIN -->
 </section>
-<?php include ('profile.php')?>
 <?php include ('script.php')?>
 
 <script>

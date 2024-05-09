@@ -12,8 +12,6 @@ $result = $conn->query($query);
 $query2 = "SELECT * FROM admission_period";
 $result2 = $conn->query($query2);
 
-$query3 = "SELECT * FROM admission_period";
-$result3 = $conn->query($query3);
 
 $query4 = "SELECT * FROM ethnicity";
 $result4 = $conn->query($query4);
@@ -718,7 +716,7 @@ $result5 = $conn->query($query5);
             <div class="table-data">
                 <div class="order">
                     <div class="head">
-                        <h3>List of archived Applicants</h3>
+                        <h3>List of Classification</h3>
                         <!-- Add this input field for date filtering -->
 
                         <div class="headfornaturetosort">
@@ -810,6 +808,7 @@ while ($row = $result->fetch_assoc()) {
     echo "<td>{$row['Criteria3']}</td>"; // Display Criteria3
     echo "<td>{$row['Criteria4']}</td>"; // Display Criteria4
     echo "<td>{$row['NatureOfDegree']}</td>"; // Display Nature of Degree
+   
     echo "</tr>";
     $rowNumber++; // Increment for the next row
 }
@@ -1601,47 +1600,35 @@ while ($row = $result->fetch_assoc()) {
 
                             <!-- Thead Section -->
                             <tr>
-                <th>#</th>
-                <th>Last Name</th>
-                <th>First Name</th>
-                <th>Middle Name</th>
-                <th>Email</th>
-                <th>Department</th>
-                <th>Designation</th>
-                <th>User Type</th>
-                <th>Account Status</th>
-                <th>Actions</th>
-            </tr>
+    <th>#</th> <!-- Row number -->
+    <th>Start Year</th>
+    <th>End Year</th>
+    <th>Semester</th>
+    <th>Start Date</th>
+    <th>End Date</th>
+    <th>Clinic Schedule</th>
+    <th>Result Release Date</th>
+    <th>Enrollment Period</th>
+</tr>
         </thead>
         <!-- Table Body -->
         <tbody>
             <?php
             $rowNumber = 1;
-            while ($row = $result2->fetch_assoc()) {
+            while ($row2 = $result2->fetch_assoc()) {
                 echo "<tr>";
-                echo "<td>{$rowNumber}</td>";  // Row Number
-                echo "<td>{$row['last_name']}</td>";  // Last Name
-                echo "<td>{$row['name']}</td>";  // First Name
-                echo "<td>{$row['mname']}</td>";  // Middle Name
-                echo "<td>{$row['email']}</td>";  // Email
-                echo "<td>{$row['Department']}</td>";  // Department
-                echo "<td>{$row['Designation']}</td>";  // Designation
-                echo "<td>{$row['userType']}</td>";  // User Type
-                echo "<td>{$row['lstatus']}</td>";  // Account Status
-                echo "<td>
-                <div class='button-container'>
-  
-                <button type='button' class='button check-btn' data-tooltip='Retrieve' onclick='retrieveUser({$row['id']}, \"Retrieve\")'>
-                <i class='bx bxs-archive-out'></i>
-                </button>
-                <button type='button' class='button inc-btn' data-tooltip='delete' onclick='deletePersonnel({$row['id']}, \"delete\")'>
-                <i class='bx bxs-trash' ></i>
-                </button>
-     
-                </div>
-                </td>"; // 9
+                echo "<td>{$rowNumber}</td>"; // Display row number
+                echo "<td>{$row2['start_year']}</td>"; // Start year
+                echo "<td>{$row2['end_year']}</td>"; // End year
+                echo "<td>{$row2['sem']}</td>"; // Semester
+                echo "<td>{$row2['start']}</td>"; // Start date
+                echo "<td>{$row2['end']}</td>"; // End date
+                echo "<td>{$row2['clinic_sched']}</td>"; // Clinic schedule
+                echo "<td>{$row2['result_release']}</td>"; // Result release date
+                echo "<td>{$row2['enrollment_period']}</td>"; // Enrollment period
                 echo "</tr>";
-                $rowNumber++;
+                
+                $rowNumber++; // Increment for the next row
             }
             ?>
         </tbody>

@@ -1,17 +1,15 @@
 <?php
 include("../config.php");
-include("../includes/functions.php");
-
+include "../includes/functions.php";
+include "../includes/fetch_data.php";
+include "../template/header_admin.php";
+include "../template/sidebar-admin.php";
+if (!isset($_SESSION['user_id']) || $_SESSION['user_type'] !== 'Admin') {
+    header("Location: ../loginpage.php");
+    exit();
+}
 ?>
-
-<?php include ('../template/header_admin.php')?>
-
 <body>
-<?php include ('sidebar-admin.php')?>
-    <!-- CONTENT -->
-    <section id="content">
-        <?php include("../template/navBar_admin.php")?>
-        <!-- MAIN -->
         <main>
 <!-- Faculty List  -->
 <div id="student-result-content">
@@ -24,6 +22,13 @@ include("../includes/functions.php");
                             <li><a class="active" href="#top" style="text-decoration:none">Faculty</a></li>
                         </ul>
                     </div>
+                    <div class="head">
+                            <div class="btn-group mr-2">
+                                    <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#add_Faculty" style="border-radius: 20px;">
+                                        <i class='bx bx-folder-plus'></i> Add Faculty
+                                    </button>
+                                </div>
+                            </div>
                 </div>
 
                 <!-- Add User Modal -->
@@ -58,7 +63,7 @@ include("../includes/functions.php");
                                 </div>
                                 <div class="form-group">
                                 <label for="status" class="mr-sm-2">Select User Status</label>
-                                        <select class="custom-select" name="status" > <!-- Add name attribute -->
+                                        <select class="custom-select" name="status" id="status"> <!-- Add name attribute -->
                                             <option selected>Choose...</option>
                                             <option value="Approved">Approved</option>
                                             <option value="Pending">Pending</option>
@@ -67,7 +72,7 @@ include("../includes/functions.php");
                                 </div>
                                 <div class="form-group">
                                     <label for="office" class="mr-sm-2">Select User Office</label>
-                                    <select class="form-control" name="office" > <!-- Add name attribute -->
+                                    <select class="form-control" name="office" id="office"> <!-- Add name attribute -->
                                         <option selected>Choose...</option>
                                         <option value="Admin">BSU-OUR Administrator</option>
                                         <option value="Faculty">BSU-College</option>
@@ -110,27 +115,27 @@ include("../includes/functions.php");
                                 <input type="hidden" name="faculty_id" id="faculty_id" >
 
                                 <div class="mb-3">
-                                    <label for="">First name</label>
+                                    <label for="fname">First name</label>
                                     <input type="text" name="fname" id="fname" class="form-control" />
                                 </div>
                                 <div class="mb-3">
-                                    <label for="">Middle Name</label>
+                                    <label for="mname">Middle Name</label>
                                     <input type="text" name="mname" id="mname" class="form-control" />
                                 </div>
                                 <div class="mb-3">
-                                    <label for="">Last Name</label>
+                                    <label for="lname">Last Name</label>
                                     <input type="text" name="lname" id="lname" class="form-control" />
                                 </div>
                                 <div class="mb-3">
-                                    <label for="">Email</label>
+                                    <label for="email">Email</label>
                                     <input type="text" name="email" id="email" class="form-control" />
                                 </div>
                                 <div class="mb-3">
-                                    <label for="">Department</label>
+                                    <label for="dept">Department</label>
                                     <input type="text" name="dept" id="dept" class="form-control" />
                                 </div>
                                 <div class=" mb-3">
-                                    <label for="">Designation</label>
+                                    <label for="designation">Designation</label>
                                     <input type="text" name="designation" id="designation" class="form-control" placeholder="Enter Designation"/>
                                 </div>
                                 <div class="form-group">
@@ -179,35 +184,35 @@ include("../includes/functions.php");
                             <div class="modal-body">
 
                                 <div class="mb-3">
-                                    <label for="">Last Name</label>
+                                    <label>Last Name</label>
                                     <p id="view_lname" class="form-control"></p>
                                 </div>
                                 <div class="mb-3">
-                                    <label for="">First Name</label>
+                                <label>First Name</label>
                                     <p id="view_fname" class="form-control"></p>
                                 </div>
                                 <div class="mb-3">
-                                    <label for="">Middle Name</label>
+                                <label>Middle Name</label>
                                     <p id="view_mname" class="form-control"></p>
                                 </div>
                                 <div class="mb-3">
-                                    <label for="">Email</label>
+                                <label>Email</label>
                                     <p id="view_email" class="form-control"></p>
                                 </div>
                                 <div class="mb-3">
-                                    <label for="">Department</label>
+                                <label>Department</label>
                                     <p id="view_dept" class="form-control"></p>
                                 </div>
                                 <div class="mb-3">
-                                    <label for="">Status</label>
+                                <label>Status</label>
                                     <p id="view_status" class="form-control"></p>
                                 </div>
                                 <div class="mb-3">
-                                    <label for="">Office</label>
+                                <label>Office</label>
                                     <p id="view_office" class="form-control"></p>
                                 </div>
                                 <div class="mb-3">
-                                    <label for="">Designation</label>
+                                <label>Designation</label>
                                     <p id="view_designation" class="form-control"></p>
                                 </div>
                             </div>
@@ -222,17 +227,9 @@ include("../includes/functions.php");
                 <div id="master-listpersonnel">
                     <div class="table-data">
                         <div class="order">
-                            <div class="head">
-                            <div class="btn-group mr-2">
-                                    <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#add_Faculty" style="border-radius: 20px;">
-                                        <i class='bx bx-folder-plus'></i> Add Faculty
-                                    </button>
-                                </div>
-                            </div>
-
                             <div id="table-container">
                                 <!--staff-->                        
-                                <table id="faculty" class="display responsive wrap " width="100%">
+                                <table id="faculty" class="display responsive" width="100%">
                                     <thead>
                                         <tr>
                                             <th>#</th>
@@ -294,7 +291,6 @@ include("../includes/functions.php");
         <!-- MAIN -->
 
 </section>
-<?php include ('profile.php')?>
 <?php include ('script.php')?>
 <script>
 $(document).on('submit', '#addFaculty', function (e) {
@@ -470,11 +466,9 @@ if(confirm('Are you sure you want to delete this data?'))
 
  //dataTable
  $('#faculty').DataTable( {
-    responsive: true,
-    lengthMenu: [ 
-        [10, 25, 50, -1], 
-        [10, 25, 50, "All"] 
-    ]
+    paging: true,
+    scrollCollapse: true,
+    scrollY: '50vh'
    });
 
 

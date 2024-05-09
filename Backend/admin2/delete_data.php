@@ -6,10 +6,10 @@ include("../includes/fetch_data.php");
 // Define the response array
 $response = array();
 
-if (isset($_POST['undo'])) {
+if (isset($_POST['delete'])) {
 
     // Undo truncation by copying data from archive table back to original table
-    $result = copyData($conn);
+    $result = deleteAllData($conn);
     
     if ($result['status'] == 200) {
         // Truncation undone successfully
