@@ -159,7 +159,7 @@ $stmt->close();
             color: green;
         }
         .button.archive-btn:hover i {
-            color: yellow;
+            color: blue;
         }
 
         .button-container .button::after {
