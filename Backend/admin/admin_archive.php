@@ -3,9 +3,11 @@
 include ("admin_cover.php");
 
 
+// Query to fetch data from admission_data_archive
 $query = "SELECT * FROM admission_data_archive";
-// Execute the query
 $result = $conn->query($query);
+$rowNumber = 1;
+
 
 ?>
 
@@ -777,7 +779,7 @@ $result = $conn->query($query);
                     $rowNumber = 1; // To number each row
                     while ($row = $result->fetch_assoc()) {
                                     echo "<tr class='editRow' data-id='" . $row['id'] . "' data-date='" . $row['application_date'] . "'>";
-                                    echo "<td>" . $counter . "</td>"; // 1
+                                    echo "<td>{$rowNumber}</td>";  // Display the row number
                                     echo "<td>" . $row['applicant_number'] . "</td>"; // 2
                                     echo "<td>" . $row['Last_Name'] . "</td>"; // 3
                                     echo "<td>" . $row['Name'] . "</td>"; // 4
@@ -799,7 +801,7 @@ $result = $conn->query($query);
               </td>"; // 9
                                     echo "<td id='checkbox-{$row['id']}'><input type='checkbox' style='display: none;' class='select-checkbox'></td>"; // 10
                                     echo "</tr>";
-                                    $counter++; // Increment the counter for the next row
+                                    $rowNumber++; // Increment the counter for the next row
                                 }
                                 ?>
                             </tbody>
