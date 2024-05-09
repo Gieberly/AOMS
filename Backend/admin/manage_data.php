@@ -756,7 +756,69 @@ $result5 = $conn->query($query5);
 <button type="button" id="toggleAddDataDiv">
     <i class='bx bxs-add-to-queue'></i> Add 
 </button>
+<style>
+/* General styles for the add data div */
+#addDataDiv {
+    display: none; /* Initially hidden */
+    background-color: #f9f9f9; /* Light background color */
+    border: 1px solid #ccc; /* Light gray border */
+    border-radius: 10px; /* Rounded corners */
+    padding: 20px; /* Padding inside the div */
+    max-width: 500px; /* Maximum width to control form width */
+    margin: 20px auto; /* Center the div and add space around */
+    box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.1); /* Add a subtle shadow */
+}
 
+/* Styles for the form */
+#addProgramForm {
+    display: flex;
+    flex-direction: column; /* Arrange elements vertically */
+}
+
+/* Style for form groups */
+.form-group {
+    margin-bottom: 15px; /* Space between form fields */
+}
+
+/* Style for form labels */
+.form-group label {
+    font-size: 16px; /* Larger font for labels */
+    color: #333; /* Dark text color */
+}
+
+/* Style for input fields */
+.input {
+    padding: 10px; /* Add padding inside the input field */
+    border: 1px solid #ccc; /* Light gray border */
+    border-radius: 5px; /* Rounded corners */
+    box-sizing: border-box; /* Ensure padding doesn't affect size */
+    font-size: 14px; /* Text size within the input */
+}
+
+/* Change border color on focus */
+.input:focus {
+    border-color: #4CAF50; /* Green border when focused */
+    outline: none; /* Remove default focus outline */
+}
+
+/* Style for the submit button */
+.submit {
+    background-color: #4CAF50; /* Green background */
+    color: white; /* White text */
+    padding: 10px 20px; /* Padding around the text */
+    border: none; /* No border */
+    border-radius: 5px; /* Rounded corners */
+    cursor: pointer; /* Change cursor on hover */
+    transition: background-color 0.3s; /* Smooth transition on hover */
+}
+
+/* Change background color on hover */
+.submit:hover {
+    background-color: #45a049; /* Darker green */
+}
+
+
+</style>
 <script>
     // JavaScript to toggle the visibility of the add data div
     document.getElementById("toggleAddDataDiv").addEventListener("click", function () {
