@@ -6,7 +6,15 @@ include ("admin_cover.php");
 // Query to fetch data from admission_data_archive
 $query = "SELECT * FROM admission_data_archive";
 $result = $conn->query($query);
+
+
 $rowNumber = 1;
+
+
+// Query to fetch data from users_archive
+$query2 = "SELECT * FROM users_archive";
+$result2 = $conn->query($query2);
+
 
 
 ?>
@@ -73,7 +81,7 @@ $rowNumber = 1;
 
         .button.inc-btn,
         .button.check-btn,
-        .button.archive-btn { 
+        .button.archive-btn {
             background: none;
             border: none;
             padding: 0;
@@ -94,6 +102,7 @@ $rowNumber = 1;
         .button.check-btn:hover i {
             color: green;
         }
+
         .button.archive-btn:hover i {
             color: blue;
         }
@@ -697,7 +706,7 @@ $rowNumber = 1;
                 </div>
                 <div class="button-container">
 
-                  
+
                 </div>
             </div>
 
@@ -762,17 +771,17 @@ $rowNumber = 1;
                                     <th>First Name</th>
                                     <th>Middle Name</th>
                                     <th>email</th>
-                                  
+
                                     <th>Action</th>
-                                  
+
                                 </tr>
                             </thead>
 
                             <!-- Tbody Section -->
                             <tbody id="tbody">
-                            <?php
-                    $rowNumber = 1; // To number each row
-                    while ($row = $result->fetch_assoc()) {
+                                <?php
+                                $rowNumber = 1; // To number each row
+                                while ($row = $result->fetch_assoc()) {
                                     echo "<tr>";
                                     echo "<td>{$rowNumber}</td>";  // Display the row number
                                     echo "<td>" . $row['applicant_number'] . "</td>"; // 2
@@ -878,7 +887,66 @@ $rowNumber = 1;
 
             </div>
 
-            
+
+            <div class="table-data">
+                <div class="order">
+                    <div class="head">
+                        <h3>List of archived Applicants</h3>
+                    </div>
+                    <div class="table-container">
+                        <table class="display" style="width: 100%;">
+
+                            <!-- Thead Section -->
+                            <tr>
+
+                                <th>#</th>
+                                <th>Last Name</th>
+                                <th>First Name</th>
+                                <th>Middle Name</th>
+                                <th>Email</th>
+                                <th>Department</th>
+                                <th>Designation</th>
+                                <th>User Type</th>
+                                <th>Account Status</th>
+                                <th>Actions</th>
+                            </tr>
+                            </thead>
+                            <tbody id="datalist">
+                                <?php
+                                $rowNumber = 1; // Reset row number for the second table
+                                while ($row = $result2->fetch_assoc()) {
+                                    echo "<tr>";
+                                    echo "<td>{$rowNumber}</td>";
+                                    echo "<td>{$row['last_name']}</td>";
+                                    echo "<td>{$row['name']}</td>";
+                                    echo "<td>{$row['mname']}</td>";
+                                    echo "<td>{$row['mname']}</td>";
+                                    echo "<td>{$row['Department']}</td>";
+                                    echo "<td>{$row['Designation']}</td>";
+                                    echo "<td>{$row['userType']}</td>";
+                                    echo "<td>{$row['lstatus']}</td>"; // Display account status
+                                
+                                    // Action buttons for Approve/Reject with appropriate event handling
+                                    echo "<td>
+                                          <div class='button-container'>
+                                          <button type='button' class='button check-btn' data-tooltip='Approve' onclick='updateStatus({$row['id']}, \"Approved\")'>
+                                          <i class='bx bxs-check-circle'></i>
+                                          </button>
+                                          <button type='button' class='button delete-btn'  data-tooltip='Reject' onclick='updateStatus({$row['id']}, \"Rejected\")'>
+                                          <i class='bx bxs-x-circle'></i>
+                                          </button>
+                                          </div>
+                                    </td>";
+
+                                    echo "</tr>"; // End of the row
+                                    $rowNumber++; // Increment the row counter
+                                }
+                                ?>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
             <div class="table-data">
                 <div class="order">
                     <div class="head">
@@ -896,9 +964,9 @@ $rowNumber = 1;
                                     <th>First Name</th>
                                     <th>Middle Name</th>
                                     <th>email</th>
-                                  
+
                                     <th>Action</th>
-                                  
+
                                 </tr>
                             </thead>
                             <tbody id="tbody">
@@ -913,9 +981,9 @@ $rowNumber = 1;
     </section>
 
     <!-- Success message div -->
-<div class="success-message" id="archive" style="display: none;">
-  <p id="archive-message"></p>
-</div>
+    <div class="success-message" id="archive" style="display: none;">
+        <p id="archive-message"></p>
+    </div>
     <div id="toast" class="toast" role="alert" aria-live="assertive" aria-atomic="true">
         <div class="toast-header">
         </div>
@@ -939,88 +1007,88 @@ $rowNumber = 1;
 
     <script>
 
-         
-// Function to display success message
-function showSuccessMessage(message) {
-  var archiveMessage = document.getElementById('archive-message');
-  archiveMessage.innerHTML = message;
-  var archiveDiv = document.getElementById('archive');
-  archiveDiv.style.display = 'block';
-  // Hide the success message after 3 seconds
-  setTimeout(function() {
-    archiveDiv.style.display = 'none';
-    // Reload the page after the message disappears
-    location.reload();
-  }, 2000);
-}
 
-function undoUser(id) {
-    // Show confirmation dialog
-    $('.confirmation-dialog').show();
-    $('.confirmation-dialog-overlay').show();
-    $('.confirmation-dialog p').text('Are you sure you want to retrieve this data?');
+        // Function to display success message
+        function showSuccessMessage(message) {
+            var archiveMessage = document.getElementById('archive-message');
+            archiveMessage.innerHTML = message;
+            var archiveDiv = document.getElementById('archive');
+            archiveDiv.style.display = 'block';
+            // Hide the success message after 3 seconds
+            setTimeout(function () {
+                archiveDiv.style.display = 'none';
+                // Reload the page after the message disappears
+                location.reload();
+            }, 2000);
+        }
 
-    // Handle button clicks in the confirmation dialog
-    $('.confirmation-buttons button').click(function() {
-        var userConfirmed = $(this).data('confirmed');
-        if (userConfirmed) {
-            // User confirmed, send AJAX request to delete data
-            $.ajax({
-                url: "undo_App_Archive.php",
-                type: "POST",
-                data: { delete_ids: [id] },
-                success: function(response) {
-                    // Show response message in success message div
-                    showSuccessMessage(response);
-                    // Reload or update the table as needed
-                },
-                error: function(xhr, status, error) {
-                    console.error(xhr.responseText); // Log error message
-                    // Handle error as needed
+        function undoUser(id) {
+            // Show confirmation dialog
+            $('.confirmation-dialog').show();
+            $('.confirmation-dialog-overlay').show();
+            $('.confirmation-dialog p').text('Are you sure you want to retrieve this data?');
+
+            // Handle button clicks in the confirmation dialog
+            $('.confirmation-buttons button').click(function () {
+                var userConfirmed = $(this).data('confirmed');
+                if (userConfirmed) {
+                    // User confirmed, send AJAX request to delete data
+                    $.ajax({
+                        url: "undo_App_Archive.php",
+                        type: "POST",
+                        data: { delete_ids: [id] },
+                        success: function (response) {
+                            // Show response message in success message div
+                            showSuccessMessage(response);
+                            // Reload or update the table as needed
+                        },
+                        error: function (xhr, status, error) {
+                            console.error(xhr.responseText); // Log error message
+                            // Handle error as needed
+                        }
+                    });
                 }
+
+                // Hide the confirmation dialog and overlay
+                $('.confirmation-dialog').hide();
+                $('.confirmation-dialog-overlay').hide();
             });
         }
 
-        // Hide the confirmation dialog and overlay
-        $('.confirmation-dialog').hide();
-        $('.confirmation-dialog-overlay').hide();
-    });
-}
+        function deleteUser(id) {
+            // Show confirmation dialog
+            $('.confirmation-dialog').show();
+            $('.confirmation-dialog-overlay').show();
+            $('.confirmation-dialog p').text('Are you sure you want to permanently delete this data?');
 
-function deleteUser(id) {
-    // Show confirmation dialog
-    $('.confirmation-dialog').show();
-    $('.confirmation-dialog-overlay').show();
-    $('.confirmation-dialog p').text('Are you sure you want to permanently delete this data?');
-
-    // Handle button clicks in the confirmation dialog
-    $('.confirmation-buttons button').click(function() {
-        var userConfirmed = $(this).data('confirmed');
-        if (userConfirmed) {
-            // User confirmed, send AJAX request to delete data
-            $.ajax({
-                url: "delete_applicants.php",
-                type: "POST",
-                data: { delete_ids: [id] },
-                success: function(response) {
-                    // Show response message in success message div
-                    showSuccessMessage(response);
-                    // Reload or update the table as needed
-                },
-                error: function(xhr, status, error) {
-                    console.error(xhr.responseText); // Log error message
-                    // Handle error as needed
+            // Handle button clicks in the confirmation dialog
+            $('.confirmation-buttons button').click(function () {
+                var userConfirmed = $(this).data('confirmed');
+                if (userConfirmed) {
+                    // User confirmed, send AJAX request to delete data
+                    $.ajax({
+                        url: "delete_applicants.php",
+                        type: "POST",
+                        data: { delete_ids: [id] },
+                        success: function (response) {
+                            // Show response message in success message div
+                            showSuccessMessage(response);
+                            // Reload or update the table as needed
+                        },
+                        error: function (xhr, status, error) {
+                            console.error(xhr.responseText); // Log error message
+                            // Handle error as needed
+                        }
+                    });
                 }
+
+                // Hide the confirmation dialog and overlay
+                $('.confirmation-dialog').hide();
+                $('.confirmation-dialog-overlay').hide();
             });
         }
 
-        // Hide the confirmation dialog and overlay
-        $('.confirmation-dialog').hide();
-        $('.confirmation-dialog-overlay').hide();
-    });
-}
-
-new DataTable('table.display');
+        new DataTable('table.display');
 
         function confirmSubmission() {
             document.getElementById("confirmationDialoga").style.display = "block";
