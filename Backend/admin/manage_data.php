@@ -782,6 +782,8 @@ if (isset($_SESSION['program_added_successfully']) && $_SESSION['program_added_s
     <th>Nature of Degree</th>
     <th>Sections</th> <!-- Number of sections -->
     <th>Students Per Section</th> 
+    <th>Action</th> 
+    
     </tr>
 </thead>
 
@@ -797,6 +799,18 @@ echo "<td>{$row['Courses']}</td>"; // Courses
 echo "<td>{$row['Nature_of_Degree']}</td>"; // Nature of Degree
 echo "<td>{$row['No_of_Sections']}</td>"; // Number of Sections
 echo "<td>{$row['No_of_Students_Per_Section']}</td>"; // Students Per Section
+echo "<td>
+<div class='button-container'>
+
+<button type='button' class='button check-btn' data-tooltip='Delete' onclick='deleteProgram({$row['id']}, \"Delete\")'>
+  <i class='bx bxs-check-circle'></i>
+</button>
+<button type='button' class='button inc-btn' data-tooltip='Edit' onclick='editProgram({$row['id']}, \"Edit\")'>
+ <i class='bx bxs-no-entry'></i>
+</button>
+
+</div>
+</td>"; // 9
 echo "</tr>";
 $rowNumber++; // Increment for the next row
 }
@@ -1884,11 +1898,11 @@ function showSuccessMessage(message) {
   }, 2000);
 }
 
-function undoUser(id) {
+function deleteProgram(id) {
     // Show confirmation dialog
     $('.confirmation-dialog').show();
     $('.confirmation-dialog-overlay').show();
-    $('.confirmation-dialog p').text('Are you sure you want to retrieve this data?');
+    $('.confirmation-dialog p').text('Are you sure you want to delete this data?');
 
     // Handle button clicks in the confirmation dialog
     $('.confirmation-buttons button').click(function() {
@@ -1896,7 +1910,7 @@ function undoUser(id) {
         if (userConfirmed) {
             // User confirmed, send AJAX request to delete data
             $.ajax({
-                url: "undo_App_Archive.php",
+                url: "delete_program.php",
                 type: "POST",
                 data: { delete_ids: [id] },
                 success: function(response) {
@@ -1917,7 +1931,7 @@ function undoUser(id) {
     });
 }
 
-function retrieveUser(id) {
+function editProgram(id) {
     // Show confirmation dialog
     $('.confirmation-dialog').show();
     $('.confirmation-dialog-overlay').show();
