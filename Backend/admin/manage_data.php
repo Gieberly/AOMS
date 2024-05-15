@@ -807,7 +807,7 @@ while ($row = $result->fetch_assoc()) {
                 <button type='button' class='button inc-btn' data-tooltip='Edit' onclick='editProgram(this)'>
                     <i class='bx bxs-edit'></i>
                 </button>
-                <button type='button' class='button save-btn' data-tooltip='Save' onclick='saveProgram(this)' style='display:none;'>
+                <button type='button' class='button save-btn' data-tooltip='Save' onclick='saveProgram({$row['ProgramID']})' style='display:none;'>
                     <i class='bx bxs-save'></i>
                 </button>
                 <button type='button' class='button cancel-btn' data-tooltip='Cancel' onclick='cancelEdit(this)' style='display:none;'>
@@ -853,42 +853,37 @@ function cancelEdit(button) {
     row.find('.save-btn').hide();
     row.find('.cancel-btn').hide();
 }
-function saveProgram(button) {
-    var row = $(button).closest('tr');
-    var programID = row.data('id');
-    var updatedData = {};
 
-    row.find('input').each(function() {
-        var input = $(this);
-        var field = input.data('field');
-        updatedData[field] = input.val();
-    });
+function saveProgram(ProgramID) {
+    // Show confirmation dialog
+    $('.confirmation-dialog').show();
+    $('.confirmation-dialog-overlay').show();
+    $('.confirmation-dialog p').text('Are you sure you want to update this data?');
 
-    $.ajax({
-        url: "update_program.php",
-        type: "POST",
-        data: {
-            id: programID,
-            updatedData: updatedData
-        },
-        success: function(response) {
-            // Update table cells with new values
-            row.find('.editable').each(function() {
-                var cell = $(this);
-                var input = cell.find('input');
-                cell.text(input.val());
+    // Handle button clicks in the confirmation dialog
+    $('.confirmation-buttons button').click(function() {
+        var userConfirmed = $(this).data('confirmed');
+        if (userConfirmed) {
+            // User confirmed, send AJAX request to delete data
+            $.ajax({
+                url: "update_program.php",
+                type: "POST",
+                data: { delete_ids: [id] },
+                success: function(response) {
+                    // Show response message in success message div
+                    showSuccessMessage(response);
+                    // Reload or update the table as needed
+                },
+                error: function(xhr, status, error) {
+                    console.error(xhr.responseText); // Log error message
+                    // Handle error as needed
+                }
             });
-            // Toggle button visibility
-            row.find('.inc-btn').show();
-            row.find('.check-btn').show();
-            row.find('.save-btn').hide();
-            row.find('.cancel-btn').hide();
-            alert(response);
-        },
-        error: function(xhr, status, error) {
-            console.error(xhr.responseText);
-            alert("An error occurred while saving the data.");
         }
+
+        // Hide the confirmation dialog and overlay
+        $('.confirmation-dialog').hide();
+        $('.confirmation-dialog-overlay').hide();
     });
 }
 
