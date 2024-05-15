@@ -82,6 +82,8 @@ $result5 = $conn->query($query5);
         }
 
         .button.inc-btn,
+        .button.cancel-btn,
+        .button.save-btn,
         .button.check-btn,
         .button.archive-btn { 
             background: none;
@@ -91,6 +93,8 @@ $result5 = $conn->query($query5);
         }
 
         .button.inc-btn i,
+        .button.save-btn i,
+        .button.cancel-btn i,
         .button.check-btn i,
         .button.archive-btn i {
             font-size: 13px;
@@ -99,6 +103,12 @@ $result5 = $conn->query($query5);
 
         .button.inc-btn:hover i {
             color: orange;
+        }
+        .button.save-btn:hover i {
+            color: green;
+        }
+        .button.cancel-btn:hover i {
+            color: blue;
         }
 
         .button.check-btn:hover i {
@@ -801,10 +811,10 @@ while ($row = $result->fetch_assoc()) {
     echo "<td class='editable' data-field='No_of_Students_Per_Section'>{$row['No_of_Students_Per_Section']}</td>"; // Students Per Section
     echo "<td>
             <div class='button-container'>
-                <button type='button' class='button check-btn' data-tooltip='Delete' onclick='deleteProgram({$row['ProgramID']})'>
+                <button type='button' class='button inc-btn' data-tooltip='Delete' onclick='deleteProgram({$row['ProgramID']})'>
                     <i class='bx bxs-trash'></i>
                 </button>
-                <button type='button' class='button inc-btn' data-tooltip='Edit' onclick='editProgram(this)'>
+                <button type='button' class='button check-btn' data-tooltip='Edit' onclick='editProgram(this)'>
                     <i class='bx bxs-edit'></i>
                 </button>
                 <button type='button' class='button save-btn' data-tooltip='Save' onclick='saveProgram({$row['ProgramID']})' style='display:none;'>
@@ -1083,7 +1093,7 @@ document.addEventListener("DOMContentLoaded", function () {
                         <div class="headfornaturetosort">
                     
                             <button type="button" id="toggleAddClassification">
-                                <i class='bx bx-select-multiple'></i> Add
+                                <i class='bx bx-select-multiple'></i> Add Classification
                             </button>
 
                         </div>
@@ -1137,13 +1147,13 @@ echo "<td>{$row5['Criteria4']}</td>"; // Display Criteria4
 echo "<td>{$row5['NatureOfDegree']}</td>"; // Display Nature of Degree
 echo "<td>
 <div class='button-container'>
-    <button type='button' class='button check-btn' data-tooltip='Delete' onclick='deleteProgram({$row5['ID']})'>
+    <button type='button' class='button inc-btn' data-tooltip='Delete' onclick='deleteClass({$row5['ID']})'>
         <i class='bx bxs-trash'></i>
     </button>
-    <button type='button' class='button inc-btn' data-tooltip='Edit' onclick='editProgram(this)'>
+    <button type='button' class='button check-btn' data-tooltip='Edit' onclick='editProgram(this)'>
         <i class='bx bxs-edit'></i>
     </button>
-    <button type='button' class='button save-btn' data-tooltip='Save' onclick='saveProgram({$row5['ID']})' style='display:none;'>
+    <button type='button' class='button save-btn' data-tooltip='Save' onclick='saveClass({$row5['ID']})' style='display:none;'>
         <i class='bx bxs-save'></i>
     </button>
     <button type='button' class='button cancel-btn' data-tooltip='Cancel' onclick='cancelEdit(this)' style='display:none;'>
@@ -1182,6 +1192,7 @@ $rowNumber++; // Increment for the next row
     <th>Clinic Schedule</th>
     <th>Result Release Date</th>
     <th>Enrollment Period</th>
+    <th>Action</th>
 </tr>
         </thead>
         <!-- Table Body -->
@@ -1199,6 +1210,20 @@ $rowNumber++; // Increment for the next row
                 echo "<td>{$row2['clinic_sched']}</td>"; // Clinic schedule
                 echo "<td>{$row2['result_release']}</td>"; // Result release date
                 echo "<td>{$row2['enrollment_period']}</td>"; // Enrollment period
+                echo "<td>
+<div class='button-container'>
+    
+    <button type='button' class='button check-btn' data-tooltip='Edit' onclick='editProgram(this)'>
+        <i class='bx bxs-edit'></i>
+    </button>
+    <button type='button' class='button save-btn' data-tooltip='Save' onclick='saveClass({$row2['id']})' style='display:none;'>
+        <i class='bx bxs-save'></i>
+    </button>
+    <button type='button' class='button cancel-btn' data-tooltip='Cancel' onclick='cancelEdit(this)' style='display:none;'>
+        <i class='bx bxs-x-circle'></i>
+    </button>
+</div>
+</td>"; 
                 echo "</tr>";
                 
                 $rowNumber++; // Increment for the next row
