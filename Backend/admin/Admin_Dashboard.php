@@ -322,8 +322,9 @@ function fetchPrograms($conn)
 $programs = fetchPrograms($conn);
 
 // Fetch pending accounts from the users table
-$pending_query = "SELECT * FROM users WHERE lstatus = 'Pending'";
+$pending_query = "SELECT * FROM users WHERE lstatus = 'Pending' AND userType != 'Student'";
 $pending_result = $conn->query($pending_query);
+
 ?>
 <!DOCTYPE html>
 <html lang="en" dir="ltr">
