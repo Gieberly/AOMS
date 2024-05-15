@@ -7,7 +7,7 @@ if(isset($_POST['delete_ids'])) {
 
 
         // Delete data from original table
-        $delete_query = "DELETE FROM programs WHERE id = ?";
+        $delete_query = "DELETE FROM programs WHERE ProgramID = ?";
         $delete_stmt = $conn->prepare($delete_query);
         $delete_stmt->bind_param("i", $id);
         $delete_stmt->execute();
