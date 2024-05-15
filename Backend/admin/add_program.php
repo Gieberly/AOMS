@@ -9,7 +9,7 @@ $courses = $_POST['courses'];
 $nature_of_degree = $_POST['nature_of_degree'];
 $no_of_sections = (int)$_POST['no_of_sections'];
 $no_of_students_per_section = (int)$_POST['no_of_students_per_section'];
-$number_of_available_slots = (int)$_POST['number_of_available_slots']; // The new hidden input
+$Number_of_Available_Slots = (int)$_POST['number_of_available_slots']; // The new hidden input
 
 // SQL query to insert a new program
 $sql = "INSERT INTO programs (college, courses, nature_of_degree, no_of_sections, no_of_students_per_section, number_of_available_slots) 
