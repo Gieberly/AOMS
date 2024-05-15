@@ -854,7 +854,7 @@ function cancelEdit(button) {
     row.find('.cancel-btn').hide();
 }
 
-function saveProgram(ProgramID) {
+function saveProgram(id) {
     // Show confirmation dialog
     $('.confirmation-dialog').show();
     $('.confirmation-dialog-overlay').show();
