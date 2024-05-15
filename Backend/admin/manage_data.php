@@ -2004,38 +2004,7 @@ function deleteProgram(id) {
     });
 }
 
-function editProgram(id) {
-    // Show confirmation dialog
-    $('.confirmation-dialog').show();
-    $('.confirmation-dialog-overlay').show();
-    $('.confirmation-dialog p').text('Are you sure you want to retrieve this data?');
 
-    // Handle button clicks in the confirmation dialog
-    $('.confirmation-buttons button').click(function() {
-        var userConfirmed = $(this).data('confirmed');
-        if (userConfirmed) {
-            // User confirmed, send AJAX request to delete data
-            $.ajax({
-                url: "undo_Personnel_Archive.php",
-                type: "POST",
-                data: { delete_ids: [id] },
-                success: function(response) {
-                    // Show response message in success message div
-                    showSuccessMessage(response);
-                    // Reload or update the table as needed
-                },
-                error: function(xhr, status, error) {
-                    console.error(xhr.responseText); // Log error message
-                    // Handle error as needed
-                }
-            });
-        }
-
-        // Hide the confirmation dialog and overlay
-        $('.confirmation-dialog').hide();
-        $('.confirmation-dialog-overlay').hide();
-    });
-}
 
 function deleteUser(id) {
     // Show confirmation dialog
