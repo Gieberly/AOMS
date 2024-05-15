@@ -935,11 +935,12 @@ document.addEventListener("DOMContentLoaded", function () {
     <input class="input" type="number" id="no_of_students_per_section" name="no_of_students_per_section" required>
   </div>
   <div class="form-group">
-    <label for="number_of_available_slots">Number of Availbale Slots:</label>
-  <input type="input" id="number_of_available_slots" name="number_of_available_slots">
+    <label for="number_of_available_slots">Number of Available Slots:</label>
+    <input class="input" type="number" id="number_of_available_slots" name="number_of_available_slots" required>
   </div>
-   <button type="submit">Submit</button>
+  <button type="submit">Submit</button>
 </form>
+
 
   </div>
 </div>

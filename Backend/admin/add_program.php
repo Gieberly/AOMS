@@ -9,10 +9,10 @@ $courses = $_POST['courses'];
 $nature_of_degree = $_POST['nature_of_degree'];
 $no_of_sections = (int)$_POST['no_of_sections'];
 $no_of_students_per_section = (int)$_POST['no_of_students_per_section'];
-$Number_of_Available_Slots = (int)$_POST['number_of_available_slots']; // The new hidden input
+$number_of_available_slots = isset($_POST['number_of_available_slots']) ? (int)$_POST['number_of_available_slots'] : 0;
 
 // SQL query to insert a new program
-$sql = "INSERT INTO programs (college, courses, nature_of_degree, no_of_sections, no_of_students_per_section, number_of_available_slots) 
+$sql = "INSERT INTO programs (College, courses, nature_of_degree, no_of_sections, no_of_students_per_section, number_of_available_slots) 
         VALUES (?, ?, ?, ?, ?, ?)";
 
 $stmt = $conn->prepare($sql);
@@ -21,7 +21,7 @@ if ($stmt === false) {
     die("Error preparing the statement: " . $conn->error);
 }
 
-$stmt->bind_param("sssii", $college, $courses, $nature_of_degree, $no_of_sections, $no_of_students_per_section, $number_of_available_slots);
+$stmt->bind_param("sssiii", $college, $courses, $nature_of_degree, $no_of_sections, $no_of_students_per_section, $number_of_available_slots);
 
 if ($stmt->execute()) {
     // Set a session variable to indicate success
@@ -37,3 +37,4 @@ $conn->close();
 // Redirect to manage_data.php
 header("Location: manage_data.php");
 exit(); // Make sure to exit after redirecting
+?>
