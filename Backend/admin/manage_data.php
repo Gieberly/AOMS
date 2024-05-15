@@ -747,7 +747,7 @@ if (isset($_SESSION['program_added_successfully']) && $_SESSION['program_added_s
                                 <i class='bx bx-send'></i>
                             </button> -->
                             <button type="button" id="toggleAddProgram">
-                                <i class='bx bx-select-multiple'></i> Add Program
+                                <i class='bx bx-select-multiple'></i> Add
                             </button>
 
                         </div>
@@ -1093,7 +1093,7 @@ document.addEventListener("DOMContentLoaded", function () {
                         <div class="headfornaturetosort">
                     
                             <button type="button" id="toggleAddClassification">
-                                <i class='bx bx-select-multiple'></i> Add Classification
+                                <i class='bx bx-select-multiple'></i> Add
                             </button>
 
                         </div>
@@ -1240,6 +1240,13 @@ $rowNumber++; // Increment for the next row
                     <div class="head">
                         <h3>List of Applicant Ethnicity</h3>
                     </div>
+                    <div class="headfornaturetosort">
+                    
+                    <button type="button" id="toggleAddethnicity">
+                        <i class='bx bx-select-multiple'></i> Add
+                    </button>
+
+                </div>
                     <div class="table-container">
                         <table class="" style="width: 100%;">
 
@@ -1247,6 +1254,7 @@ $rowNumber++; // Increment for the next row
 <tr>
     <th>#</th> <!-- Row numbering -->
     <th>Ethnicity Name</th> <!-- Ethnicity Name -->
+    <th> Action</th>
 </tr>
         </thead>
         <!-- Table Body -->
@@ -1257,6 +1265,22 @@ $rowNumber++; // Increment for the next row
                 echo "<tr>";
                 echo "<td>{$rowNumber}</td>"; // Display row number
                 echo "<td>{$row4['ethnicity_name']}</td>"; // Display Ethnicity Name
+                echo "<td>
+<div class='button-container'>
+    <button type='button' class='button inc-btn' data-tooltip='Delete' onclick='deleteEthni({$row4['ethnicity_id']})'>
+        <i class='bx bxs-trash'></i>
+    </button>
+    <button type='button' class='button check-btn' data-tooltip='Edit' onclick='editEthni(this)'>
+        <i class='bx bxs-edit'></i>
+    </button>
+    <button type='button' class='button save-btn' data-tooltip='Save' onclick='saveEthni({$row4['ethnicity_id']})' style='display:none;'>
+        <i class='bx bxs-save'></i>
+    </button>
+    <button type='button' class='button cancel-btn' data-tooltip='Cancel' onclick='cancelEthni(this)' style='display:none;'>
+        <i class='bx bxs-x-circle'></i>
+    </button>
+</div>
+</td>"; 
                 echo "</tr>";
                 $rowNumber++;
             }
