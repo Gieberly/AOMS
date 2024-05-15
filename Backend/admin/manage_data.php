@@ -792,34 +792,107 @@ if (isset($_SESSION['program_added_successfully']) && $_SESSION['program_added_s
 <?php
 $rowNumber = 1; // To number each row
 while ($row = $result->fetch_assoc()) {
-echo "<tr>";
-echo "<td>{$rowNumber}</td>"; // Row number
-echo "<td>{$row['College']}</td>"; // College
-echo "<td>{$row['Courses']}</td>"; // Courses
-echo "<td>{$row['Nature_of_Degree']}</td>"; // Nature of Degree
-echo "<td>{$row['No_of_Sections']}</td>"; // Number of Sections
-echo "<td>{$row['No_of_Students_Per_Section']}</td>"; // Students Per Section
-echo "<td>
-<div class='button-container'>
-
-<button type='button' class='button check-btn' data-tooltip='Delete' onclick='deleteProgram({$row['ProgramID']}, \"Delete\")'>
-<i class='bx bxs-trash' ></i>
-</button>
-<button type='button' class='button inc-btn' data-tooltip='Edit' onclick='editProgram({$row['ProgramID']}, \"Edit\")'>
-<i class='bx bxs-edit'></i>
-</button>
-
-</div>
-</td>"; // 9
-echo "</tr>";
-$rowNumber++; // Increment for the next row
+    echo "<tr data-id='{$row['ProgramID']}'>";
+    echo "<td>{$rowNumber}</td>"; // Row number
+    echo "<td class='editable' data-field='College'>{$row['College']}</td>"; // College
+    echo "<td class='editable' data-field='Courses'>{$row['Courses']}</td>"; // Courses
+    echo "<td class='editable' data-field='Nature_of_Degree'>{$row['Nature_of_Degree']}</td>"; // Nature of Degree
+    echo "<td class='editable' data-field='No_of_Sections'>{$row['No_of_Sections']}</td>"; // Number of Sections
+    echo "<td class='editable' data-field='No_of_Students_Per_Section'>{$row['No_of_Students_Per_Section']}</td>"; // Students Per Section
+    echo "<td>
+            <div class='button-container'>
+                <button type='button' class='button check-btn' data-tooltip='Delete' onclick='deleteProgram({$row['ProgramID']})'>
+                    <i class='bx bxs-trash'></i>
+                </button>
+                <button type='button' class='button inc-btn' data-tooltip='Edit' onclick='editProgram(this)'>
+                    <i class='bx bxs-edit'></i>
+                </button>
+                <button type='button' class='button save-btn' data-tooltip='Save' onclick='saveProgram(this)' style='display:none;'>
+                    <i class='bx bxs-save'></i>
+                </button>
+                <button type='button' class='button cancel-btn' data-tooltip='Cancel' onclick='cancelEdit(this)' style='display:none;'>
+                    <i class='bx bxs-x-circle'></i>
+                </button>
+            </div>
+          </td>"; 
+    echo "</tr>";
+    $rowNumber++; // Increment for the next row
 }
-    ?>
+?>
+
 </tbody>
 
                         </table>
                     </div>
 <script>
+    function editProgram(button) {
+    var row = $(button).closest('tr');
+    row.find('.editable').each(function() {
+        var cell = $(this);
+        var value = cell.text();
+        var field = cell.data('field');
+        cell.html('<input type="text" class="form-control" data-field="' + field + '" value="' + value + '">');
+    });
+    // Toggle button visibility
+    row.find('.inc-btn').hide();
+    row.find('.check-btn').hide();
+    row.find('.save-btn').show();
+    row.find('.cancel-btn').show();
+}
+
+function cancelEdit(button) {
+    var row = $(button).closest('tr');
+    row.find('.editable').each(function() {
+        var cell = $(this);
+        var input = cell.find('input');
+        cell.text(input.val()); // Restore the original value
+    });
+    // Toggle button visibility
+    row.find('.inc-btn').show();
+    row.find('.check-btn').show();
+    row.find('.save-btn').hide();
+    row.find('.cancel-btn').hide();
+}
+function saveProgram(button) {
+    var row = $(button).closest('tr');
+    var programID = row.data('id');
+    var updatedData = {};
+
+    row.find('input').each(function() {
+        var input = $(this);
+        var field = input.data('field');
+        updatedData[field] = input.val();
+    });
+
+    $.ajax({
+        url: "update_program.php",
+        type: "POST",
+        data: {
+            id: programID,
+            updatedData: updatedData
+        },
+        success: function(response) {
+            // Update table cells with new values
+            row.find('.editable').each(function() {
+                var cell = $(this);
+                var input = cell.find('input');
+                cell.text(input.val());
+            });
+            // Toggle button visibility
+            row.find('.inc-btn').show();
+            row.find('.check-btn').show();
+            row.find('.save-btn').hide();
+            row.find('.cancel-btn').hide();
+            alert(response);
+        },
+        error: function(xhr, status, error) {
+            console.error(xhr.responseText);
+            alert("An error occurred while saving the data.");
+        }
+    });
+}
+
+
 document.addEventListener("DOMContentLoaded", function () {
   document.getElementById("toggleAddProgram").addEventListener("click", function () {
     document.getElementById("addProgramModal").style.display = "block"; // Open modal
