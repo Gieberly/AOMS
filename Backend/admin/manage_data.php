@@ -822,6 +822,23 @@ document.addEventListener("DOMContentLoaded", function () {
   });
 });
 
+document.addEventListener("DOMContentLoaded", function () {
+  // Function to update the hidden input
+  function updateAvailableSlots() {
+    const noOfSections = parseInt(document.getElementById("no_of_sections").value) || 0;
+    const noOfStudentsPerSection = parseInt(document.getElementById("no_of_students_per_section").value) || 0;
+    const numberOfAvailableSlots = noOfSections * noOfStudentsPerSection;
+    
+    document.getElementById("number_of_available_slots").value = numberOfAvailableSlots;
+  }
+
+  // Attach event listeners to inputs
+  document.getElementById("no_of_sections").addEventListener("input", updateAvailableSlots);
+  document.getElementById("no_of_students_per_section").addEventListener("input", updateAvailableSlots);
+
+  // Initial update in case there's a default value
+  updateAvailableSlots();
+});
 
 </script>
 
@@ -917,8 +934,11 @@ document.addEventListener("DOMContentLoaded", function () {
     <label for="no_of_students_per_section">Students Per Section:</label>
     <input class="input" type="number" id="no_of_students_per_section" name="no_of_students_per_section" required>
   </div>
-  <input type="hidden" id="number_of_available_slots" name="number_of_available_slots"> <!-- Hidden input -->
-  <button type="submit">Submit</button>
+  <div class="form-group">
+    <label for="number_of_available_slots">Number of Availbale Slots:</label>
+  <input type="input" id="number_of_available_slots" name="number_of_available_slots">
+  </div>
+   <button type="submit">Submit</button>
 </form>
 
   </div>
