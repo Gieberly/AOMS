@@ -803,10 +803,10 @@ echo "<td>
 <div class='button-container'>
 
 <button type='button' class='button check-btn' data-tooltip='Delete' onclick='deleteProgram({$row['ProgramID']}, \"Delete\")'>
-  <i class='bx bxs-check-circle'></i>
+<i class='bx bxs-trash' ></i>
 </button>
 <button type='button' class='button inc-btn' data-tooltip='Edit' onclick='editProgram({$row['ProgramID']}, \"Edit\")'>
- <i class='bx bxs-no-entry'></i>
+<i class='bx bxs-edit'></i>
 </button>
 
 </div>
