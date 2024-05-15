@@ -12,7 +12,7 @@ if(isset($_POST['delete_ids'])) {
         $delete_stmt->bind_param("i", $id);
         $delete_stmt->execute();
     }
-    echo "Applicant has been deleted successfully.";
+    echo "Program has been deleted successfully.";
 }
 
 ?>
