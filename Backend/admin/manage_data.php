@@ -1137,13 +1137,13 @@ echo "<td>{$row5['Criteria4']}</td>"; // Display Criteria4
 echo "<td>{$row5['NatureOfDegree']}</td>"; // Display Nature of Degree
 echo "<td>
 <div class='button-container'>
-    <button type='button' class='button check-btn' data-tooltip='Delete' onclick='deleteProgram({$row['ProgramID']})'>
+    <button type='button' class='button check-btn' data-tooltip='Delete' onclick='deleteProgram({$row5['ID']})'>
         <i class='bx bxs-trash'></i>
     </button>
     <button type='button' class='button inc-btn' data-tooltip='Edit' onclick='editProgram(this)'>
         <i class='bx bxs-edit'></i>
     </button>
-    <button type='button' class='button save-btn' data-tooltip='Save' onclick='saveProgram({$row['ProgramID']})' style='display:none;'>
+    <button type='button' class='button save-btn' data-tooltip='Save' onclick='saveProgram({$row5['ID']})' style='display:none;'>
         <i class='bx bxs-save'></i>
     </button>
     <button type='button' class='button cancel-btn' data-tooltip='Cancel' onclick='cancelEdit(this)' style='display:none;'>
