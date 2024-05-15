@@ -216,7 +216,7 @@ $rejectedUserCounts = [
 ];
 
 // Query to fetch pending users
-$sqlPendingUsers = "SELECT COUNT(*) AS count_pending_users FROM users WHERE lstatus = 'Pending'";
+$sqlPendingUsers = "SELECT COUNT(*) AS count_pending_users FROM users WHERE lstatus = 'Pending' AND userType != 'Student'";
 $resultPendingUsers = $conn->query($sqlPendingUsers);
 $countPendingUser = $resultPendingUsers->fetch_assoc()['count_pending_users'];
 
