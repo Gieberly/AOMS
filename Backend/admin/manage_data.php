@@ -802,10 +802,10 @@ echo "<td>{$row['No_of_Students_Per_Section']}</td>"; // Students Per Section
 echo "<td>
 <div class='button-container'>
 
-<button type='button' class='button check-btn' data-tooltip='Delete' onclick='deleteProgram({$row['id']}, \"Delete\")'>
+<button type='button' class='button check-btn' data-tooltip='Delete' onclick='deleteProgram({$row['ProgramID']}, \"Delete\")'>
   <i class='bx bxs-check-circle'></i>
 </button>
-<button type='button' class='button inc-btn' data-tooltip='Edit' onclick='editProgram({$row['id']}, \"Edit\")'>
+<button type='button' class='button inc-btn' data-tooltip='Edit' onclick='editProgram({$row['ProgramID']}, \"Edit\")'>
  <i class='bx bxs-no-entry'></i>
 </button>
 
