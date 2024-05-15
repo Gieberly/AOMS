@@ -128,14 +128,14 @@ $full_name = $name . ' ' . $mname . ' ' . $last_name;
     
         <li class="">
             <a href="manage_data.php" id="data-result-link" style="text-decoration:none">
-                <i class='bx bxs-book-alt'></i>
+            <i class='bx bxs-data'></i>
                 <span class="text">Manage Data</span>
             </a>
         </li>
 
         <li class="">
             <a href="admin_archive.php" id="data-info-link" style="text-decoration:none">
-                <i class='bx bxs-data'></i>
+                <i class='bx bxs-book-alt'></i>
                 <span class="text">Archive</span>
             </a>
         </li>
