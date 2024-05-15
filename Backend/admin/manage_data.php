@@ -1238,19 +1238,58 @@ $rowNumber++; // Increment for the next row
             <div class="table-data">
                 <div class="order">
                     <div class="head">
-                        <h3>List of Applicant Ethnicity</h3>
-                    </div>
-                    <div class="headfornaturetosort">
-                    
-                    <button type="button" id="toggleAddethnicity">
-                        <i class='bx bx-select-multiple'></i> Add
-                    </button>
+                        <h3>List of Programs</h3>
+                        <!-- Add this input field for date filtering -->
 
-                </div>
+                        <div class="headfornaturetosort">
+                            <!-- <form method="GET" action="" id="calendarFilterForm">
+                                <label for="appointment_date"></label>
+                                <input type="date" name="appointment_date" id="appointment_date">
+                                <button type="submit"><i class='bx bx-filter'></i></button>
+                            </form>
+              
+                            <button type="button" id="sendButton" style="display: none;">
+                                <i class='bx bx-send'></i>
+                            </button> -->
+                            <button type="button" id="toggleAddProgram">
+                                <i class='bx bx-select-multiple'></i> Add
+                            </button>
+
+                        </div>
+                    </div>
+                    <style>
+                        .table-container {
+                            max-height: 400px;
+                            overflow-y: auto;
+                            max-width: 100%;
+                            /* Set maximum width to adjust to the end of the screen */
+                            margin: 0 auto;
+                            /* Center the table horizontally */
+                        }
+
+                        #thead {
+                            position: sticky;
+                            top: 0;
+                            z-index: 1;
+                            background-color: white;
+                        }
+
+                        /* Table scrollbar */
+                        .table-container::-webkit-scrollbar {
+                            width: 10px;
+                        }
+
+                        .table-container::-webkit-scrollbar-thumb {
+                            background-color: #4CAF50;
+                            border-radius: 5px;
+                        }
+                    </style>
+
                     <div class="table-container">
-                        <table class="" style="width: 100%;">
+                        <table class="display" style="width: 100%;">
 
                             <!-- Thead Section -->
+                            <thead id="thead">
 <tr>
     <th>#</th> <!-- Row numbering -->
     <th>Ethnicity Name</th> <!-- Ethnicity Name -->
