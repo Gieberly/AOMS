@@ -1605,7 +1605,11 @@ $result = $conn->query($query);
 
     <script>
 
-         
+new DataTable('#studentTable', {
+    order: [[3, 'desc']]
+});
+
+   
 // Function to display success message
 function showSuccessMessage(message) {
   var archiveMessage = document.getElementById('archive-message');
@@ -1751,10 +1755,6 @@ function deletePersonnel(id) {
         $('.confirmation-dialog-overlay').hide();
     });
 }
-
-new DataTable('#studentTable', {
-    order: [[3, 'desc']]
-});
 
 
 new DataTable('table.display');
