@@ -788,14 +788,15 @@ $result = $conn->query($query);
         // Action buttonscc
         echo "<td>";
         echo "<div class='button-container'>";
-        <button type='button' class='button check-btn' data-tooltip='Edit' onclick='editProgram(this)'>
-        <i class='bx bxs-edit'></i>
-    </button>
+        
         echo "<button type='button' class='button check-btn' data-tooltip='Approve' onclick='updateStatus({$staff['id']}, \"Approved\")'>";
         echo "<i class='bx bxs-check-circle'></i>";
         echo "</button>";
         echo "<button type='button' class='button delete-btn' data-tooltip='Reject' onclick='updateStatus({$staff['id']}, \"Rejected\")'>";
         echo "<i class='bx bxs-x-circle'></i>";
+        echo "</button>";
+        echo "<button type='button' class='button check-btn' data-tooltip='Edit' onclick='editUser(this)'>";
+        echo "<i class='bx bxs-edit'></i>";
         echo "</button>";
         echo "<button type='button' class='button archive-btn' data-tooltip='Archive' onclick='archiveUser({$staff['id']}, \"Archive\")'>";
         echo "<i class='bx bxs-box'></i>";
