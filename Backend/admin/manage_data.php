@@ -715,9 +715,9 @@ if (isset($_SESSION['program_added_successfully']) && $_SESSION['program_added_s
         <main>
             <div class="head-title">
                 <div class="left">
-                    <h1>Applicants</h1>
+                    <h1>Data</h1>
                     <ul class="breadcrumb">
-                        <li><a href="#">Applicants</a></li>
+                        <li><a href="#">Data</a></li>
                         <li><i class='bx bx-chevron-right'></i></li>
                         <li>
                         <li><a class="active" href="Admin_Dashboard.php">Home</a></li>
