@@ -683,9 +683,9 @@ $result = $conn->query($query);
         <main>
             <div class="head-title">
                 <div class="left">
-                    <h1>Applicants</h1>
+                    <h1>Admission Personnels</h1>
                     <ul class="breadcrumb">
-                        <li><a href="#">Applicants</a></li>
+                        <li><a href="#">Admission Personnels</a></li>
                         <li><i class='bx bx-chevron-right'></i></li>
                         <li>
                         <li><a class="active" href="Admin_Dashboard.php">Home</a></li>
