@@ -1406,7 +1406,7 @@ $pending_result = $conn->query($pending_query);
                             <!-- Table for displaying student data -->
                             <table id="dashboard" class="display responsive wrap" width="100%" id="courses">
                                 <!-- table header -->
-                                <h4>Pending Accounts</h4>
+                                <h3>Pending Accounts</h3>
                                 <thead>
                                     <tr>
 
@@ -1431,7 +1431,7 @@ $pending_result = $conn->query($pending_query);
                                         echo "<td>{$row['last_name']}</td>";
                                         echo "<td>{$row['name']}</td>";
                                         echo "<td>{$row['mname']}</td>";
-                                        echo "<td>{$row['mname']}</td>";
+                                        echo "<td>{$row['email']}</td>";
                                         echo "<td>{$row['Department']}</td>";
                                         echo "<td>{$row['Designation']}</td>";
                                         echo "<td>{$row['userType']}</td>";
