@@ -686,7 +686,7 @@ $result = $conn->query($query);
         <main>
             <div class="head-title">
                 <div class="left">
-                    <h1>Audit Trail</h1>
+                <h1>Audit Trail</h1>
                     <ul class="breadcrumb">
                         <li><a href="#">Audit Trail</a></li>
                         <li><i class='bx bx-chevron-right'></i></li>
@@ -704,7 +704,7 @@ $result = $conn->query($query);
             <div class="table-data">
                 <div class="order">
                     <div class="head">
-                        <h3>List of logs</h3>
+                        <h3>List of archived Applicants</h3>
                         <!-- Add this input field for date filtering -->
 
                         <div class="headfornaturetosort">
@@ -1832,14 +1832,14 @@ new DataTable('table.display');
                 $('#content' + selectedTabId.substr(3)).show();
             });
             // Check if there is a selected row stored in local storage
-            var selectedRowIdAudit Trail = localStorage.getItem('selectedRowIdAudit Trail');
-            if (selectedRowIdAudit Trail) {
+            var selectedRowIdApplicants = localStorage.getItem('selectedRowIdApplicants');
+            if (selectedRowIdApplicants) {
 
                 // Highlight the selected row
-                $('tr[data-id="' + selectedRowIdAudit Trail + '"]').addClass('selected');
+                $('tr[data-id="' + selectedRowIdApplicants + '"]').addClass('selected');
 
                 // Populate form fields with data corresponding to the selected row
-                populateForm(selectedRowIdAudit Trail);
+                populateForm(selectedRowIdApplicants);
 
                 // Show the todo div
                 $('.todo').show();
@@ -1862,7 +1862,7 @@ new DataTable('table.display');
                     $('.todo').show();
 
                     // Store the selected row ID in local storage
-                    localStorage.setItem('selectedRowIdAudit Trail', userId);
+                    localStorage.setItem('selectedRowIdApplicants', userId);
                 }
             });
 
@@ -1874,7 +1874,7 @@ new DataTable('table.display');
                 $('.editRow').removeClass('selected');
 
                 // Clear the selected row ID from local storage
-                localStorage.removeItem('selectedRowIdAudit Trail');
+                localStorage.removeItem('selectedRowIdApplicants');
             });
 
             function populateForm(userId) {
