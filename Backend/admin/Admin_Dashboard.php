@@ -326,8 +326,7 @@ $pending_query = "SELECT * FROM users WHERE lstatus = 'Pending' AND userType != 
 $pending_result = $conn->query($pending_query);
 
 ?>
-<!DOCTYPE html>
-<html lang="en" dir="ltr">
+
 
 <head>
     <meta charset="UTF-8">
