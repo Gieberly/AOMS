@@ -691,9 +691,9 @@ $result2 = $conn->query($query2);
         <main>
             <div class="head-title">
                 <div class="left">
-                    <h1>Applicants</h1>
+                    <h1>Archived Data</h1>
                     <ul class="breadcrumb">
-                        <li><a href="#">Applicants</a></li>
+                        <li><a href="#">Archived Data</a></li>
                         <li><i class='bx bx-chevron-right'></i></li>
                         <li>
                         <li><a class="active" href="Admin_Dashboard.php">Home</a></li>
